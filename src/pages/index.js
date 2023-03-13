@@ -1,8 +1,9 @@
+import Layout from "@/components/Layouts/Layout";
 import Head from "next/head";
 import Image from "next/image";
 
 const Home = () => {
-  return <div>Hello thsisa dkasdjfk</div>;
+  return <Layout/>;
 };
 
 export default Home;

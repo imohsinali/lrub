@@ -42,13 +42,19 @@ console.log(role)
 const loginPage = () => {
   if (role.Inspector && data) {
     setLogin({ Admin:false, Inspector: true,User:false });
-
+localStorage.setItem("Userlogin", false);
+localStorage.setItem("Inspectorlogin", true);
+localStorage.setItem("Adminlogin", false);
+console.log("msohin");
 
     router.push("/Inspector");
   }
   if (role.Admin && Adminlogin) {
   setLogin({ Admin: true,Inspector:false,User:false });
-
+localStorage.setItem("Userlogin", false);
+localStorage.setItem("Inspectorlogin", false);
+localStorage.setItem("Adminlogin", true);
+console.log("msohin");
 
     router.push("/Admin");
   }

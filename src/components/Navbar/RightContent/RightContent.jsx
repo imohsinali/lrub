@@ -1,7 +1,5 @@
 import AuthModel from "@/components/Models/Auth/AuthModel";
-import { Context } from "@/components/context/context"; 
 
-// import { auth } from "@/firebase/clientApp";
 import { Button, Flex } from "@chakra-ui/react";
 // import { User } from "firebase/auth";
 import React from "react";

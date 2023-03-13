@@ -8,9 +8,9 @@ export default function App({ Component, pageProps }) {
   return (
     <ContextProvider>
         <ChakraBaseProvider theme={theme}>
-          <Layout>
+          {/* <Layout> */}
             <Component {...pageProps} />
-          </Layout>
+          {/* </Layout> */}
         </ChakraBaseProvider>
     </ContextProvider>
   );
