@@ -20,6 +20,7 @@ const Banner1 = () => {
           justifyContent={"space-evenly"}
           alignItems={"center"}
           width={{ base: 400, md: 810, sm: 100, xl: 1800 }}
+          key={logo.name}
         >
           <Box
             key={logo.name}

@@ -19,7 +19,7 @@ function AirbnbCard() {
     
     >
     <Box  borderWidth="1px" borderRadius="lg" overflow="hidden"  height={'50%'} >
-      <Image src={property.imageUrl} width={1700} height={100}  />
+      <Image src={property.imageUrl} alt={property.imageAlt} width={1700} height={100}  />
 
         
 
