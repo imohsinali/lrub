@@ -72,7 +72,7 @@ export default function Layout({children}) {
         <FooterPage/>
         {/* Rest of your home page content */}
       </Flex>
-      {/* <main>{children}</main> */}
+      <main>{children}</main>
     </Flex>
   );
 }

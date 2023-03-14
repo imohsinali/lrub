@@ -1,7 +1,4 @@
-import { Box, Flex, Icon, Text, Button, Image } from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import {  useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, Text, Image } from "@chakra-ui/react";
 
 const Card = ({ title, description, icon }) => (
   <Box
@@ -16,7 +13,7 @@ const Card = ({ title, description, icon }) => (
       transition="transform .2s"
       _hover={{ transform: "scale(1.05)" }}
   >
-    <Image src={icon} boxSize="10" color="purple.500" mb="4" />
+    <Image src={icon} boxSize="10" color="purple.500" mb="4"  alt="image"/>
     <Text fontSize="xl" fontWeight="semibold" mb="2">
       {title}
     </Text>

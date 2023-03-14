@@ -44,9 +44,9 @@ const defaultLogin ={
     Admin: false,
     User: false,
   }
+const [login, setLogin] = useState(defaultLogin);
 
 const [authState, setAuthState] = useState(defaultModelState);
-const [login, setLogin] = useState(defaultLogin);
   const checkIfWalletIsConnect = async () => {
     try {
       if (!window.ethereum) return alert("Please install MetaMask.");

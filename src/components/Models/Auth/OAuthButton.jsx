@@ -1,96 +1,65 @@
-
-import { Button, Flex} from '@chakra-ui/react'
-import React from 'react'
+import { Button, Flex } from "@chakra-ui/react";
+import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useContext,useEffect,useState } from "react";
-
-  import useSWR from "swr";
-import { Context } from '@/components/context/context';
-
+import useSWR from "swr";
+import axios from "axios";
+import { Context } from "@/components/context/context";
+import { AuthContext } from "@/components/context/User";
 
 const OAuthButton = () => {
-    const {
-      connectWallet,
-      currentAccount,
-      contract,
-      authState,
-        setLogin,
-        login
-    } = useContext(Context);
-const Adminlogin = "0xa91ad5bc6487900b5d5ba28eac7d4bd40db06e76"==currentAccount;
+  const { connectWallet, currentAccount, contract ,authState} = useContext(Context);
 
-    console.log(currentAccount);
-    const { data, error } = useSWR(
-      ["data", connectWallet, contract, currentAccount],
-      async () => {
-        const registeredInspector = await contract.isLandInspector(
-          currentAccount
-        );
-        return registeredInspector;
+  const router = useRouter();
+
+  const { data: registeredInspector, error } = useSWR(
+    ["data", connectWallet, contract, currentAccount],
+    async () => {
+      const registeredInspector = await contract.isLandInspector(
+        currentAccount
+      );
+      return registeredInspector;
+    }
+  );
+
+
+     let {role}=authState
+    const { setAuthState,auth } = useContext(AuthContext);
+    console.log("abksansknd", auth);
+
+    const loginPage=()=>{
+      if(role.Admin)
+      {
+     setAuthState({
+                       token: "Admin",
+             });
+
+             router.push('/Admin')
+
       }
-    );
-    console.log("ml", login);
 
-    useEffect(() => {
-      // console.log(checkIfWalletIsConnect())
-      console.log("uef", data);
-    }, [data]);
-const router=useRouter()
-   let {role}= authState
+      if(role.User)
+      {
+             setAuthState({
+               token: "user",
+             });
 
-console.log(role)
-const loginPage = () => {
-  if (role.Inspector && data) {
-    setLogin({ Admin:false, Inspector: true,User:false });
-localStorage.setItem("Userlogin", false);
-localStorage.setItem("Inspectorlogin", true);
-localStorage.setItem("Adminlogin", false);
-console.log("msohin");
+             router.push("/user");
 
-    router.push("/Inspector");
-  }
-  if (role.Admin && Adminlogin) {
-  setLogin({ Admin: true,Inspector:false,User:false });
-localStorage.setItem("Userlogin", false);
-localStorage.setItem("Inspectorlogin", false);
-localStorage.setItem("Adminlogin", true);
-console.log("msohin");
+      }
+    }
 
-    router.push("/Admin");
-  }
-  if (role.User && registeredUser) {
-    localStorage.setItem("Userlogin", true);
-    localStorage.setItem("Inspectorlogin", false);
-    localStorage.setItem("Adminlogin", false);
-    console.log("msohin");
-    router.push("/user");
-  }
-  if (role.User && !registeredUser) {
-    localStorage.setItem("Userlogin", true);
-    localStorage.setItem("Inspectorlogin", false);
-    localStorage.setItem("Adminlogin", false);
-    console.log("msohin");
-  router.pathname("/registration");
-  }
 
-  // setIsModalVisible(false);
-};
-    
-    console.log(data);
-    const handleSubmit = () => {
-      connectWallet();
-    console.log("r", role.Inspector);
+  const handleSubmit = () => {
+    connectWallet();
+     loginPage();
 
-      loginPage()
-    };
+
+  };
 
   return (
     <Flex flexDirection={"column"} width={"100%"} mb={2} gap={3}>
       <Button
-        // isLoading
-        loadingText="Connecting"
         bgColor="orange.400"
-        // variant="outline"
         spinnerPlacement="start"
         color={"white"}
         onClick={() => {
@@ -103,7 +72,6 @@ console.log("msohin");
         isLoading
         loadingText="Connecting"
         bgColor="blue.400"
-        // variant="outline"
         spinnerPlacement="start"
         color={"white"}
       >
@@ -111,6 +79,6 @@ console.log("msohin");
       </Button>
     </Flex>
   );
-}
+};
 
-export default OAuthButton
+export default OAuthButton;

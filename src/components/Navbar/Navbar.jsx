@@ -18,7 +18,7 @@ export default function Navbar() {
       zIndex={999}
     >
       <Flex align={"center"}>
-        <Image src="/images/nlogo.jpg" width={70} height={100} />
+        <Image src="/images/nlogo.jpg" width={70} height={100}  alt="image" />
       </Flex>
       <RightContent />
     </Flex>

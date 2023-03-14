@@ -1,18 +1,21 @@
-// import { withAuth } from "@/components/protected/withauth";
+import { AuthContext } from "@/components/context/User";
+import AdminNavbar from "@/components/Navbar/AdminNavbar";
+import { Box } from "@chakra-ui/react";
+import { useContext } from "react";
 
-import { Button } from "@chakra-ui/react";
-import Link from "next/link";
+const Index = () => {
+    const { auth} = useContext(AuthContext);
+console.log('masdoasd', auth);
+  
 
-import ProtectedRoute from "../../components/protected/withauth";
-
-const index = () => {
-  return <ProtectedRoute>
+  return (
     <div>
-      <h1>Admin Page</h1>
-
-      <Link href="/Admin/AddInspector">AddInspector</Link>
+      <>
+        <AdminNavbar/>
+        <Box p={4}>Admin Content Goes Here</Box>
+      </>
     </div>
-  </ProtectedRoute>;
+  );
 };
 
-export default index;
+export default  Index;

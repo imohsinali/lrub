@@ -4,14 +4,22 @@ import { theme } from "../components/chakra/theme";
 import Layout from "@/components/Layouts/Layout";
 import { ContextProvider } from '../components/context/context';
 
-export default function App({ Component, pageProps }) {
+import { AuthProvider } from "@/components/context/User";
+
+
+export default function App({ Component, pageProps}) {
+  
+
+
   return (
     <ContextProvider>
+      <AuthProvider >
         <ChakraBaseProvider theme={theme}>
           {/* <Layout> */}
-            <Component {...pageProps} />
+          <Component {...pageProps} />
           {/* </Layout> */}
         </ChakraBaseProvider>
+      </AuthProvider>
     </ContextProvider>
   );
 }
