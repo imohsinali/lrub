@@ -19,28 +19,24 @@ const AnimatedImage = styled(Image)`
 `;
 
 function AirbnbCard() {
-  const property = {
-    imageUrl: "/images/About-Us-Banner.jpg",
-    imageAlt: "Rear view of modern home with pool",
-  };
+  
 
   return (
     <Flex
       justifyContent="center"
       alignItems="center"
-      width={{ base: "100%" }}
+      // width={{ base: "100%" }}
       mt={{ base: "180", sm: "125" }}
     >
       <Box
         position="relative"
-        borderWidth="1px"
         borderRadius="lg"
         overflow="hidden"
         height="50%"
       >
         <Image
-          src={property.imageUrl}
-          alt={property.imageAlt}
+          src={'/images/About-Us-Banner.jpg'}
+          alt={'Image'}
           width={1700}
           height={100}
         />
