@@ -1,110 +1,103 @@
-import { Box, Flex, Heading, SimpleGrid, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, Histogram, LabelList, AreaChart, Area } from "recharts";
+import {
+  Flex,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  HStack,
+  InputRightElement,
+  Stack,
+  Button,
+  Heading,
+  Text,
+  useColorModeValue,
+  Link,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-const Dashboard = () => {
-  const data = [
-    { year: "2020", land: 100, people: 80, verified: 70, transferred: 50 },
-    { year: "2021", land: 150, people: 120, verified: 90, transferred: 100 },
-  ];
-
-  const verifiedData = [
-    { name: "Verified", value: 160 },
-    { name: "Unverified", value: 40 },
-  ];
-
-  const landData = [
-    { name: "Transferred", value: 100 },
-    { name: "Not Transferred", value: 50 },
-  ];
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#FF00FF"];
+export default function SignupCard() {
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <Flex direction="column" maxW="7xl" mx="auto" p="6">
-      <Heading mb="6">Dashboard</Heading>
-      <SimpleGrid columns={[1, 2, 3]} gap={6}>
-        <Stat bg="purple.100" p="4" borderRadius="md">
-          <StatLabel>Total Land Inspectors</StatLabel>
-          <StatNumber>50</StatNumber>
-        </Stat>
-        <Stat bg="orange.100" p="4" borderRadius="md">
-          <StatLabel>Total Lands Registered This Year</StatLabel>
-          <StatNumber>200</StatNumber>
-        </Stat>
-        <Stat bg="teal.100" p="4" borderRadius="md">
-          <StatLabel>Total Lands Transferred Last Year</StatLabel>
-          <StatNumber>100</StatNumber>
-        </Stat>
-      </SimpleGrid>
-      <Heading my="6">Charts</Heading>
-      <SimpleGrid columns={[1, 2, 3]} gap={6}>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="verified" stroke="#8884d8" activeDot={{ r: 8 }} />
-            <Line type="monotone" dataKey="transferred" stroke="#82ca9d" activeDot={{ r: 8 }} />
-          </LineChart>
-        </ResponsiveContainer>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="verified" fill="#8884d8">
-              <LabelList dataKey="verified" position="top" />
-            </Bar>
-              <Bar dataKey="transferred" fill="#82ca9d">
-          <LabelList dataKey="transferred" position="top" />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-    <Box>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart
-          data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+    <Flex
+      minH={"100vh"}
+      align={"center"}
+      justify={"center"}
+      bg={useColorModeValue("gray.50", "gray.800")}
+    >
+      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+        <Stack align={"center"}>
+          <Heading fontSize={"4xl"} textAlign={"center"}>
+            Sign up
+          </Heading>
+          <Text fontSize={"lg"} color={"gray.600"}>
+            to enjoy all of our cool features ✌️
+          </Text>
+        </Stack>
+        <Box
+          rounded={"lg"}
+          bg={useColorModeValue("white", "gray.700")}
+          boxShadow={"lg"}
+          p={8}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="verified" stroke="#8884d8" />
-          <Line type="monotone" dataKey="transferred" stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
-    </Box>
-    <Box>
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart
-          data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Area type="monotone" dataKey="verified" stroke="#8884d8" fill="#8884d8" />
-          <Area type="monotone" dataKey="transferred" stroke="#82ca9d" fill="#82ca9d" />
-        </AreaChart>
-      </ResponsiveContainer>
-    </Box>
-  </SimpleGrid>
-</Flex>
-
-  )}
-
-export default Dashboard
+          <Stack spacing={4}>
+            <HStack>
+              <Box>
+                <FormControl id="firstName" isRequired>
+                  <FormLabel>First Name</FormLabel>
+                  <Input type="text" />
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl id="lastName">
+                  <FormLabel>Last Name</FormLabel>
+                  <Input type="text" />
+                </FormControl>
+              </Box>
+            </HStack>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" />
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input type={showPassword ? "text" : "password"} />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <Stack spacing={10} pt={2}>
+              <Button
+                loadingText="Submitting"
+                size="lg"
+                bg={"blue.400"}
+                color={"white"}
+                _hover={{
+                  bg: "blue.500",
+                }}
+              >
+                Sign up
+              </Button>
+            </Stack>
+            <Stack pt={6}>
+              <Text align={"center"}>
+                Already a user? <Link color={"blue.400"}>Login</Link>
+              </Text>
+            </Stack>
+          </Stack>
+        </Box>
+      </Stack>
+    </Flex>
+  );
+}
