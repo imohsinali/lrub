@@ -18,11 +18,12 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { AuthContext } from "../context/User";
 import { Router, useRouter } from "next/router";
+import Link from "next/link";
 
 const AdminNavbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isMobile, setIsMobile] = useState(false);
-  const { auth, setAuthState } = useContext(AuthContext);
+  const { auth, setAuthState, decryptData } = useContext(AuthContext);
 
   
 useEffect(() => {
@@ -45,10 +46,12 @@ useEffect(() => {
   let router=useRouter();
 
   const hanndleLogOut=()=>{
-    console.log("maso")
-    if(auth.token=='Admin')
+   const token = decryptData(auth.token)
+
+    console.log(token)
+    if(token=='Admin')
     {
-       setAuthState("")
+       setAuthState("logout")
        router.push('/')
        
     }
@@ -81,7 +84,7 @@ useEffect(() => {
                 <DrawerBody>
                   <VStack spacing={4} align="stretch">
                     <Button w="full" variant="ghost">
-                      Add Inspector
+                      <Link href="/Admin/AddInspector">Add Inspector</Link>
                     </Button>
                     <Button w="full" variant="ghost">
                       View All Inspector
@@ -106,7 +109,7 @@ useEffect(() => {
             <Spacer />
             <Box>
               <Button mx={2} variant="ghost">
-                Add Inspector
+                <Link href="/Admin/AddInspector">Add Inspector</Link>
               </Button>
               <Button mx={2} variant="ghost">
                 View All Inspector

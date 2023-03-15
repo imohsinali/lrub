@@ -17,9 +17,16 @@ export default function Navbar() {
       right={0}
       zIndex={999}
     >
-      <Flex align={"center"}>
-        <Image src="/images/nlogo.jpg" width={70} height={100}  alt="image" />
+      <Flex
+        align={"center"}
+        borderRadius={"50%"}
+        width={20}
+      >
+        <div style={{ borderRadius: "50%", overflow: "hidden" }}>
+          <Image src="/images/nlogo.jpg" width={70} height={70} alt="image" />
+        </div>
       </Flex>
+
       <RightContent />
     </Flex>
   );

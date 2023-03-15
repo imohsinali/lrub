@@ -8,15 +8,7 @@ import CardGrid from '../Home/Grid';
 import Join from '../Home/Join';
 import Banner1 from '../Home/Banner1';
 import FooterPage from '../Home/FooterPage';
-const images = [
-  // "/images/googlelogo.png",
-  // "/images/banner1.jpg",
-  "/images/banner6.avif",
-  "/images/banner5.avif",
 
-  // "https://images.deepai.org/art-image/92f8d649137e4ed4b98804698dee4500/photovoltaic-homepage-a6deb5-thumb.jpg",
-  "/images/About-Us-Banner.jpg",
-];
 
 export default function Layout({children}) {
   console.log(Context)
@@ -28,7 +20,7 @@ export default function Layout({children}) {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <BannerCarousel images={images} />
+        <BannerCarousel />
         <Flex justifyContent={"center"} direction="column">
           <Text fontSize={"4rem"} align={"center"}>
             Key Fetures
@@ -55,21 +47,24 @@ export default function Layout({children}) {
           mt={-10}
           zIndex={1}
           opacity={5}
-          
+          color={{ base: "red", med: "green", sm: "yellow", xl: "blue" }}
+          width={{ base: 400, sm: 100, md: 810, xl: "95%" }}
+          overflow={"hidden"}
         >
-          <Text fontSize={"4rem"} align={"center"} mb={5}>
+          <Text fontSize={{base:"2rem", sm: "4rem"}} align={"center"} mb={5} >
             Development Stacks
           </Text>
           <Flex
             justifyContent={"center"}
             direction="row"
-            width={{ base: 400, md: 810, sm: 100, xl: 1700 }}
-            overflow={"hidden"}
+            // color={{ base: "red", med: "green", sm: "yellow", xl: "blue" }}
+            //  width={{ base: 400, sm: 100, md: 810, xl: '100%' }}
+            // overflow={"hidden"}
           >
             <Banner1 />
           </Flex>
         </Flex>
-        <FooterPage/>
+        <FooterPage />
         {/* Rest of your home page content */}
       </Flex>
       <main>{children}</main>
