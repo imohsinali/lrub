@@ -87,7 +87,7 @@ useEffect(() => {
                       <Link href="/Admin/AddInspector">Add Inspector</Link>
                     </Button>
                     <Button w="full" variant="ghost">
-                      View All Inspector
+                      <Link href={"/Admin/viewAllInspector"}> View All</Link>
                     </Button>
                     <Button
                       w="full"
@@ -112,7 +112,7 @@ useEffect(() => {
                 <Link href="/Admin/AddInspector">Add Inspector</Link>
               </Button>
               <Button mx={2} variant="ghost">
-                View All Inspector
+                <Link href={"/Admin/viewAllInspector"}> View All</Link>
               </Button>
               <Button mx={2} variant="ghost">
                 Change Admin
