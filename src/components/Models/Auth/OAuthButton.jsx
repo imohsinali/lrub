@@ -5,9 +5,14 @@ import useSWR from "swr";
 import axios from "axios";
 import { Context } from "@/components/context/context";
 import { AuthContext } from "@/components/context/User";
+import { setCookie } from "nookies";
+import { encryptData } from "@/components/utils/encrytpDycrytp";
+
+// Set the `token`
 
 const OAuthButton = () => {
-  const { connectWallet, currentAccount, contract ,authState} = useContext(Context);
+  const { connectWallet, currentAccount, contract, authState } =
+    useContext(Context);
 
   const router = useRouter();
 
@@ -21,39 +26,49 @@ const OAuthButton = () => {
     }
   );
 
+  let { role } = authState;
+  const { setAuthState, auth } = useContext(AuthContext);
 
-     let {role}=authState
-    const { setAuthState,auth } = useContext(AuthContext);
-    console.log("abksansknd", auth);
+  const Admin =
+    currentAccount ==
+    "0xa91ad5bc6487900B5D5ba28EAc7D4BD40db06e76".toLowerCase();
+  const loginPage = () => {
+    if (role.Admin && Admin) {
+            localStorage.setItem("session", "token");
 
-    const loginPage=()=>{
-      if(role.Admin)
-      {
-     setAuthState({
-                       token: "Admin",
-             });
+            // redirect to protected route
+            router.push("/Admin");
 
-             router.push('/Admin')
-
-      }
-
-      if(role.User)
-      {
-             setAuthState({
-               token: "user",
-             });
-
-             router.push("/user");
-
-      }
+      const data = encryptData("Admin");
+      setCookie(null, "token", data, {
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+        path: "/",
+      });
+      router.push("/Admin");
+      //  window.location.reload();
     }
 
+    if (role.User) {
+                  localStorage.setItem("session", null);
 
-  const handleSubmit = () => {
+      const data = encryptData("User");
+
+      setCookie(null, "token", data, {
+        //  maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 60 * 60, // 30 days
+
+        path: "/",
+      });
+
+      router.push("/User");
+    }
+  };
+
+  const handleSubmit = async () => {
+    // e.preventDefault();
+
     connectWallet();
-     loginPage();
-
-
+    loginPage();
   };
 
   return (

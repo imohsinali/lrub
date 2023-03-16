@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
 // import { GrUserAdmin } from "react-icons/gr";
@@ -29,7 +30,15 @@ const AuthButton = () => {
         User: _roleU,
       },
     });
+    toast({
+      title: "Connected to Metamask",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+
   }
+  const toast = useToast();
 
   return (
     <Flex>
@@ -38,8 +47,11 @@ const AuthButton = () => {
         height="40px"
         display={{ base: "none", sm: "flex" }}
         width={{ base: "70px", md: "110px" }}
+        borderRadius={15}
+        color={"blackAlpha.900"}
         mr="2px"
         onClick={() => handleSetPath(true, false, false)}
+        fontSize={"1rem"}
       >
         Admin
       </Button>
@@ -49,7 +61,10 @@ const AuthButton = () => {
         display={{ base: "none", sm: "flex" }}
         width={{ base: "70px", md: "110px" }}
         mr="2px"
+        borderRadius={15}
+        color={"blackAlpha.900"}
         onClick={() => handleSetPath(false, true, false)}
+        fontSize={"1rem"}
       >
         Inspector
       </Button>
@@ -58,7 +73,10 @@ const AuthButton = () => {
         height="40px"
         display={{ base: "none", sm: "flex" }}
         width={{ base: "70px", md: "110px" }}
+        borderRadius={15}
+        color={"blackAlpha.900"}
         mr="2px"
+        fontSize={"1rem"}
         onClick={() => handleSetPath(false, false, true)}
       >
         User

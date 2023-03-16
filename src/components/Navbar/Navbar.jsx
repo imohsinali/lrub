@@ -6,7 +6,7 @@ import RightContent from "./RightContent/RightContent";
 export default function Navbar() {
   return (
     <Flex
-      bg={"rgb(68,88,106)"}
+      bg={"#F7FAFC"}
       height={"100px"}
       padding="6px 15px"
       alignItems={"center"}
@@ -17,11 +17,7 @@ export default function Navbar() {
       right={0}
       zIndex={999}
     >
-      <Flex
-        align={"center"}
-        borderRadius={"50%"}
-        width={20}
-      >
+      <Flex align={"center"} borderRadius={"50%"} width={20}>
         <div style={{ borderRadius: "50%", overflow: "hidden" }}>
           <Image src="/images/nlogo.jpg" width={70} height={70} alt="image" />
         </div>

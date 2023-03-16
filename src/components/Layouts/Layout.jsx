@@ -7,7 +7,7 @@ import HeroSection from '../Home/HeroSection';
 import CardGrid from '../Home/Grid';
 import Join from '../Home/Join';
 import Banner1 from '../Home/Banner1';
-import FooterPage from '../Home/FooterPage';
+import Footer from '../Home/Footer';
 
 
 export default function Layout({children}) {
@@ -41,7 +41,7 @@ export default function Layout({children}) {
         <Flex
           justifyContent={"center"}
           direction="column"
-          backgroundColor={"gray.100"}
+          // backgroundColor={"gray.100"}
           pb={10}
           pt={10}
           mt={-10}
@@ -64,7 +64,7 @@ export default function Layout({children}) {
             <Banner1 />
           </Flex>
         </Flex>
-        <FooterPage />
+        <Footer />
         {/* Rest of your home page content */}
       </Flex>
       <main>{children}</main>

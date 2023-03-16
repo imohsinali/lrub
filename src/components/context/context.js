@@ -47,6 +47,9 @@ const defaultLogin ={
 const [login, setLogin] = useState(defaultLogin);
 
 const [authState, setAuthState] = useState(defaultModelState);
+
+
+
   const checkIfWalletIsConnect = async () => {
     try {
       if (!window.ethereum) return alert("Please install MetaMask.");
@@ -140,6 +143,34 @@ const [authState, setAuthState] = useState(defaultModelState);
       throw error;
     }
   };
+
+async function lockMetamask() {
+  
+// Check if provider is connected
+if (window.ethereum.isConnected()) {
+  // Get the current dApp origin (e.g. "https://example.com")
+  console.log(window.ethereum)
+  // Disconnect the dApp from MetaMask
+  try {
+await window.ethereum.request({
+  method: "eth_requestAccounts",
+  params: [{ eth_accounts: {} }],
+});
+
+  } catch (error) {
+    console.error(error);
+  }
+} else {
+  console.error("MetaMask not connected");
+}
+}
+
+
+  // ...
+
+
+
+
   useEffect(() => {
     checkIfWalletIsConnect();
     getAllTransactions();
@@ -167,6 +198,7 @@ const [authState, setAuthState] = useState(defaultModelState);
         setAuthState,
         login,
         setLogin,
+        lockMetamask,
       }}
     >
       {children}

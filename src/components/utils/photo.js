@@ -1,6 +1,16 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import { Button, Center, Stack, Text, VStack, Input, Box, Image, Flex } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import {
+  Button,
+  Center,
+  Stack,
+  Text,
+  VStack,
+  Input,
+  Box,
+  Image,
+  Flex,
+} from "@chakra-ui/react";
+import { useState, useRef } from "react";
 
 const UserInformationForm = () => {
   const [isCapturing, setIsCapturing] = useState(false);
@@ -8,24 +18,22 @@ const UserInformationForm = () => {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-    const videoRef = useRef(null);
+  const videoRef = useRef(null);
 
-    const startCapture = async () => {
-      setIsCapturing(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-      await videoRef.current.play();
-    };
-
-
+  const startCapture = async () => {
+    setIsCapturing(true);
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    videoRef.current.srcObject = stream;
+    await videoRef.current.play();
+  };
 
   const stopCapture = async () => {
     setIsCapturing(false);
-  const video = videoRef.current;
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext("2d").drawImage(video, 0, 0);
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
 
     const imageBytes = canvas.toDataURL("image/png").split(",")[1];
     const pdfDoc = await PDFDocument.create();
@@ -175,4 +183,3 @@ const UserInformationForm = () => {
 };
 
 export default UserInformationForm;
-

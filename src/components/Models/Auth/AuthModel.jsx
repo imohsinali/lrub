@@ -11,7 +11,7 @@ import {
   Text,
   Avatar,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import OAuthButton from "./OAuthButton";
 
 const AuthModel = () => {
@@ -23,6 +23,17 @@ const AuthModel = () => {
       open: false,
     }));
   };
+
+  useEffect(() => {
+    let {role}=authState
+      if(role.Admin|| role.User || role.Inspector)
+      {
+          setAuthState((prev) => ({
+            ...prev,
+            open: false,
+          }));}
+
+  },[]);
 
   return (
     <>

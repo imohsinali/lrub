@@ -1,11 +1,13 @@
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 
-const Inpector = () => {
+const User = () => {
   return (
     <SidebarWithHeader>
-      <h1>Hwlewieo</h1>
+        <h1>jsdkfjasdnfl</h1>
     </SidebarWithHeader>
   );
 };
 
-export default Inpector;
+export default User;
+
+
