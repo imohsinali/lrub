@@ -4,95 +4,178 @@ import {
   FormControl,
   FormLabel,
   Input,
-  InputGroup,
   HStack,
-  InputRightElement,
   Stack,
   Button,
   Heading,
-  Text,
   useColorModeValue,
-  Link,
+  useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useContext, useState } from "react";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import ProtectedRoute from "@/components/protected/protectedRoute";
+import { Context } from "@/components/context/context";
+import { ethers } from "ethers";
+function AddLandInspector() {
+  const { contract, currentAccount } = useContext(Context);
+  const [loading ,setLoading]=useState(false)
 
-  function AddLandInspector() {
-  const [showPassword, setShowPassword] = useState(false);
+  const toast = useToast();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // prevent the form from submitting and refreshing the page
+    const formData = new FormData(event.target);
+    console.log(formData);
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
+    const walletAddress = formData.get("wallet");
+    const dob = formData.get("dob");
+    const cnic = Number(formData.get("cnic"));
+    const city = formData.get("city");
+    const desg = formData.get("desg");
+    const name = firstName + " " + lastName;
+    if (firstName && walletAddress && dob && cnic && city && desg) {
+      try {
+        console.log({
+          firstName,
+          lastName,
+          walletAddress,
+          dob,
+          cnic,
+          city,
+          desg,
+          name,
+        });
+        let byte32 = ethers.utils.formatBytes32String(city);
+        setLoading(true);
+
+        console.log("city", ethers.utils.parseBytes32String(byte32));
+        const transaction = await contract.addLandInspector(
+          walletAddress,
+          stringToBytes32(name),
+          stringToBytes32(dob),
+          cnic,
+          stringToBytes32(desg),
+          stringToBytes32(city),
+          { gasLimit: 1000000 }
+        );
+        console.log("maos");
+        await transaction.wait();
+        console.log("maos 2");
+        setLoading(false)
+        toast({
+          title: "LandInspector Added",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      } catch (error) {
+        setLoading(false);
+
+        toast({
+          title: "Something went wrong",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    }
+
+    // do something with the form data, such as sending it to a server or updating state
+  };
+  function stringToBytes32(str) {
+    return ethers.utils.formatBytes32String(str);
+  }
 
   return (
     <ProtectedRoute>
       <SidebarWithHeader>
-      <Flex
-        minH={"100vh"}
-        align={"center"}
-        justify={"center"}
-        bg={useColorModeValue("gray.50", "gray.800")}
-        marginTop={10}
-      >
-        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-          <Stack align={"center"}>
-            <Heading fontSize={"4xl"} textAlign={"center"}>
-              Add Land Inspector
-            </Heading>
-          </Stack>
-          <Box
-            rounded={"lg"}
-            bg={useColorModeValue("white", "gray.700")}
-            boxShadow={"lg"}
-            p={8}
-          >
-            <Stack spacing={4}>
-              <HStack>
-                <Box>
-                  <FormControl id="firstName" isRequired>
-                    <FormLabel>First Name</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl id="lastName">
-                    <FormLabel>Last Name</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-              </HStack>
-              <FormControl id="wallet" isRequired>
-                <FormLabel>wallet address</FormLabel>
-                <Input type="email" />
-              </FormControl>
-              <FormControl id="email" isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" />
-              </FormControl>
-              <FormControl id="email" isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" />
-              </FormControl>
-
-              <Stack spacing={10} pt={2}>
-                <Button
-                  loadingText="Submitting"
-                  size="lg"
-                  bg={"blue.400"}
-                  color={"white"}
-                  _hover={{
-                    bg: "blue.500",
-                  }}
-                >
-                  Add Inspector
-                </Button>
-              </Stack>
+        <Flex
+          minH={"100vh"}
+          align={"center"}
+          justify={"center"}
+          bg={useColorModeValue("gray.50", "gray.800")}
+          marginTop={10}
+        >
+          <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+            <Stack align={"center"}>
+              <Heading fontSize={"4xl"} textAlign={"center"}>
+                Add Land Inspector
+              </Heading>
             </Stack>
-          </Box>
-        </Stack>
-      </Flex>
+            <Box
+              rounded={"lg"}
+              bg={useColorModeValue("white", "gray.700")}
+              boxShadow={"lg"}
+              p={8}
+              as="form" // attach onSubmit handler to the form element
+              onSubmit={handleSubmit}
+            >
+              <Stack spacing={4}>
+                <HStack>
+                  <Box>
+                    <FormControl id="firstName" isRequired>
+                      <FormLabel>First Name</FormLabel>
+                      <Input type="text" name="firstName" />
+                    </FormControl>
+                  </Box>
+                  <Box>
+                    <FormControl id="lastName">
+                      <FormLabel>Last Name</FormLabel>
+                      <Input type="text" name="lastName" />
+                    </FormControl>
+                  </Box>
+                </HStack>
+                <FormControl id="wallet" isRequired>
+                  <FormLabel>wallet address</FormLabel>
+                  <Input type="string" name="wallet" />
+                </FormControl>
+                <FormControl id="dob" isRequired>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <Input type="date" name="dob" />
+                </FormControl>
+                <FormControl id="cnic" isRequired>
+                  <FormLabel>Cnic</FormLabel>
+                  <Input type="number" name="cnic" />
+                </FormControl>
+                <FormControl id="city" isRequired>
+                  <FormLabel>City</FormLabel>
+                  <Input type="text" name="city" />
+                </FormControl>
+                <FormControl id="desg" isRequired>
+                  <FormLabel>Designation</FormLabel>
+                  <Input type="text" name="desg" />
+                </FormControl>
+
+                <Stack spacing={10} pt={2}>
+                  <Button
+                    isLoading={loading}
+                    loadingText="Submitting"
+                    size="lg"
+                    bg={"blue.400"}
+                    color={"white"}
+                    _hover={{
+                      bg: "blue.500",
+                    }}
+                    type="submit"
+                  >
+                    Add Inspector
+                  </Button>
+                </Stack>
+              </Stack>
+            </Box>
+          </Stack>
+        </Flex>
       </SidebarWithHeader>
     </ProtectedRoute>
   );
 }
 
+export default AddLandInspector;
 
-export default AddLandInspector
+// address addr;
+//     bytes32 name;
+//     bytes32 dob;
+//     uint cnic;
+//     bytes32 city;
+//     bytes32 designation;

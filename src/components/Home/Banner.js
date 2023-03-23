@@ -25,7 +25,6 @@ function AirbnbCard() {
     <Flex
       justifyContent="center"
       alignItems="center"
-      // width={{ base: "100%" }}
       mt={{ base: "180", sm: "125" }}
     >
       <Box

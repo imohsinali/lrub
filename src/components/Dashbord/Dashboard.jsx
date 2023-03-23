@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import MobileNav from "./MobileNav";
 import NavItem from "./NavItem";
 import { decryptData } from "../utils/encrytpDycrytp";
+import FiltersBox from "../utils/BoxFilter";
 // import { IconType } from 'react-icons';
 // import { ReactText } from 'react';
 
@@ -84,11 +85,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
+      
       {LinkItems.map((link) => (
         <NavItem
           key={link.name}
           icon={link.icon}
           onClick={() => router.push(link.src)}
+          src={link.src}
+          
         >
           {link.name}
         </NavItem>

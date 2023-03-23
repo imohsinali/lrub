@@ -64,7 +64,7 @@ const OAuthButton = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit =  () => {
     // e.preventDefault();
 
     connectWallet();

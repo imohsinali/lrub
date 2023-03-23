@@ -20,8 +20,7 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/User";
+import FiltersBox from "../utils/BoxFilter";
 
 const MobileNav = ({onOpen, ...rest }) => {
 
@@ -61,6 +60,9 @@ let data='Admin';
           <Image src="/images/nlogo.jpg" width={70} height={55} alt="image" />
         </Link>
       </Text>
+      {/* <Flex mr={70}>
+        <FiltersBox />
+      </Flex> */}
 
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
@@ -69,6 +71,7 @@ let data='Admin';
           aria-label="open menu"
           icon={<FiBell />}
         />
+
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
@@ -95,7 +98,7 @@ let data='Admin';
                       ? "Admin"
                       : decrypted == "Inspector"
                       ? "Inspector"
-                      : decrypted=="User"
+                      : decrypted == "User"
                       ? "User"
                       : "Gust"}
                   </Text>
