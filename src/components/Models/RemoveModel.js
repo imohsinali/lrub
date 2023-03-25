@@ -3,33 +3,82 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton,
+  ModalFooter,
   Button,
+  useToast,
 } from "@chakra-ui/react";
-export default function RemoveModel({isOpen,setOpen}) {
-  console.log(isOpen)
+import { useContext } from "react";
+import { Web3Context } from "../context/web3Model";
+
+export default function LandInspectorModal({ isOpen, setOpen, landInspector }) {
+      const { contract } = useContext(Web3Context);
+      console.log(contract)
+  const toast=useToast()
+
+      const removeLandInpsector=async(address)=>
+      {
+        try {
+          await contract.removeLandInspector(address)
+          toast({
+            title: "remove Susscesfully",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+          setOpen(false)
+          
+        } catch (error) {
+                    toast({
+                      title: "Something Went Wrong",
+                      status: "error",
+                      duration: 2000,
+                      isClosable: true,
+                    });
+          setOpen(false);
+
+          
+        }
+
+      }
+
   return (
-    <>
-
-      <Modal isOpen={isOpen} onClose={()=>setOpen(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Masjalsklakdlasdml
-          </ModalBody>
-
-          <ModalFooter>
-            {/* <Button colorScheme="blue" mr={3} onClick={()=>setOpen(false)}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button> */}
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+    <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Land Inspector Details</ModalHeader>
+        <ModalBody>
+          <p>Wallet Address: {landInspector?.address}</p>
+          <p>Name: {landInspector?.name}</p>
+          <p>CNIC: {landInspector?.cnic}</p>
+          <p>Date of Birth: {landInspector?.dateOfBirth}</p>
+          <p>City: {landInspector?.city}</p>
+          <p>Designation: {landInspector?.designation}</p>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            backgroundColor={"red"}
+            borderRadius={15}
+            p={{ base: 2, md: 5 }}
+            fontSize={{ base: 10, md: 14 }}
+            onClick={() => setOpen(false)}
+            mr={3}
+          >
+            Cancel
+          </Button>
+          <Button
+            backgroundColor={"green"}
+            borderRadius={15}
+            p={{ base: 2, md: 5 }}
+            fontSize={{ base: 10, md: 14 }}
+            mr={3}
+            colorScheme="blue"
+            onClick={() => removeLandInpsector(landInspector?.address)}
+          >
+            Confirm
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

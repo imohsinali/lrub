@@ -19,11 +19,12 @@ import { Context } from "@/components/context/context";
 import { ethers } from "ethers";
 import RemoveModel from "@/components/Models/RemoveModel";
 import useSWR from "swr";
+import { Web3Context } from "@/components/context/web3Model";
 
 
 
 const TableWithPagination = () => {
-    const { contract, currentAccount } = useContext(Context);
+    const { contract} = useContext(Web3Context);
 
 const { data: inspectors } = useSWR(["data", contract], async () => {
   const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
@@ -62,42 +63,50 @@ console.log("dar", inspectors);
   const [isOpen,setOpen]=useState(false)
   return (
     <ProtectedRoute>
-      <SidebarWithHeader>
+      <SidebarWithHeader bgColor={"#F7FAFC"}>
         {/* <FiltersBox/> */}
-        <Table variant="simple" mt={20}>
-          <Thead fontSize={40}>
-            <Tr fontSize={40}>
-              <Th fontSize={17}>#</Th>
-              <Th fontSize={17}>Wallet Address</Th>
-              <Th fontSize={17}>Name</Th>
-              <Th fontSize={17}>City</Th>
-              <Th fontSize={17}>Cnic</Th>
-              <Th fontSize={17}>Remove</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentPosts?.map((row, index) => (
-              <Tr key={row.address}>
-                <Td>{index}</Td>
-                <Td>{row.address}</Td>
-                <Td>{row.name}</Td>
-                <Td>{row.city}</Td>
-                <Td>{row.cnic}</Td>
-                <Td>
-                  <Button
-                    backgroundColor={"red"}
-                    borderRadius={15}
-                    p={5}
-                    onClick={() => setOpen(true)}
-                  >
-                    Remove
-                  </Button>
-                </Td>
+        <Box overflowX="auto">
+          <Table
+            variant={{ base: "unstyled", md: "simple" }}
+            mt={{ base: 20, md: 20 }}
+          >
+            <Thead fontSize={{ base: 14, md: 20 }}>
+              <Tr fontSize={{ base: 12, md: 17 }}>
+                <Th fontSize={{ base: 10, md: 17 }}>#</Th>
+                <Th fontSize={{ base: 10, md: 17 }}>Wallet Address</Th>
+                <Th fontSize={{ base: 10, md: 17 }}>Name</Th>
+                <Th fontSize={{ base: 10, md: 17 }}>City</Th>
+                <Th fontSize={{ base: 10, md: 17 }}>Cnic</Th>
+                <Th fontSize={{ base: 10, md: 17 }}>Remove</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-        {isOpen && <RemoveModel isOpen={isOpen} setOpen={setOpen} />}
+            </Thead>
+            <Tbody>
+              {currentPosts?.map((row, index) => (
+                <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
+                  <Td>{index}</Td>
+                  <Td>{row.address}</Td>
+                  <Td>{row.name}</Td>
+                  <Td>{row.city}</Td>
+                  <Td>{row.cnic}</Td>
+                  <Td>
+                    <Button
+                      backgroundColor={"red"}
+                      borderRadius={15}
+                      p={{ base: 2, md: 5 }}
+                      fontSize={{ base: 10, md: 14 }}
+                      onClick={() => setOpen(true)}
+                    >
+                      Remove
+                    </Button>
+                    {isOpen && (
+                      <RemoveModel isOpen={isOpen} setOpen={setOpen} landInspector={row} />
+                    )}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
 
         <Pagination handlePageClick={handlePageClick} page={currentPage} />
       </SidebarWithHeader>

@@ -14,15 +14,16 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
+import { useContext } from "react";
 import {
   FiMenu,
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
-import Image from "next/image";
-import FiltersBox from "../utils/BoxFilter";
+import { Web3Context } from "../context/web3Model";
 
 const MobileNav = ({onOpen, ...rest }) => {
+  const { disconnect } = useContext(Web3Context);
 
 let data='Admin';
   return (
@@ -57,7 +58,7 @@ let data='Admin';
         fontWeight="bold"
       >
         <Link href="/">
-          <Image src="/images/nlogo.jpg" width={70} height={55} alt="image" />
+          {/* <Image src="/images/nlogo.jpg" width={70} height={55} alt="image" /> */}
         </Link>
       </Text>
       {/* <Flex mr={70}>
@@ -114,9 +115,10 @@ let data='Admin';
             >
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={() => disconnect()}>
+                <Link href="/">Sign out</Link>
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>

@@ -97,9 +97,9 @@ function AddLandInspector() {
           bg={useColorModeValue("gray.50", "gray.800")}
           marginTop={10}
         >
-          <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+          <Stack spacing={4} mx={"auto"} maxW={"xl"} py={6} px={2}>
             <Stack align={"center"}>
-              <Heading fontSize={"4xl"} textAlign={"center"}>
+              <Heading fontSize={"3xl"} textAlign={"center"}>
                 Add Land Inspector
               </Heading>
             </Stack>
@@ -107,8 +107,8 @@ function AddLandInspector() {
               rounded={"lg"}
               bg={useColorModeValue("white", "gray.700")}
               boxShadow={"lg"}
-              p={8}
-              as="form" // attach onSubmit handler to the form element
+              p={6}
+              as="form"
               onSubmit={handleSubmit}
             >
               <Stack spacing={4}>
@@ -147,7 +147,7 @@ function AddLandInspector() {
                   <Input type="text" name="desg" />
                 </FormControl>
 
-                <Stack spacing={10} pt={2}>
+                <Stack spacing={4}>
                   <Button
                     isLoading={loading}
                     loadingText="Submitting"

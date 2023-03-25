@@ -2,9 +2,11 @@ import React, { createContext, useState, useEffect } from "react";
 import { ethers } from "ethers";
 // import { getWeb3Modal } from "./web3Modal";
 import Web3Modal from "web3modal";
+import contractABI from "../contract/lrub.json";
 
 
 import WalletConnect from "@walletconnect/web3-provider";
+import { useRouter } from "next/router";
 const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
 
 
@@ -31,6 +33,8 @@ async function getWeb3Modal() {
 export const Web3Context = createContext();
 
 const Web3Provider = ({ children }) => {
+
+    const router=useRouter()
   const [provider, setProvider] = useState();
   const [library, setLibrary] = useState();
   const [account, setAccount] = useState();
@@ -40,6 +44,8 @@ const Web3Provider = ({ children }) => {
   const [network, setNetwork] = useState();
   const [message, setMessage] = useState("");
   const [verified, setVerified] = useState();
+  const [contract, setContract] = useState();
+
 
   const connectWallet = async () => {
     try {
@@ -50,6 +56,13 @@ const Web3Provider = ({ children }) => {
       const network = await library.getNetwork();
       setProvider(provider);
       setLibrary(library);
+      const signer = library.getSigner(); 
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI.abi,
+        signer
+      ); 
+      setContract(contract);
       if (accounts) setAccount(accounts[0]);
       setChainId(network.chainId);
     } catch (error) {
@@ -69,8 +82,14 @@ const Web3Provider = ({ children }) => {
   const disconnect = async () => {
     const web3Modal = await getWeb3Modal();
 
-    await web3Modal.clearCachedProvider();
-    refreshState();
+     web3Modal.clearCachedProvider();
+     localStorage.setItem("walletconnect", null);
+    //  localStorage.setItem('sess')
+    router.reload();
+
+    router.push("/");
+
+
   };
 
   useEffect(async () => {
@@ -121,6 +140,7 @@ const Web3Provider = ({ children }) => {
     network,
     message,
     verified,
+    contract,
     connectWallet,
     refreshState,
     disconnect,

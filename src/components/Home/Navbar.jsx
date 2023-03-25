@@ -1,139 +1,94 @@
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { Button, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, useToast } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  useToast,
+} from "@chakra-ui/react";
 import Image from "next/image";
 import { Context } from "../context/context";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { setCookie } from "nookies";
-import { encryptData } from "@/components/utils/encrytpDycrytp";
-import contractABI from "../contract/lrub.json";
-import { ethers } from "ethers";
-import Web3Modal from "web3modal";
 
-
-import WalletConnect from "@walletconnect/web3-provider";
 import { Web3Context } from "../context/web3Model";
-const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
-
-
 
 export default function Navbar() {
+  const toast = useToast();
 
+  const router = useRouter();
+  const { provider, account, connectWallet, contract } =
+    useContext(Web3Context);
 
-const { provider,
-    library,
-    account,
-    signature,
-    error,
-    chainId,
-    network,
-    message,
-    verified,
-    connectWallet,
-    refreshState,
-    disconnect}=useContext(Web3Context)
+  const [Role,setRole]=useState() 
 
-
-
-
-
-const { setAuthState } = useContext(Context);
-
-function handleSetPath(_roleA, _roleI, _roleU) {
-  setAuthState({
-    open: true,
-    role: {
+  function handleSetPath(_roleA, _roleI, _roleU) {
+    const role = {
       Admin: _roleA,
       Inspector: _roleI,
       User: _roleU,
-    },
-  });
-
-
-}
-const toast = useToast();
-
-// Set the `token`
-
-const { currentAccount, contract, authState } = useContext(Context);
-
-const router = useRouter();
-
-const { data: registeredInspector, error1 } = useSWR(
-  ["data", contract, currentAccount],
-  async () => {
-    const registeredInspector = await contract.isLandInspector(currentAccount);
-    return registeredInspector;
+    };
+    setRole(role)
+    // localStorage.setItem('role',role)
+    localStorage.setItem("role", JSON.stringify(role)); // Note: `role` is stringified before saving to local storage
   }
-);
-
-let { role } = authState;
-console.log("msohi", account)
-
-const Admin = account == "0xa91ad5bc6487900B5D5ba28EAc7D4BD40db06e76";
-console.log(Admin);
-
-console.log("asdkj", account,Admin);
-
-useEffect(() => {
-  const loginPage = () => {
-    if (role.Admin && Admin) {
-      localStorage.setItem("session", "token");
-
-      // redirect to protected route
-      router.push("/Admin");
-
-      const data = encryptData("Admin");
-      setCookie(null, "token", data, {
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-        path: "/",
-      });
-      toast({
-        title: "Connected to Metamask",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-      router.push("/Admin");
-      //  window.location.reload();
+console.log('ask' ,Role)
+  const { data: registeredInspector, error1 } = useSWR(
+    ["data", contract, account],
+    async () => {
+      const registeredInspector = await contract.isLandInspector(account);
+      return registeredInspector;
     }
+  );
 
-    if (role.User) {
-      localStorage.setItem("session", null);
-
-      const data = encryptData("User");
-
-      setCookie(null, "token", data, {
-        //  maxAge: 30 * 24 * 60 * 60, // 30 days
-        maxAge: 60 * 60, // 30 days
-
-        path: "/",
-      });
-
-      router.push("/User");
-    }
-
+  const toastSucess = () => {
+    toast({
+      title: "Connected to Wallet",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
   };
-  loginPage()
-}, [account]);
-const handleSubmit =async () => {
-  // e.preventDefault();
-  // checkIfWalletIsConnect();
-  // lockMetamask();
-  console.log(provider)
-  //  connectWallet();
-  try {
-    await connectWallet();
+  const toastError = () => {
+    toast({
+      title: "Something went Wrong",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  };
 
-    
-  } catch (error) {
-    
-    
-  }
- 
-};
+  useEffect(() => {
+      const role = JSON.parse(localStorage.getItem("role"));
 
+    const loginPage = async () => {
+      const Admin = await contract?.isContractOwner(account);
+      const Inpector = await contract?.isLandInspector(account);
+      if (role.Admin && Admin) {
+        localStorage.setItem("session", "token");
+        toastSucess();
+        router.push("/Admin");
+      }
+
+      if (role.Inspector && Inpector) {
+        localStorage.setItem("session", "token");
+        toastSucess();
+
+        router.push("/Inspector");
+      }
+    };
+    loginPage();
+  }, [account,Role]);
+  const handleSubmit = async () => {
+    try {
+      console.log(account);
+      await connectWallet();
+    } catch (error) {}
+  };
 
   return (
     <Flex
@@ -182,8 +137,11 @@ const handleSubmit =async () => {
               mr="2px"
               borderRadius={15}
               color={"blackAlpha.900"}
-              // onClick={() => handleSetPath(false, true, false)}
               fontSize={"1rem"}
+              onClick={() => {
+                handleSetPath(false, true, false);
+                handleSubmit();
+              }}
             >
               Inspector
             </Button>
@@ -224,8 +182,11 @@ const handleSubmit =async () => {
                 </MenuItem>
 
                 <MenuItem
-                // icon={<GrUserAdmin />}
-                // onClick={() => handleSetPath(false, true, false)}
+                  // icon={<GrUserAdmin />}
+                  onClick={() => {
+                    handleSetPath(false, true, false);
+                    handleSubmit();
+                  }}
                 >
                   Inspector
                 </MenuItem>

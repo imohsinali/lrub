@@ -8,32 +8,18 @@ import {
   DrawerContent,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-} from "react-icons/fi";
+
 import Image from "next/image";
 import { useRouter } from "next/router";
 import MobileNav from "./MobileNav";
 import NavItem from "./NavItem";
 import { decryptData } from "../utils/encrytpDycrytp";
 import FiltersBox from "../utils/BoxFilter";
+import {  useEffect, useState } from "react";
 // import { IconType } from 'react-icons';
 // import { ReactText } from 'react';
-
-const LinkItems = [
-  { name: "Home", icon: FiHome, src: "/Admin" },
-  { name: "Add Inspector", icon: FiTrendingUp, src: "/Admin/AddInspector" },
-  { name: "View the List", icon: FiCompass, src: "/Admin/ViewtheList" },
-  { name: "Change Admin", icon: FiStar, src: "/ChangeAdmin" },
-  { name: "Search Details", icon: FiSettings, src: "/SearchDetail" },
-];
-
+import {AdminLink,InspectorLinks} from './paths'
 export default function SidebarWithHeader({ children }) {
-//  let data1= decryptData(data);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.50", "gray.800")}>
@@ -67,6 +53,16 @@ export default function SidebarWithHeader({ children }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
+  const [links, setLinks] = useState();
+  useEffect(() => {
+          const role = JSON.parse(localStorage.getItem("role"));
+
+    if (role?.Admin) {
+      setLinks(AdminLink);
+    } else if (role?.Inspector) {
+      setLinks(InspectorLinks);
+    }
+  }, []);
   const router = useRouter();
   return (
     <Box
@@ -85,14 +81,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      
-      {LinkItems.map((link) => (
+
+      {links?.map((link) => (
         <NavItem
           key={link.name}
           icon={link.icon}
           onClick={() => router.push(link.src)}
           src={link.src}
-          
         >
           {link.name}
         </NavItem>
@@ -100,4 +95,3 @@ const SidebarContent = ({ onClose, ...rest }) => {
     </Box>
   );
 };
-

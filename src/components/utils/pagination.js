@@ -1,27 +1,47 @@
-import { chakra, Stack } from "@chakra-ui/react";
+import { Box, chakra, Stack } from "@chakra-ui/react";
 import * as React from "react";
 import { Paginate } from "react-paginate-chakra-ui";
+  import { useBreakpointValue } from "@chakra-ui/react";
 
 export default function Pagination({ handlePageClick, page }) {
   console.log("pagination",Paginate);
-  return (
-    <Stack p={0} align="center" position="fixed" bottom="0" left="0" right="0">
-      <Paginate
-        bgColor={'gray.300'}
-        page={page}
 
-        count={70000}
-        pageSize={10}
-        onPageChange={handlePageClick}
-        margin={2}
-        mb={0}
-        shadow="lg"
-        fontWeight="blue"
-        variant="outline"
-        border="2px solid"
-        w={{ base: "100%", sm: "80%", md: "50%", lg: "30%" }}
-        mx="auto"
-      />
-    </Stack>
-  );
+
+const paginationWidth = useBreakpointValue({ base: '90%', sm: '50%', md: '30%' })
+
+return (
+  <Box
+    position="fixed"
+    bottom={0}
+    left={-50}
+    right={240}
+    mx="auto"
+    // w={paginationWidth}
+    p={0}
+    maxW={'100px'}
+  >
+    <Paginate
+      page={page}
+      count={10000}
+      pageSize={7}
+      onPageChange={handlePageClick}
+      fontWeight="blue"
+      width='1px'
+      variant="outline"
+      borderColor="blue.500"
+      borderWidth="2px"
+      borderRadius="md"
+      fontSize={{ base: 'sm', md: 'md' }}
+      textAlign="center"
+    />
+  </Box>
+)
 }
+    
+    
+    
+    
+    
+    
+    
+    
