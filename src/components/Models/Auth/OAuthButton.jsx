@@ -11,8 +11,14 @@ import { encryptData } from "@/components/utils/encrytpDycrytp";
 // Set the `token`
 
 const OAuthButton = () => {
-  const { connectWallet, currentAccount, contract, authState } =
-    useContext(Context);
+  const {
+    connectWallet,
+    currentAccount,
+    contract,
+    authState,
+    checkIfWalletIsConnect,
+    lockMetamask,
+  } = useContext(Context);
 
   const router = useRouter();
 
@@ -66,8 +72,9 @@ const OAuthButton = () => {
 
   const handleSubmit =  () => {
     // e.preventDefault();
-
-    connectWallet();
+// checkIfWalletIsConnect();
+// lockMetamask();
+   connectWallet();
     loginPage();
   };
 
