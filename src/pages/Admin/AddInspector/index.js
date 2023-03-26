@@ -14,10 +14,10 @@ import {
 import { useContext, useState } from "react";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import ProtectedRoute from "@/components/protected/protectedRoute";
-import { Context } from "@/components/context/context";
 import { ethers } from "ethers";
+import { Web3Context } from "@/components/context/web3Model";
 function AddLandInspector() {
-  const { contract, currentAccount } = useContext(Context);
+  const { contract} = useContext(Web3Context);
   const [loading ,setLoading]=useState(false)
 
   const toast = useToast();
@@ -46,10 +46,8 @@ function AddLandInspector() {
           desg,
           name,
         });
-        let byte32 = ethers.utils.formatBytes32String(city);
         setLoading(true);
 
-        console.log("city", ethers.utils.parseBytes32String(byte32));
         const transaction = await contract.addLandInspector(
           walletAddress,
           stringToBytes32(name),

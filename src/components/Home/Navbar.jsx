@@ -66,20 +66,37 @@ console.log('ask' ,Role)
       const role = JSON.parse(localStorage.getItem("role"));
 
     const loginPage = async () => {
-      const Admin = await contract?.isContractOwner(account);
-      const Inpector = await contract?.isLandInspector(account);
-      if (role.Admin && Admin) {
-        localStorage.setItem("session", "token");
-        toastSucess();
-        router.push("/Admin");
+      try {
+        const Admin = await contract?.isContractOwner(account);
+        const Inpector = await contract?.isLandInspector(account);
+        const User = await contract?.ReturnAllUserList();
+        const UserRegistered = User?.includes(account);
+
+        // const User=await contract?.isUserRegistered(account)
+        if (role?.Admin && Admin) {
+          localStorage.setItem("session", "token");
+          toastSucess();
+          router.push("/Admin");
+        } else if (role?.Inspector && Inpector) {
+          localStorage.setItem("session", "token");
+          toastSucess();
+
+          router.push("/Inspector");
+        } else if (role?.User && UserRegistered) {
+          localStorage.setItem("session", "token");
+          toastSucess();
+
+          router.push("/User");
+        } else if (role?.User && !UserRegistered && account) {
+          router.push("/register");
+        } else {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error)
       }
 
-      if (role.Inspector && Inpector) {
-        localStorage.setItem("session", "token");
-        toastSucess();
 
-        router.push("/Inspector");
-      }
     };
     loginPage();
   }, [account,Role]);
@@ -124,7 +141,6 @@ console.log('ask' ,Role)
                 handleSetPath(true, false, false);
                 handleSubmit();
               }}
-              // onClick={connectWallet}
               fontSize={"1rem"}
             >
               Admin
@@ -154,9 +170,10 @@ console.log('ask' ,Role)
               color={"blackAlpha.900"}
               mr="2px"
               fontSize={"1rem"}
-              // onClick={() =>
-              // handleSetPath(false, false, true);}
-              onClick={connectWallet}
+              onClick={() => {
+                handleSetPath(false, false, true);
+                handleSubmit();
+              }}
             >
               User
             </Button>
@@ -171,8 +188,6 @@ console.log('ask' ,Role)
               />
               <MenuList>
                 <MenuItem
-                  // icon={<GrUserAdmin />}
-                  // onClick={() => handleSetPath(true, false, false)}
                   onClick={() => {
                     handleSetPath(true, false, false);
                     handleSubmit();
@@ -182,7 +197,6 @@ console.log('ask' ,Role)
                 </MenuItem>
 
                 <MenuItem
-                  // icon={<GrUserAdmin />}
                   onClick={() => {
                     handleSetPath(false, true, false);
                     handleSubmit();
@@ -191,11 +205,11 @@ console.log('ask' ,Role)
                   Inspector
                 </MenuItem>
                 <MenuItem
-                // icon={<GrUserAdmin />}
-                // onClick={() => {
-                //   handleSetPath(false, false, true);
-                //   handleSubmit();
-                // }}
+                  
+                  onClick={() => {
+                    handleSetPath(false, false, true);
+                    handleSubmit();
+                  }}
                 >
                   User
                 </MenuItem>
