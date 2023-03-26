@@ -6,8 +6,8 @@ import { Web3Context } from "@/components/context/web3Model";
 import fileHash from "@/components/utils/IPFS";
 import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
-export default function multistep() {
-   const { contract ,account} = useContext(Web3Context);
+const UserRegistration = () => {
+  const { contract, account } = useContext(Web3Context);
 
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
@@ -88,20 +88,19 @@ export default function multistep() {
       setLoading(true);
       const imgeHash = await fileHash(profile);
       const docHash = await fileHash(document);
-  const name = fname + "|" + lname;
+      const name = fname + "|" + lname;
       const transaction = await contract.registerUser(
         stringToBytes32(name),
         stringToBytes32(dob),
         stringToBytes32(city),
         Number(cnic),
         docHash,
-        
+
         imgeHash,
         stringToBytes32(email),
         { gasLimit: 1000000 }
       );
 
-  // function registerUser(bytes32  _name, bytes32  _dob, bytes32  _city,uint _cinc, bytes32 _document, bytes32  _profilepic, bytes32  _email
 
       await transaction.wait();
       setLoading(false);
@@ -123,16 +122,11 @@ export default function multistep() {
     }
   };
 
-  //   console.log("main", imgeHash);
 
   function stringToBytes32(str) {
     return ethers.utils.formatBytes32String(str);
   }
 
-  console.log(
-    "sss",
-    stringToBytes32('Mohsin ali abilit qwo qw ajs')
-  );
   const router = useRouter();
   return (
     <>
@@ -215,4 +209,6 @@ export default function multistep() {
       </Box>
     </>
   );
-}
+};
+
+export default UserRegistration;
