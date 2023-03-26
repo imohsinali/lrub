@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import { Form1, Form2 } from "./Forms";
+import { Form1, Form2 } from "@/components/Form/UserRegistry";
 import { useRouter } from "next/router";
 import { Web3Context } from "@/components/context/web3Model";
 import fileHash from "@/components/utils/IPFS";
@@ -103,9 +103,7 @@ export default function multistep() {
 
   // function registerUser(bytes32  _name, bytes32  _dob, bytes32  _city,uint _cinc, bytes32 _document, bytes32  _profilepic, bytes32  _email
 
-      console.log("maos");
       await transaction.wait();
-      console.log("maos 2");
       setLoading(false);
       toast({
         title: "Registered Successfully",
