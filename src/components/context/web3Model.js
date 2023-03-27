@@ -4,10 +4,13 @@ import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import contractABI from "../contract/lrub.json";
 
+
+
 import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
 // const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
 const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
+
 
 const providerOptions = {
   walletconnect: {
@@ -24,8 +27,9 @@ const providerOptions = {
 
 async function getWeb3Modal() {
   const web3Modal = new Web3Modal({
-    cacheProvider: false,
+    cacheProvider: true,
     providerOptions: providerOptions,
+    
   });
   return web3Modal;
 }
@@ -64,25 +68,11 @@ const Web3Provider = ({ children }) => {
       setChainId(network.chainId);
 
       // Store the contract and account values in localStorage
-      localStorage.setItem("contract", JSON.stringify(contract));
-      localStorage.setItem("account", JSON.stringify(accounts[0]));
     } catch (error) {
       setError(error);
     }
   };
-  useEffect(() => {
-    // Read the contract and account values from localStorage
-    const storedContract = localStorage.getItem("contract");
-    const storedAccount = localStorage.getItem("account");
 
-    if (storedContract) {
-      setContract(JSON.parse(storedContract));
-    }
-
-    if (storedAccount) {
-      setAccount(JSON.parse(storedAccount));
-    }
-  }, []);
 
   const refreshState = () => {
     setAccount();
@@ -99,7 +89,6 @@ const Web3Provider = ({ children }) => {
     web3Modal.clearCachedProvider();
     localStorage.setItem("walletconnect", null);
     //  localStorage.setItem('sess')
-    router.reload();
 
     router.push("/");
   };
@@ -144,6 +133,8 @@ const Web3Provider = ({ children }) => {
       };
     }
   }, [provider]);
+
+  
 
   const web3ContextValue = {
     provider,

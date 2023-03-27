@@ -13,7 +13,7 @@ import Footer from './Footer';
 export default function Layout({children}) {
   console.log(Context)
   return (
-    <Flex direction={"column"} justifyContent="center">
+    <Flex direction={"column"} justifyContent="center" zoom={0.1}>
       <Navbar />
       <Flex
         direction={"column"}

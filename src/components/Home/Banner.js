@@ -36,7 +36,7 @@ function AirbnbCard() {
         <Image
           src={'/images/About-Us-Banner.jpg'}
           alt={'Image'}
-          width={1700}
+          width={1500}
           height={100}
         />
         <Box

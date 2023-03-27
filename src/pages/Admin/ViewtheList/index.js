@@ -6,16 +6,12 @@ import {
   Tbody,
   Tr,
   Th,
-  Tc,
   Td,
-  Select,
   Button,
 } from "@chakra-ui/react";
 import Pagination from "@/components/utils/pagination";
 import ProtectedRoute from "@/components/protected/protectedRoute";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
-import FiltersBox from "@/components/utils/BoxFilter";
-import { Context } from "@/components/context/context";
 import { ethers } from "ethers";
 import RemoveModel from "@/components/Models/RemoveModel";
 import useSWR from "swr";
@@ -24,7 +20,10 @@ import { Web3Context } from "@/components/context/web3Model";
 
 
 const TableWithPagination = () => {
-    const { contract} = useContext(Web3Context);
+    const { contract,account} = useContext(Web3Context);
+    
+
+    console.log(contract,account)
 
 const { data: inspectors } = useSWR(["data", contract], async () => {
   const inspectorAddresses = await contract.ReturnAllLandIncpectorList();

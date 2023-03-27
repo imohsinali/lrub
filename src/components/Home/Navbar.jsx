@@ -21,7 +21,7 @@ export default function Navbar() {
   const toast = useToast();
 
   const router = useRouter();
-  const { provider, account, connectWallet, contract } =
+  const {  account, connectWallet, contract } =
     useContext(Web3Context);
 
   const [Role,setRole]=useState() 
@@ -110,8 +110,8 @@ console.log('ask' ,Role)
   return (
     <Flex
       bg={"#F7FAFC"}
-      height={"100px"}
-      padding="6px 15px"
+      height={"90px"}
+      padding="5px 10px"
       alignItems={"center"}
       justifyContent="space-between"
       position="fixed"
