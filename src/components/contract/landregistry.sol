@@ -48,7 +48,6 @@ struct LandInspector {
         uint landPrice;
         bytes32 landAddress;
         bytes32 district;
-
         string allLatitudeLongitude;
         string document;
         string  Landpic;
@@ -173,7 +172,7 @@ struct LandRequest{
         RegisteredInspectorMapping[_addr] = true;
         inspectorsCount++;
         allLandInspectorList[1].push(_addr);
-        InspectorMapping[_addr] = LandInspector(inspectorsCount, _addr, _name, _dob, _cinc, _designation, _city,_district, _email,_phone);
+        InspectorMapping[_addr] = LandInspector(inspectorsCount, _addr, _name, _dob, _cinc, _city,_district,_designation, _email,_phone);
         return true;
     } else {
         revert();

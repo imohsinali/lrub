@@ -1,21 +1,19 @@
 body{
   zoom:0.8;
- 
-  /* margin:0 auto; */
-    /* position: absolute; */
-  /* top: 50%; */
-  /* left: 50%; */
-  /* transform: translate(-50%, -50%); */
-  /* transform: scale(0); */
-  
+   
 
 }
 
 .web3modal-modal-lightbox {
   margin-left: -62.5vw !important;
-  background-color: red;
 }
-#WEB3_CONNECT_MODAL_ID{
-  background-color: black !important;
-  /* border-width:100pc !important; */
+
+
+@media only screen and (min-width: 360px) and (max-width: 744px) {
+  body{
+    zoom:1
+  }
+  .web3modal-modal-lightbox {
+  margin-left: -54vw !important;
+}
 }

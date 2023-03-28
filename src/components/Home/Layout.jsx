@@ -13,16 +13,28 @@ import Footer from './Footer';
 export default function Layout({children}) {
   console.log(Context)
   return (
-    <Flex direction={"column"} justifyContent="center" zoom={0.1}>
+    <Flex direction={"column"} justifyContent="center">
       <Navbar />
       <Flex
         direction={"column"}
         justifyContent={"center"}
         alignItems={"center"}
+        ml={{ base: "5" }}
       >
         <BannerCarousel />
         <Flex justifyContent={"center"} direction="column">
-          <Text fontSize={"4rem"} align={"center"}>
+          <Text
+            fontSize={{ base: "2.4rem", sm: "4rem" }}
+            align={"center"}
+            mt={{
+              base: "2rem",
+              sm: "6rem",
+            }}
+            mb={{
+              base: "0rem",
+              sm: "2rem",
+            }}
+          >
             Key Fetures
           </Text>
           <CardGrid />
@@ -33,8 +45,19 @@ export default function Layout({children}) {
           backgroundColor={"white"}
           zIndex={2}
         >
-          <Text fontSize={"4rem"} align={"center"}>
-            How To Join.?
+          <Text
+            fontSize={{ base: "2.4rem", sm: "4rem" }}
+            align={"center"}
+            mt={{
+              base: "2rem",
+              sm: "6rem",
+            }}
+            mb={{
+              base: "0rem",
+              sm: "2rem",
+            }}
+          >
+            How To Join.
           </Text>
           <Join />
         </Flex>
@@ -51,7 +74,18 @@ export default function Layout({children}) {
           width={{ base: 400, sm: 100, md: 810, xl: "95%" }}
           overflow={"hidden"}
         >
-          <Text fontSize={{base:"2rem", sm: "4rem"}} align={"center"} mb={5} >
+          <Text
+            fontSize={{ base: "2.4rem", sm: "4rem" }}
+            align={"center"}
+            mt={{
+              base: "2rem",
+              sm: "6rem",
+            }}
+            mb={{
+              base: "0rem",
+              sm: "2rem",
+            }}
+          >
             Development Stacks
           </Text>
           <Flex
@@ -64,7 +98,9 @@ export default function Layout({children}) {
             <Banner1 />
           </Flex>
         </Flex>
-        <Footer />
+        <Flex width={{ base: "113%", sm: "100%" }}>
+          <Footer />
+        </Flex>
         {/* Rest of your home page content */}
       </Flex>
       <main>{children}</main>

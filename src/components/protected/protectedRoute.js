@@ -6,17 +6,16 @@ const ProtectedRoute = ({ children }) => {
   const router = useRouter();
   const {contract,account}=useContext(Web3Context)
 
-  useEffect(async () => {
-   const Admin = await contract?.isContractOwner(account);
-   console.log('i am protedt',Admin)
-   console.log(router)
-   if(!Admin)
-   {
-    router.push('/')
-   }
+  
+  //  console.log('i am protedt',Admin)
+  //  console.log(router)
+  //  if(false)
+  //  {
+  //   console.log("i am not")
+  //   router.push('/')
+  //  }
 
     
-  }, []);
 
   return <>{children}</>;
 };

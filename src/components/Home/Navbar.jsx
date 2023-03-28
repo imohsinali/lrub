@@ -10,33 +10,32 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { Context } from "../context/context";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
 import { Web3Context } from "../context/web3Model";
-
+import { SignJWT } from "jose";
+import {nanoid} from 'nanoid'
+import { setCookie } from "nookies";
 export default function Navbar() {
   const toast = useToast();
 
   const router = useRouter();
-  const {  account, connectWallet, contract } =
-    useContext(Web3Context);
-
-  const [Role,setRole]=useState() 
+  const { account, connectWallet, contract } = useContext(Web3Context);
+  const [loginClicked, setLogin] = useState(false);
 
   function handleSetPath(_roleA, _roleI, _roleU) {
+    // const secret = ;
+
+    console.log("ajsdkaj", process?.env?.NEXT_PUBLIC_SECRET_ADMIN);
     const role = {
       Admin: _roleA,
       Inspector: _roleI,
       User: _roleU,
     };
-    setRole(role)
-    // localStorage.setItem('role',role)
-    localStorage.setItem("role", JSON.stringify(role)); // Note: `role` is stringified before saving to local storage
+    localStorage.setItem("role", JSON.stringify(role));
   }
-console.log('ask' ,Role)
   const { data: registeredInspector, error1 } = useSWR(
     ["data", contract, account],
     async () => {
@@ -44,67 +43,106 @@ console.log('ask' ,Role)
       return registeredInspector;
     }
   );
+  const [toastShown, setToastShown] = useState(false);
+  const [loginInProgress, setLoginInProgress] = useState(false);
 
-  const toastSucess = () => {
-    toast({
-      title: "Connected to Wallet",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+  const toastSuccess = () => {
+    console.log("toastShown:", toastShown); // add this line
+
+    if (!toastShown) {
+      toast({
+        title: "Connected to Wallet",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+
+      setToastShown(true);
+    }
   };
+
   const toastError = () => {
-    toast({
-      title: "Something went Wrong",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+    if (!toastShown) {
+      toast({
+        title: "Connecting to the Wallet",
+        status: "loading",
+        duration: 2000,
+        isClosable: true,
+      });
+
+      setToastShown(true);
+    }
   };
 
   useEffect(() => {
-      const role = JSON.parse(localStorage.getItem("role"));
+    const login = async () => {
+      if (!loginInProgress) {
+        setLoginInProgress(true);
+        try {
+          const role = JSON.parse(localStorage.getItem("role"));
+          await connectWallet();
+          console.log("login called"); // add this line
 
-    const loginPage = async () => {
-      try {
-        const Admin = await contract?.isContractOwner(account);
-        const Inpector = await contract?.isLandInspector(account);
-        const User = await contract?.ReturnAllUserList();
-        const UserRegistered = User?.includes(account);
-
-        // const User=await contract?.isUserRegistered(account)
-        if (role?.Admin && Admin) {
-          localStorage.setItem("session", "token");
-          toastSucess();
-          router.push("/Admin");
-        } else if (role?.Inspector && Inpector) {
-          localStorage.setItem("session", "token");
-          toastSucess();
-
-          router.push("/Inspector");
-        } else if (role?.User && UserRegistered) {
-          localStorage.setItem("session", "token");
-          toastSucess();
-
-          router.push("/User");
-        } else if (role?.User && !UserRegistered && account) {
-          router.push("/register");
-        } else {
-          router.push("/");
+          const Admin1 = await contract?.isContractOwner(account);
+          const Inpector = await contract?.isLandInspector(account);
+          const User = await contract?.ReturnAllUserList();
+          const UserRegistered = User?.includes(account);
+          loginPage(role, Admin1, Inpector, UserRegistered);
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.log(error)
+      }
+      setLoginInProgress(false);
+    };
+
+    loginClicked && login();
+  }, [loginClicked, account, contract]);
+
+  console.log(loginClicked);
+
+  const loginPage = async (role, Admin, Inpector, UserRegistered) => {
+    try {
+      if (role?.Admin && Admin) {
+        const token = await new SignJWT({})
+          .setProtectedHeader({ alg: "HS256" })
+          .setJti(nanoid())
+          .setIssuedAt()
+          .setExpirationTime("1m")
+          .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_ADMIN));
+          setCookie(null, "token", token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+            secure: process.env.NODE_ENV === "production",
+          });
+        router.push("/Admin");
+        toastSuccess();
       }
 
+      if (role?.Admin && !Admin) {
+        router.reload();
+        toastError();
+      } else if (role?.Inspector && Inpector) {
+        localStorage.setItem("session", "token");
+        router.push("/Inspector");
+        toastSuccess();
+      } else if (role?.Inspector && !Inpector) {
+        router.reload();
 
-    };
-    loginPage();
-  }, [account,Role]);
-  const handleSubmit = async () => {
-    try {
-      console.log(account);
-      await connectWallet();
-    } catch (error) {}
+        toastError();
+      } else if (role?.User && UserRegistered) {
+        localStorage.setItem("session", "token");
+        router.push("/User");
+        toastSuccess();
+      } else if (role?.User && !UserRegistered) {
+        router.push("/register");
+        toastSuccess();
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      console.log("some thi s")
+      console.log(error);
+    }
   };
 
   return (
@@ -137,11 +175,12 @@ console.log('ask' ,Role)
               borderRadius={15}
               color={"blackAlpha.900"}
               mr="2px"
-              onClick={() => {
-                handleSetPath(true, false, false);
-                handleSubmit();
-              }}
               fontSize={"1rem"}
+              onClick={() => {
+                setLogin(true);
+
+                handleSetPath(true, false, false);
+              }}
             >
               Admin
             </Button>
@@ -155,8 +194,9 @@ console.log('ask' ,Role)
               color={"blackAlpha.900"}
               fontSize={"1rem"}
               onClick={() => {
+                setLogin(true);
+
                 handleSetPath(false, true, false);
-                handleSubmit();
               }}
             >
               Inspector
@@ -171,8 +211,9 @@ console.log('ask' ,Role)
               mr="2px"
               fontSize={"1rem"}
               onClick={() => {
+                setLogin(true);
+
                 handleSetPath(false, false, true);
-                handleSubmit();
               }}
             >
               User
@@ -189,8 +230,9 @@ console.log('ask' ,Role)
               <MenuList>
                 <MenuItem
                   onClick={() => {
+                    setLogin(true);
+
                     handleSetPath(true, false, false);
-                    handleSubmit();
                   }}
                 >
                   Admin
@@ -198,17 +240,18 @@ console.log('ask' ,Role)
 
                 <MenuItem
                   onClick={() => {
+                    setLogin(true);
+
                     handleSetPath(false, true, false);
-                    handleSubmit();
                   }}
                 >
                   Inspector
                 </MenuItem>
                 <MenuItem
-                  
                   onClick={() => {
+                    setLogin(true);
+
                     handleSetPath(false, false, true);
-                    handleSubmit();
                   }}
                 >
                   User
@@ -221,3 +264,12 @@ console.log('ask' ,Role)
     </Flex>
   );
 }
+
+
+// export async  function getServerSideProps()
+// {
+
+//   const  SECRET=process?.env?.SECRET
+//       console.log("ajsdkaj", SECRET);
+
+// }

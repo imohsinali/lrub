@@ -8,8 +8,8 @@ import contractABI from "../contract/lrub.json";
 
 import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
-// const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
-const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
+const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
+// const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
 
 
 const providerOptions = {
@@ -47,6 +47,7 @@ const Web3Provider = ({ children }) => {
   const [message, setMessage] = useState("");
   const [verified, setVerified] = useState();
   const [contract, setContract] = useState();
+  const [Admin,setAdmin]=useState(false)
 
   const connectWallet = async () => {
     try {
@@ -93,14 +94,17 @@ const Web3Provider = ({ children }) => {
     router.push("/");
   };
 
-  useEffect(() => {
+  useEffect(async() => {
     const web3 = async () => {
       const web3Modal = await getWeb3Modal();
-
       if (web3Modal.cachedProvider) {
+      const Admin = await contract?.isContractOwner(account); 
+     setAdmin(Admin);
+
         connectWallet();
       }
     };
+
     web3();
   }, []);
 
@@ -150,6 +154,7 @@ const Web3Provider = ({ children }) => {
     connectWallet,
     refreshState,
     disconnect,
+    Admin
   };
 
   return (

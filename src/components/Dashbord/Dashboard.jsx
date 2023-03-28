@@ -22,7 +22,7 @@ import {AdminLink,InspectorLinks} from './paths'
 export default function SidebarWithHeader({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box minH="100vh" bg={useColorModeValue("gray.50", "gray.800")}>
+    <Box minH={{base:"100vh", sm:"125vh"}} bg={useColorModeValue("gray.50", "gray.800")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}

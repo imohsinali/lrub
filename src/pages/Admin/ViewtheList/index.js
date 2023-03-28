@@ -1,14 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
 import Pagination from "@/components/utils/pagination";
 import ProtectedRoute from "@/components/protected/protectedRoute";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
@@ -17,34 +8,31 @@ import RemoveModel from "@/components/Models/RemoveModel";
 import useSWR from "swr";
 import { Web3Context } from "@/components/context/web3Model";
 
-
-
 const TableWithPagination = () => {
-    const { contract,account} = useContext(Web3Context);
-    
+  const { contract } = useContext(Web3Context);
 
-    console.log(contract,account)
-
-const { data: inspectors } = useSWR(["data", contract], async () => {
-  const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
-  const inpsectors = await Promise.all(
-    inspectorAddresses.map(async (address) => {
-      const { name, city, dob, designation, cnic } =
-        await contract.InspectorMapping(address);
-      return {
-        address,
-        name: ethers.utils.parseBytes32String(name),
-        city: ethers.utils.parseBytes32String(city),
-        dob: ethers.utils.parseBytes32String(dob),
-        cnic: parseInt(cnic._hex),
-        designation: ethers.utils.parseBytes32String(designation),
-      };
-    })
-  );
-  return inpsectors;
-});
-console.log("dar", inspectors);
-  
+  const { data: inspectors } = useSWR(["data", contract], async () => {
+    const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
+    const inpsectors = await Promise.all(
+      inspectorAddresses.map(async (address) => {
+        const { name, city, dob, designation, cnic, district, email, phone } =
+          await contract.InspectorMapping(address);
+        return {
+          address,
+          name: ethers.utils.parseBytes32String(name),
+          city: ethers.utils.parseBytes32String(city),
+          district: ethers.utils.parseBytes32String(district),
+          email: ethers.utils.parseBytes32String(email),
+          phone: parseInt(phone._hex),
+          dob: ethers.utils.parseBytes32String(dob),
+          cnic: parseInt(cnic._hex),
+          designation: ethers.utils.parseBytes32String(designation),
+        };
+      })
+    );
+    return inpsectors;
+  });
+  console.log("dar", inspectors);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
@@ -59,9 +47,9 @@ console.log("dar", inspectors);
     console.log(p);
   };
 
-  const [isOpen,setOpen]=useState(false)
+  const [isOpen, setOpen] = useState(false);
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
       <SidebarWithHeader bgColor={"#F7FAFC"}>
         {/* <FiltersBox/> */}
         <Box overflowX="auto">
@@ -84,7 +72,7 @@ console.log("dar", inspectors);
                 <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
                   <Td>{index}</Td>
                   <Td>{row.address}</Td>
-                  <Td>{row.name}</Td>
+                  <Td>{row.name.split('|').join(" ")}</Td>
                   <Td>{row.city}</Td>
                   <Td>{row.cnic}</Td>
                   <Td>
@@ -98,7 +86,11 @@ console.log("dar", inspectors);
                       Remove
                     </Button>
                     {isOpen && (
-                      <RemoveModel isOpen={isOpen} setOpen={setOpen} landInspector={row} />
+                      <RemoveModel
+                        isOpen={isOpen}
+                        setOpen={setOpen}
+                        landInspector={row}
+                      />
                     )}
                   </Td>
                 </Tr>
@@ -109,7 +101,7 @@ console.log("dar", inspectors);
 
         <Pagination handlePageClick={handlePageClick} page={currentPage} />
       </SidebarWithHeader>
-    </ProtectedRoute>
+    
   );
 };
 

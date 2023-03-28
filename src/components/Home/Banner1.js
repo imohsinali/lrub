@@ -11,6 +11,9 @@ const logos = [
 ];
 
 const Banner1 = () => {
+
+  
+
   return (
     <>
       {logos.map((logo) => (
@@ -19,7 +22,7 @@ const Banner1 = () => {
           className={styles.logo}
           justifyContent={"space-evenly"}
           alignItems={"center"}
-          width={{ base: 400, md: 710, sm: 100, xl: 1000 }}
+          width={{ base: 300, md: 710, sm: 100, xl: 1000 }}
           key={logo.name}
         >
           <Box

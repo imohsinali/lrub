@@ -12,47 +12,44 @@ import { useContext } from "react";
 import { Web3Context } from "../context/web3Model";
 
 export default function LandInspectorModal({ isOpen, setOpen, landInspector }) {
-      const { contract } = useContext(Web3Context);
-      console.log(contract)
-  const toast=useToast()
+  const { contract } = useContext(Web3Context);
+  const toast = useToast();
 
-      const removeLandInpsector=async(address)=>
-      {
-        try {
-          await contract.removeLandInspector(address)
-          toast({
-            title: "remove Susscesfully",
-            status: "success",
-            duration: 2000,
-            isClosable: true,
-          });
-          setOpen(false)
-          
-        } catch (error) {
-                    toast({
-                      title: "Something Went Wrong",
-                      status: "error",
-                      duration: 2000,
-                      isClosable: true,
-                    });
-          setOpen(false);
-
-          
-        }
-
-      }
+  const removeLandInpsector = async (address) => {
+    try {
+      await contract.removeLandInspector(address);
+      toast({
+        title: "remove Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Something Went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
-      <ModalOverlay />
-      <ModalContent>
+      <ModalOverlay w={"110%"} h={"110%"} />
+      <ModalContent m={{ base: 200, sm: 100 }} ml={{ base: "", sm: "40%" }}>
         <ModalHeader>Land Inspector Details</ModalHeader>
         <ModalBody>
           <p>Wallet Address: {landInspector?.address}</p>
-          <p>Name: {landInspector?.name}</p>
+          <p>Name: {landInspector?.name.split("|").join(" ")}</p>
           <p>CNIC: {landInspector?.cnic}</p>
-          <p>Date of Birth: {landInspector?.dateOfBirth}</p>
+          <p>Date of Birth: {landInspector?.dob}</p>
           <p>City: {landInspector?.city}</p>
+          <p>District: {landInspector?.district}</p>
+          <p>Phone:{landInspector?.phone}</p>
+          <p>Email:{landInspector?.email}</p>
           <p>Designation: {landInspector?.designation}</p>
         </ModalBody>
         <ModalFooter>
