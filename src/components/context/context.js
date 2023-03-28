@@ -223,7 +223,6 @@ const refreshState = () => {
       value={{
         connectWallet,
         // ConnectWallet,
-        checkIfWalletIsConnect,
         setCoordinates,
         account,
         currentAccount,
@@ -240,7 +239,6 @@ const refreshState = () => {
         provider,
         login,
         setLogin,
-        lockMetamask,
       }}
     >
       {children}
