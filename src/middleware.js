@@ -12,6 +12,12 @@ export default async function middleWare(req) {
     return NextResponse.redirect('https://lrub.netlify.app')
 
     }
+
+    if(!verifiedToken)
+    {
+          return NextResponse.redirect("https://lrub.netlify.app");
+
+    }
   if (verifiedToken) {
     return NextResponse.next()
     
