@@ -8,16 +8,13 @@ export default async function middleWare(req) {
   const verifiedToken =
     token && (await verifyToken(token).catch((er) => console.log(er)));
 
-  if (req.nextUrl.pathname.startsWith("/Admin") && !verifiedToken) {
-    return NextResponse.redirect('https://lrub.netlify.app')
-
-    }
-
-    if(!verifiedToken)
-    {
-          return NextResponse.redirect("https://lrub.netlify.app");
-
-    }
+  if (
+    (req.nextUrl.pathname.startsWith("/Admin") ||
+    (req.nextUrl.pathname.startsWith("/admin")) && !verifiedToken)
+  ) {
+    return NextResponse.redirect("https://lrub.netlify.app");
+  }
+    
   if (verifiedToken) {
     return NextResponse.next()
     
