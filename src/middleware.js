@@ -9,7 +9,7 @@ export default async function middleWare(req) {
     token && (await verifyToken(token).catch((er) => console.log(er)));
 
   if (req.nextUrl.pathname.startsWith("/Admin") && !verifiedToken) {
-    return NextResponse.rewrite(new URL("https://lrub.netlify.app/", req.url));
+    return NextResponse.rewrite(new URL("https://lrub.netlify.app/", '/'));
   }
   if (verifiedToken) {
     return NextResponse.rewrite(
