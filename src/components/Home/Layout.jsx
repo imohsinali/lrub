@@ -1,17 +1,16 @@
-import React from 'react'
-import Navbar from './Navbar'
-import { Context } from '../context/context'
-import BannerCarousel from './Banner'
-import { Box, Flex, Text } from '@chakra-ui/react';
-import HeroSection from './HeroSection';
-import CardGrid from './Grid';
-import Join from './Join';
-import Banner1 from './Banner1';
-import Footer from './Footer';
+import React from "react";
+import Navbar from "./Navbar";
+import { Context } from "../context/context";
+import BannerCarousel from "./Banner";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import HeroSection from "./HeroSection";
+import CardGrid from "./Grid";
+import Join from "./Join";
+import Banner1 from "./Banner1";
+import Footer from "./Footer";
 
-
-export default function Layout({children}) {
-  console.log(Context)
+export default function Layout({ children }) {
+  console.log(Context);
   return (
     <Flex direction={"column"} justifyContent="center">
       <Navbar />

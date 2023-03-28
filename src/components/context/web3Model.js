@@ -94,12 +94,12 @@ const Web3Provider = ({ children }) => {
     router.push("/");
   };
 
-  useEffect(async() => {
+  useEffect(() => {
     const web3 = async () => {
       const web3Modal = await getWeb3Modal();
       if (web3Modal.cachedProvider) {
-      const Admin = await contract?.isContractOwner(account); 
-     setAdmin(Admin);
+       const Admin = await contract?.isContractOwner(account); 
+       setAdmin(Admin);
 
         connectWallet();
       }

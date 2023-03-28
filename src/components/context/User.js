@@ -39,14 +39,14 @@ const AuthContext = React.createContext();
 const { Provider } = AuthContext;
 
 const AuthProvider = ({ children }) => {
-  const [auth, setAuthState] = React.useState('');
+  const [auth, setAuth] = React.useState('');
 
     React.useEffect(() => {
       const token = window.localStorage.getItem("token");
       const decryptedData = decryptData(token);
 
       if (token) {
-        setAuthState({ decryptedData });
+        setAuth({ decryptedData });
       }
     }, []);
 
@@ -57,7 +57,7 @@ const AuthProvider = ({ children }) => {
        localStorage.setItem("token", encryptedData);
       const token=localStorage.getItem('token')
 
-    setAuthState({
+    setAuth({
       token,
     });
   };
@@ -69,7 +69,7 @@ const AuthProvider = ({ children }) => {
       value={{
         auth,
         decryptData,
-        setAuthState: (userAuthInfo) => setUserAuthInfo(userAuthInfo),
+        setAuth: (userAuthInfo) => setUserAuthInfo(userAuthInfo),
       }}
     >
       {children}
