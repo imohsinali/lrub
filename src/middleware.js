@@ -7,9 +7,9 @@ export default async function authenticate(req) {
   const Itoken = req.cookies.get("Inspectortoken")?.value;
   const Utoken = req.cookies.get("Usertoken")?.value; 
   const Asecret= process.env.NEXT_PUBLIC_SECRET_ADMIN;
-  const Isecret = process.env.NEXT_PUBLIC_SECRET_ADMIN;
+  const Isecret = process.env.NEXT_PUBLIC_SECRET_INSP;
 
-  const Usecret = process.env.NEXT_PUBLIC_SECRET_ADMIN;
+  const Usecret = process.env.NEXT_PUBLIC_SECRET_USER;
 
 
   // Verify the token
