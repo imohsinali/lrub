@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
 const UserRegistration = () => {
   const { contract, account } = useContext(Web3Context);
-
+   const router=useRouter()
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
   const [loading, setLoading] = useState(false);
@@ -101,8 +101,19 @@ const UserRegistration = () => {
         { gasLimit: 1000000 }
       );
 
-
       await transaction.wait();
+      const token = await new SignJWT({})
+        .setProtectedHeader({ alg: "HS256" })
+        .setJti(nanoid())
+        .setIssuedAt()
+        .setExpirationTime("1H")
+        .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_USER));
+      setCookie(null, "Usertoken", token, {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+        secure: process.env.NODE_ENV === "development",
+      });
+      router.push("/User");
       setLoading(false);
       toast({
         title: "Registered Successfully",
@@ -122,12 +133,10 @@ const UserRegistration = () => {
     }
   };
 
-
   function stringToBytes32(str) {
     return ethers.utils.formatBytes32String(str);
   }
 
-  const router = useRouter();
   return (
     <>
       <Box

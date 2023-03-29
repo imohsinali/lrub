@@ -89,8 +89,6 @@ const Web3Provider = ({ children }) => {
 
     web3Modal.clearCachedProvider();
     localStorage.setItem("walletconnect", null);
-    //  localStorage.setItem('sess')
-
     router.push("/");
   };
 

@@ -98,7 +98,6 @@ export default function Navbar() {
     loginClicked && login();
   }, [loginClicked, account, contract]);
 
-  console.log(loginClicked);
 
   const loginPage = async (role, Admin, Inpector, UserRegistered) => {
     try {
@@ -107,12 +106,12 @@ export default function Navbar() {
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
           .setIssuedAt()
-          .setExpirationTime("1m")
+          .setExpirationTime("1H")
           .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_ADMIN));
-          setCookie(null, "token", token, {
+          setCookie(null, "Admintoken", token, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === "development",
           });
         router.push("/Admin");
         toastSuccess();
@@ -122,7 +121,17 @@ export default function Navbar() {
         router.reload();
         toastError();
       } else if (role?.Inspector && Inpector) {
-        localStorage.setItem("session", "token");
+        const token = await new SignJWT({})
+          .setProtectedHeader({ alg: "HS256" })
+          .setJti(nanoid())
+          .setIssuedAt()
+          .setExpirationTime("1H")
+          .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_INSP));
+        setCookie(null, "Inspectortoken", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: process.env.NODE_ENV === "development",
+        });
         router.push("/Inspector");
         toastSuccess();
       } else if (role?.Inspector && !Inpector) {
@@ -130,17 +139,26 @@ export default function Navbar() {
 
         toastError();
       } else if (role?.User && UserRegistered) {
-        localStorage.setItem("session", "token");
+        const token = await new SignJWT({})
+          .setProtectedHeader({ alg: "HS256" })
+          .setJti(nanoid())
+          .setIssuedAt()
+          .setExpirationTime("1H")
+          .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_USER));
+        setCookie(null, "Usertoken", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: process.env.NODE_ENV === "development",
+        });
         router.push("/User");
         toastSuccess();
       } else if (role?.User && !UserRegistered) {
-        router.push("/register");
+        router.push("/Register");
         toastSuccess();
       } else {
         router.push("/");
       }
     } catch (error) {
-      console.log("some thi s")
       console.log(error);
     }
   };

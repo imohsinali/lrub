@@ -116,8 +116,8 @@ let data='Admin';
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={() => disconnect()}>
-                <Link href="/">Sign out</Link>
+              <MenuItem onClick={() =>{ disconnect()}}>
+                         Sign out
               </MenuItem>
             </MenuList>
           </Menu>

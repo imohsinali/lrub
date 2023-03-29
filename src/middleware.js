@@ -3,16 +3,33 @@ import { jwtVerify } from "jose";
 
 export default async function authenticate(req) {
   // Get the token from the request cookie
-  const token = req.cookies.get("token")?.value;
+  const Atoken = req.cookies.get("Admintoken")?.value;
+  const Itoken = req.cookies.get("Inspectortoken")?.value;
+  const Utoken = req.cookies.get("Usertoken")?.value; 
+  const Asecret= process.env.NEXT_PUBLIC_SECRET_ADMIN;
+  const Isecret = process.env.NEXT_PUBLIC_SECRET_ADMIN;
+
+  const Usecret = process.env.NEXT_PUBLIC_SECRET_ADMIN;
+
 
   // Verify the token
-  const verifiedToken =
-    token && (await verifyToken(token).catch((err) => console.error(err)));
+  const verifiedTokenA =
+    Atoken &&
+    (await verifyToken(Atoken, Asecret).catch((err) => console.error(err)));
+  const verifiedTokenI =
+    Itoken &&
+    (await verifyToken(Itoken, Isecret).catch((err) => console.error(err)));
+  const verifiedTokenU =
+    Itoken &&
+    (await verifyToken(Utoken, Usecret).catch((err) => console.error(err)));
+
 
   // Check if the user is trying to access an admin page without a valid token
   const isAdminPage = /^\/admin/i.test(req.nextUrl.pathname);
-  const isUnauthenticated = !verifiedToken;
-  if (isAdminPage && isUnauthenticated) {
+  const isInspectorPage = /^\/inspector/i.test(req.nextUrl.pathname);
+  const isUserPage = /^\/user/i.test(req.nextUrl.pathname);
+
+  if (isAdminPage && !verifiedTokenA) {
     // Redirect the user to the login page with a message
     const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
       "Access to this page is restricted. Please log in to continue."
@@ -20,25 +37,38 @@ export default async function authenticate(req) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  if (isAdminPage && !verifiedTokenA) {
+    // Redirect the user to the login page with a message
+    const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
+      "Access to this page is restricted. Please log in to continue."
+    )}`;
+    return NextResponse.redirect(redirectUrl);
+  }
+  if (isInspectorPage && !verifiedTokenI) {
+    // Redirect the user to the login page with a message
+    const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
+      "Access to this page is restricted. Please log in to continue."
+    )}`;
+    return NextResponse.redirect(redirectUrl);
+  }
+  if (isUserPage && !verifiedTokenU) {
+    // Redirect the user to the login page with a message
+    const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
+      "Access to this page is restricted. Please log in to continue."
+    )}`;
+    return NextResponse.redirect(redirectUrl);
+  }
   // Allow the request to proceed if the user is authenticated or the page is not an admin page
   return NextResponse.next();
 }
 
-const getJWtSecert = () => {
-  const sercret = process.env.NEXT_PUBLIC_SECRET_ADMIN;
 
-  if (!sercret || sercret.length == 0) {
-    throw new Error("The envirnoment variable is not set");
-  }
-  return sercret;
-};
-
-const verifyToken = async (token) => {
+const verifyToken = async (token,secret) => {
   try {
     console.log("asd");
     const verfied = await jwtVerify(
       token,
-      new TextEncoder().encode(getJWtSecert())
+      new TextEncoder().encode(secret)
     );
     console.log(verfied, verfied.payload);
     return verfied.payload;
