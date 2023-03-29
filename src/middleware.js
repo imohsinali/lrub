@@ -1,25 +1,26 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-export default async function middleWare(req) {
+export default async function authenticate(req) {
+  // Get the token from the request cookie
   const token = req.cookies.get("token")?.value;
-  console.log(token);
 
+  // Verify the token
   const verifiedToken =
-    token && (await verifyToken(token).catch((er) => console.log(er)));
+    token && (await verifyToken(token).catch((err) => console.error(err)));
 
-  if (
-    (req.nextUrl.pathname.startsWith("/Admin") ||
-    (req.nextUrl.pathname.startsWith("/admin")) && !verifiedToken)
-  ) {
-    return NextResponse.redirect("https://lrub.netlify.app");
+  // Check if the user is trying to access an admin page without a valid token
+  const isAdminPage = /^\/admin/i.test(req.nextUrl.pathname);
+  const isUnauthenticated = !verifiedToken;
+  if (isAdminPage && isUnauthenticated) {
+    // Redirect the user to the login page with a message
+    const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
+      "Access to this page is restricted. Please log in to continue."
+    )}`;
+    return NextResponse.redirect(redirectUrl);
   }
-    
-  if (verifiedToken) {
-    return NextResponse.next()
-    
-  }
-  
+
+  // Allow the request to proceed if the user is authenticated or the page is not an admin page
   return NextResponse.next();
 }
 
@@ -45,20 +46,3 @@ const verifyToken = async (token) => {
     throw new Error("your token has expired");
   }
 };
-
-// import { NextResponse } from "next/server";
-
-// export function middleware(request) {
-//   if (request.nextUrl.pathname.startsWith("/Admin")) {
-//     if (true) {
-//       // return NextResponse.rewrite(new URL("/Admin", request.url));
-//     }
-//     if (false) {
-//       return NextResponse.rewrite(new URL("/Admin", request.url));
-//     }
-//   }
-
-//   if (request.nextUrl.pathname.startsWith("/User")) {
-//     return NextResponse.rewrite(new URL("/Admin", request.url));
-//   }
-// }
