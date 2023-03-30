@@ -22,8 +22,9 @@ export default function Navbar() {
   const toast = useToast();
 
   const router = useRouter();
-  const { account, connectWallet, contract } = useContext(Web3Context);
+  const { account, connectWallet, contract,matic } = useContext(Web3Context);
   const [loginClicked, setLogin] = useState(false);
+  console.log(matic)
 
   function handleSetPath(_roleA, _roleI, _roleU) {
     // const secret = ;

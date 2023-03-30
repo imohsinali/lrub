@@ -7,8 +7,8 @@ import axios from "axios";
 
 export default  function Admin(){
    const router=useRouter()
-  const [data, setPkr] = useState(0);
-  const [usd, setUsd] = useState(0);
+  const [pkr, setPkr] = useState(null);
+  const [matic, setMatic] = useState(null);
 
 
 
@@ -16,22 +16,20 @@ export default  function Admin(){
   useEffect(() => {
     async function fetchData() {
       try {
-        const {data} = await axios.get('https://api.coingecko.com/api/v3/exchange_rates')
         // const url=   ""
-      const response = await axios.get("/api/matic");
- 
-
-
-        console.log('jkw', response.data);
-        setPkr(data.rates.pkr);
-        setUsd(data.rates.usd);
+      const {data} = await axios.get("/api/matic");
+        setPkr(data.PkrUsd)
+        setMatic(data.MaticUsd)
       } catch (error) {
         console.error(error);
         setPkr(null);
+        setMatic(null)
       }
     }
     fetchData();
   }, []);
+
+  console.log(pkr,matic)
 
 // console.log("hww", (eth.value/data.value)*1000000);
 // let pkrtomatic = matic.last_price_usd/(data?.value / usd?.value); ;
@@ -42,21 +40,7 @@ export default  function Admin(){
   return (
       <SidebarWithHeader>
         {/* <Photo/> */}
-{
- (!data) ? (
-     <div>Error loading data</div>
- ):
 
-
-    <div>
-      <h1>CoinMarketCap Latest Cryptocurrency Listings</h1>
-      <ul>
-        {/* {data.data.map((crypto) => (
-          <li key={crypto.id}>{crypto.name} - {crypto.symbol}</li>
-        ))} */}
-      </ul>
-    </div>
-}
       </SidebarWithHeader>
 
   );

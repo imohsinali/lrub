@@ -1,16 +1,13 @@
 import React, { createContext, useState, useEffect } from "react";
 import { ethers } from "ethers";
-// import { getWeb3Modal } from "./web3Modal";
 import Web3Modal from "web3modal";
 import contractABI from "../contract/lrub.json";
 
-
-
 import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
+import axios from "axios";
 const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
 // const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
-
 
 const providerOptions = {
   walletconnect: {
@@ -29,7 +26,6 @@ async function getWeb3Modal() {
   const web3Modal = new Web3Modal({
     cacheProvider: true,
     providerOptions: providerOptions,
-    
   });
   return web3Modal;
 }
@@ -47,8 +43,8 @@ const Web3Provider = ({ children }) => {
   const [message, setMessage] = useState("");
   const [verified, setVerified] = useState();
   const [contract, setContract] = useState();
-  const [Admin,setAdmin]=useState(false)
-
+  const [pkr, setPkr] = useState(null);
+  const [matic, setMatic] = useState(null);
   const connectWallet = async () => {
     try {
       const web3Modal = await getWeb3Modal();
@@ -74,7 +70,6 @@ const Web3Provider = ({ children }) => {
     }
   };
 
-
   const refreshState = () => {
     setAccount();
     setChainId();
@@ -96,13 +91,10 @@ const Web3Provider = ({ children }) => {
     const web3 = async () => {
       const web3Modal = await getWeb3Modal();
       if (web3Modal.cachedProvider) {
-       const Admin = await contract?.isContractOwner(account); 
-       setAdmin(Admin);
-
         connectWallet();
       }
     };
-
+    fetchData();
     web3();
   }, []);
 
@@ -135,8 +127,17 @@ const Web3Provider = ({ children }) => {
       };
     }
   }, [provider]);
-
-  
+  async function fetchData() {
+    try {
+      const { data } = await axios.get("/api/matic");
+      setPkr(data.PkrUsd);
+      setMatic(data.MaticUsd);
+    } catch (error) {
+      console.error(error);
+      setPkr(null);
+      setMatic(null);
+    }
+  }
 
   const web3ContextValue = {
     provider,
@@ -152,7 +153,8 @@ const Web3Provider = ({ children }) => {
     connectWallet,
     refreshState,
     disconnect,
-    Admin
+    matic,
+    pkr,
   };
 
   return (
