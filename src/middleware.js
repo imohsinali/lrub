@@ -65,12 +65,10 @@ export default async function authenticate(req) {
 
 const verifyToken = async (token,secret) => {
   try {
-    console.log("asd");
     const verfied = await jwtVerify(
       token,
       new TextEncoder().encode(secret)
     );
-    console.log(verfied, verfied.payload);
     return verfied.payload;
   } catch (error) {
     throw new Error("your token has expired");
