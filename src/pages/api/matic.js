@@ -9,11 +9,14 @@ export default async function handler(req, res) {
       "https://api.coingecko.com/api/v3/exchange_rates"
     );
     const MaticUsd = response.data.last_price_usd;
-    const PkrUsd=data.rates.pkr.value/data.rates.usd.value
+    const PkrUsd = data.rates.pkr.value / data.rates.usd.value;
 
     res
+      .setHeader("Access-Control-Allow-Origin", "*")
+      .setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+      .setHeader("Access-Control-Allow-Headers", "Content-Type")
       .status(200)
-      .json({ MaticUsd, PkrUsd  });
+      .json({ MaticUsd, PkrUsd });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch data" });
