@@ -6,6 +6,8 @@ import contractABI from "../contract/lrub.json";
 import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
 import axios from "axios";
+import useSWR from "swr";
+
 const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
 // const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
 
@@ -140,6 +142,42 @@ const Web3Provider = ({ children }) => {
     }
   }
 
+  const { data: users } = useSWR(["data", contract], async () => {
+    const userAddresses = await contract.ReturnAllUserList();
+
+    const users = await Promise.all(
+      userAddresses.map(async (address) => {
+        const {
+          name,
+          city,
+          dob,
+          document,
+          profilepic,
+          isUserVerified,
+          cinc,
+          verfiedby,
+          verifydate,
+          email,
+        } = await contract.UserMapping(address);
+        return {
+          address,
+          name: ethers.utils.parseBytes32String(name),
+          city: ethers.utils.parseBytes32String(city),
+          email: ethers.utils.parseBytes32String(email),
+          verifydate: parseInt(verifydate._hex),
+          dob: ethers.utils.parseBytes32String(dob),
+          cnic: parseInt(cinc._hex),
+          verfiedby,
+          isUserVerified,
+          document,
+          profilepic,
+        };
+      })
+    );
+    return users;
+  });
+  const currentUser = users?.filter((u) => u.address == account);
+
   const web3ContextValue = {
     provider,
     library,
@@ -151,6 +189,7 @@ const Web3Provider = ({ children }) => {
     message,
     verified,
     contract,
+    currentUser,
     connectWallet,
     refreshState,
     disconnect,
@@ -158,7 +197,10 @@ const Web3Provider = ({ children }) => {
     pkr,
     userAddress,
     setUser,
+    users
   };
+
+
 
   return (
     <Web3Context.Provider value={web3ContextValue}>

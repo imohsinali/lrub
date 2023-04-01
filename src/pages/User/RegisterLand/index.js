@@ -9,7 +9,8 @@ import fileHash from "@/components/utils/IPFS";
 import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
 const AddLand = () => {
-  const { contract, account } = useContext(Web3Context);
+  const { contract, users, currentUser } = useContext(Web3Context);
+  console.log(users, currentUser);
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);

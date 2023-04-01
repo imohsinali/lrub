@@ -14,12 +14,15 @@ import { useRouter } from "next/router";
 import MobileNav from "./MobileNav";
 import NavItem from "./NavItem";
 import FiltersBox from "../utils/BoxFilter";
-import {  useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import {AdminLink,InspectorLinks,UserLinks} from './paths'
+import { Web3Context } from "../context/web3Model";
 export default function SidebarWithHeader({ children }) {
+  const { currentUser } = useContext(Web3Context);
 
   const [links, setLinks] = useState();
   const [role,setRole]=useState('');
+  const [data,setData]=useState('')
 
   const router = useRouter();
 
@@ -35,8 +38,10 @@ export default function SidebarWithHeader({ children }) {
     {
       setLinks(UserLinks);
       setRole("User")
+      setData(currentUser[0])
     }
   }, [router.pathname]);
+  console.log(data,'da')
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH={{base:"100vh", sm:"125vh"}} bg={useColorModeValue("gray.50", "gray.800")}>
@@ -59,7 +64,7 @@ export default function SidebarWithHeader({ children }) {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} role={role} />
+      <MobileNav onOpen={onOpen} role={role} data={data} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
         {

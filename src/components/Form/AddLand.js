@@ -242,7 +242,7 @@ mapboxgl.accessToken =
 
 const router=useRouter()
   useEffect(() => {
-    if (router.pathname === "/Admin") {
+    if (router.pathname === "/User/RegisterLand") {
         console.log(router.pathname)
       document.body.style.zoom = 1;
     } else {
