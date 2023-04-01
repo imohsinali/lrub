@@ -14,8 +14,23 @@ export const AdminLink = [
 ];
 export const InspectorLinks = [
   { name: "Home", icon: FiHome, src: "/Inspector" },
-  { name: "Add Inspector", icon: FiTrendingUp, src: "/Inspector/AddInspector" },
-  { name: "View the List", icon: FiCompass, src: "/Inspector/ViewtheList" },
-  { name: "Change Admin", icon: FiStar, src: "/Inspector/ChangeAdmin" },
-  { name: "Search Details", icon: FiSettings, src: "/SearchDetail" },
+  { name: "Verify User", icon: FiTrendingUp, src: "/Inspector/VerifyUser" },
+  { name: "Verify Land", icon: FiCompass, src: "/Inspector/VerifyLand" },
+  { name: "Transfer Ownership", icon: FiStar, src: "/Inspector/TransferOwnership" },
+];
+
+
+export const UserLinks = [
+  { name: "Home", icon: FiHome, src: "/User" },
+  { name: "Land Market", icon: FiTrendingUp, src: "/User/LandMarket" },
+  { name: "My Lands", icon: FiCompass, src: "/User/MyLands" },
+
+  { name: "Send Requests", icon: FiCompass, src: "/User/SendRequests" },
+  { name: "Recived Requests", icon: FiCompass, src: "/User/RecivedRequests" },
+
+  {
+    name: "Register Land",
+    icon: FiStar,
+    src: "/User/RegisterLand",
+  },
 ];

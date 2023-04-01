@@ -82,12 +82,12 @@ export default function Navbar() {
         try {
           const role = JSON.parse(localStorage.getItem("role"));
           await connectWallet();
-          console.log("login called"); // add this line
 
           const Admin1 = await contract?.isContractOwner(account);
           const Inpector = await contract?.isLandInspector(account);
-          const User = await contract?.ReturnAllUserList();
-          const UserRegistered = User?.includes(account);
+          const UserRegistered =await contract?.RegisteredUserMapping(account);
+          console.log("login called",UserRegistered); // add this line
+
           loginPage(role, Admin1, Inpector, UserRegistered);
         } catch (error) {
           console.error(error);

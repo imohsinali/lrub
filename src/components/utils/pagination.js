@@ -17,8 +17,9 @@ return (
     right={240}
     mx="auto"
     // w={paginationWidth}
+    // backgroundColor={'red'}
     p={0}
-    maxW={'100px'}
+    maxW={"100px"}
   >
     <Paginate
       page={page}
@@ -26,16 +27,16 @@ return (
       pageSize={7}
       onPageChange={handlePageClick}
       fontWeight="blue"
-      width='1px'
-      variant="outline"
+      width="1px"
       borderColor="blue.500"
       borderWidth="2px"
       borderRadius="md"
-      fontSize={{ base: 'sm', md: 'md' }}
+      fontSize={{ base: "sm", md: "md" }}
       textAlign="center"
+
     />
   </Box>
-)
+);
 }
     
     

@@ -22,10 +22,9 @@ import {
 } from "react-icons/fi";
 import { Web3Context } from "../context/web3Model";
 
-const MobileNav = ({onOpen, ...rest }) => {
+const MobileNav = ({onOpen,role, ...rest }) => {
   const { disconnect } = useContext(Web3Context);
-
-let data='Admin';
+console.log(role)
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -41,7 +40,7 @@ let data='Admin';
       top={0}
       left={0}
       right={0}
-      zIndex={1}
+      zIndex={10}
     >
       <IconButton
         display={{ base: "flex", md: "none" }}
@@ -95,11 +94,11 @@ let data='Admin';
                 >
                   <Text fontSize="sm">Justina Clark</Text>
                   <Text fontSize="xs" color="gray.600">
-                    {data == "Admin"
+                    {role == "Admin"
                       ? "Admin"
-                      : decrypted == "Inspector"
+                      : role== "Inspector"
                       ? "Inspector"
-                      : decrypted == "User"
+                      : role == "User"
                       ? "User"
                       : "Gust"}
                   </Text>

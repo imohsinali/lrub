@@ -7,6 +7,9 @@ const JoinCard = ({ image, title, description }) => {
       //   borderWidth="1px"
       //   borderRadius="lg"
       overflow="hidden"
+      h={500}
+      backgroundColor={'red'}
+
       //   transition="transform .2s"
       //   _hover={{ transform: "scale(1.05)" }}
     >
@@ -19,7 +22,7 @@ const JoinCard = ({ image, title, description }) => {
           {title}
         </Text>
         <Image src={image} alt={title} width={100} mb={7} />
-        <Text fontSize="md" display={{ base: "none", sm:'none' }}>
+        <Text fontSize="md" display={{ base: "none", sm: "none" }}>
           {/* {description}{" "} */}
         </Text>
       </Flex>

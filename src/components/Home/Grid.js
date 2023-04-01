@@ -38,7 +38,7 @@ const CardGrid = () => {
     <Flex
       justifyContent={'space-evenly'}
       wrap={'wrap'}
-      // width={{ base: 400, md: 810, sm: 700, xl: 1800 }}
+      width={{ base: 400, md: 810, sm: 700, xl: 1600 }}
     >
       {cards.map((card) => (
         <Card

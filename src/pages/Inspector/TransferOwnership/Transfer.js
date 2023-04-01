@@ -1,6 +1,6 @@
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 
-const Inpector = () => {
+const Transfer = () => {
   return (
     <SidebarWithHeader>
       <h1>Hwlewieo</h1>
@@ -8,4 +8,4 @@ const Inpector = () => {
   );
 };
 
-export default Inpector;
+export default Transfer;

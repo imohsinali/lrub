@@ -45,6 +45,7 @@ const Web3Provider = ({ children }) => {
   const [contract, setContract] = useState();
   const [pkr, setPkr] = useState(null);
   const [matic, setMatic] = useState(null);
+  const [userAddress,setUser]=useState('')
   const connectWallet = async () => {
     try {
       const web3Modal = await getWeb3Modal();
@@ -155,6 +156,8 @@ const Web3Provider = ({ children }) => {
     disconnect,
     matic,
     pkr,
+    userAddress,
+    setUser,
   };
 
   return (

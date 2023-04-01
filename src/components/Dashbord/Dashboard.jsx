@@ -13,18 +13,36 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import MobileNav from "./MobileNav";
 import NavItem from "./NavItem";
-import { decryptData } from "../utils/encrytpDycrytp";
 import FiltersBox from "../utils/BoxFilter";
 import {  useEffect, useState } from "react";
-// import { IconType } from 'react-icons';
-// import { ReactText } from 'react';
-import {AdminLink,InspectorLinks} from './paths'
+import {AdminLink,InspectorLinks,UserLinks} from './paths'
 export default function SidebarWithHeader({ children }) {
+
+  const [links, setLinks] = useState();
+  const [role,setRole]=useState('');
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.pathname.startsWith("/Admin")) {
+      setLinks(AdminLink);
+      setRole('Admin')
+    } else if (router.pathname.startsWith("/Inspector")) {
+      setLinks(InspectorLinks);
+      setRole("Inspector")
+    }
+    else if(router.pathname.startsWith("/User"))
+    {
+      setLinks(UserLinks);
+      setRole("User")
+    }
+  }, [router.pathname]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH={{base:"100vh", sm:"125vh"}} bg={useColorModeValue("gray.50", "gray.800")}>
       <SidebarContent
         onClose={() => onClose}
+        links={links}
         display={{ base: "none", md: "block" }}
       />
       <Drawer
@@ -41,7 +59,7 @@ export default function SidebarWithHeader({ children }) {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
+      <MobileNav onOpen={onOpen} role={role} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
         {
@@ -52,18 +70,9 @@ export default function SidebarWithHeader({ children }) {
   );
 }
 
-const SidebarContent = ({ onClose, ...rest }) => {
-  const [links, setLinks] = useState();
-  useEffect(() => {
-          const role = JSON.parse(localStorage.getItem("role"));
+const SidebarContent = ({ onClose,links, ...rest }) => {
+    const router = useRouter();
 
-    if (role?.Admin) {
-      setLinks(AdminLink);
-    } else if (role?.Inspector) {
-      setLinks(InspectorLinks);
-    }
-  }, []);
-  const router = useRouter();
   return (
     <Box
       transition="3s ease"

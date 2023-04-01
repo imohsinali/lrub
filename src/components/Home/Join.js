@@ -3,6 +3,7 @@ import { Box, Flex, Text, Image } from "@chakra-ui/react";
 const Card = ({ title, description, icon }) => (
   <Box
     maxW="sm"
+    h={250}
     borderWidth="1px"
     borderRadius="lg"
     overflow="hidden"
