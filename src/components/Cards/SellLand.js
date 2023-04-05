@@ -28,16 +28,17 @@ const Card = ({
   proxyownerAddress,
   timestamp,
   verfiedby,
-  landStatus,
+  landStatus
 }) => {
-  const { contract,account,currentUser } = useContext(Web3Context);
+  const { contract } = useContext(Web3Context);
+
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   console.log("land id", id);
   const sellLand = async (id) => {
     try {
-      if (currentUser[0].isUserVerified) {
+      if (isLandVerified) {
         setLoading(true);
         await contract.changeDetails(
           id,
@@ -60,9 +61,9 @@ const Card = ({
           isClosable: true,
         });
         setLoading(false);
-      } else if (!currentUser[0].isUserVerified) {
+      } else if (!isLandVerified) {
         toast({
-          title: "You are Not verified",
+          title: "Land is Not verified",
           status: "loading",
           duration: 2000,
           isClosable: true,
@@ -78,7 +79,17 @@ const Card = ({
       setLoading(false);
     }
 
-
+    //     function changeDetails(
+    //     uint _landId,
+    //     bool s,
+    //     bool p,
+    //     bool i,
+    //     bool c,
+    //     bool sell,
+    //     uint _newPrice,
+    //     string memory _newPic,
+    //     string memory _allLatiLongi
+    // )
   };
   return (
     <Box
@@ -108,7 +119,7 @@ const Card = ({
           {landArea} Sqft
         </Text>
 
-        <Text display={"inline"} color={isLandVerified ? "green" : "red"}>
+        <Text display={"inline"} color={isLandVerified?'green':'red'}>
           {isLandVerified ? "verified" : "not verfied"}
         </Text>
       </Flex>
@@ -133,9 +144,9 @@ const Card = ({
           colorScheme="green"
           isLoading={loading}
           onClick={() => sellLand(id)}
-          isDisabled={ownerAddress==account}
+          isDisabled={landStatus == "paymentdone"}
         >
-          Buy Land
+          {isforSell ? "Cancel" : "sell now"}
         </Button>
         <Button
           variant="ghost"
@@ -162,7 +173,6 @@ const Card = ({
                 isLandVerified,
                 isforSell,
                 landStatus,
-                isUserVerified: currentUser[0].isUserVerified,
               })
             );
             router.push("MyLands/LandDetails");
@@ -176,11 +186,11 @@ const Card = ({
 };
 
 const LandCard = () => {
-  const { landforSell } = useContext(Web3Context);
+  const { currentUserLand } = useContext(Web3Context);
 
   return (
     <Flex wrap={"wrap"} alignItems={"center"} justifyContent={"space-evenly"}>
-      {landforSell?.map((land) => (
+      {currentUserLand?.map((land) => (
         <Card
           key={land.id}
           {...land}

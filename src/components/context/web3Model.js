@@ -164,6 +164,12 @@ const Web3Provider = ({ children }) => {
 
 
   const currentUser = users?.filter((u) => u.address == account);
+  const currentUserLand=land?.filter((land)=>land.ownerAddress==account)
+  const landforSell=land?.filter((land)=>(land.isforSell
+  ))
+  console.log('sel', landforSell)
+
+  console.log('asasas',landforSell)
 
   const web3ContextValue = {
     provider,
@@ -180,6 +186,7 @@ const Web3Provider = ({ children }) => {
     connectWallet,
     refreshState,
     disconnect,
+    currentUserLand,
     matic,
     pkr,
     userAddress,
@@ -187,6 +194,7 @@ const Web3Provider = ({ children }) => {
     users,
     land,
     landId,
+    landforSell,
     setLandId,
   };
 

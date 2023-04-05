@@ -33,6 +33,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
     try {
       setLoading(true);
       await contract.verifyUser(address);
+      console.log('add',address)
       toast({
         title: "Verified Susscesfully",
         status: "success",

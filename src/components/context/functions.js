@@ -91,26 +91,29 @@ export const Lands = async (contract) => {
     })
   );
 
-//   const landhistory = await Promise?.all(
-//     landsArray?.map(async (id) => {
-//       const { timestamp, parentId, childCount, ownerAddress } =
-//         await contract?.getLandHistory(id);
-//       return {
-//         parentId: parseInt(parentId?._hex),
-//         childCount: parseInt(childCount?._hex),
-//         Harea: parseInt(area?._hex),
-//         HownerAddress: ownerAddress,
-//         Htimestampe: parseInt(timestamp._hex),
-//       };
-//     })
-//   );
 
-//   console.log(landhistory, "ajskj");
+  const requeststatus = {
+    0: "pending",
+    1: "accepted",
+    2: "rejected",
+    3: "paymentdone",
+    4: "completed",
+  };
+  const getStatus = async (landId) => {
+    const status = await contract?.LandRequestMapping(landId);
+    return requeststatus[status?.requestStatus];
+  };
 
-  const landsData = land.map((landItem, index) => ({
-    ...landItem,
-    ...landinfo[index],
-    // ...landhistory[index],
-  }));
+  const landsData = await Promise.all(
+    land.map(async (landItem, index) => {
+      const status = await getStatus(landItem.id);
+      return {
+        ...landItem,
+        ...landinfo[index],
+        landStatus: status,
+      };
+    })
+  );
+
   return landsData;
 };
