@@ -147,16 +147,22 @@ const Web3Provider = ({ children }) => {
   // const [land, setLands] = useState();
   // const [users,setUsers]=useState()
 
-  const { data: users, error: userError } = useSWR('/api/getAlluser', () => getAlluser(contract), { refreshInterval: 0 });
-  const { data: land, error: landError } = useSWR('/api/Lands', () => Lands(contract), { refreshInterval: 0 });
+  const { data: users, error: userError } = useSWR(
+    ["users", contract],
+    async () => await getAlluser(contract),
+    { revalidateOnMount: true }
+  );
+
+  const { data: land, error: landError } = useSWR(
+    ["lands", contract],
+    async () => await Lands(contract),
+    { revalidateOnMount: true }
+  );
+
+  console.log(land, users);
 
 
 
-
-  console.log('lasn as',land)
-
-
-  
   const currentUser = users?.filter((u) => u.address == account);
 
   const web3ContextValue = {

@@ -27,19 +27,21 @@ export default function SidebarWithHeader({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (router.pathname.startsWith("/Admin")) {
-      setLinks(AdminLink);
-      setRole('Admin')
-    } else if (router.pathname.startsWith("/Inspector")) {
-      setLinks(InspectorLinks);
-      setRole("Inspector")
-    }
-    else if(router.pathname.startsWith("/User"))
-    {
-      setLinks(UserLinks);
-      setRole("User")
-      setData(currentUser[0])
-    }
+
+    try {
+      if (router.pathname.startsWith("/Admin")) {
+        setLinks(AdminLink);
+        setRole("Admin");
+      } else if (router.pathname.startsWith("/Inspector")) {
+        setLinks(InspectorLinks);
+        setRole("Inspector");
+      } else if (router.pathname.startsWith("/User")) {
+        setLinks(UserLinks);
+        setRole("User");
+
+        setData(currentUser[0]);
+      }
+    } catch (error) {}
   }, [router.pathname]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
