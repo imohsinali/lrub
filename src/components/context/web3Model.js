@@ -144,27 +144,16 @@ const Web3Provider = ({ children }) => {
       setMatic(null);
     }
   }
-  const [land, setLands] = useState();
-  const [users,setUsers]=useState()
+  // const [land, setLands] = useState();
+  // const [users,setUsers]=useState()
 
-
-  useEffect(() => {
-
-     const data =async()=>{
-      const users = await getAlluser(contract);
-     setUsers(users);
-
-      const lands=await Lands(contract)
-     setLands(lands)
-
-     }
-     data()
-    
-  }, [contract]);
+  const { data: users, error: userError } = useSWR('/api/getAlluser', () => getAlluser(contract), { refreshInterval: 0 });
+  const { data: land, error: landError } = useSWR('/api/Lands', () => Lands(contract), { refreshInterval: 0 });
 
 
 
-  console.log('lasn',land)
+
+  console.log('lasn as',land)
 
 
   
