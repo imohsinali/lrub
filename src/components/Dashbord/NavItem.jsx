@@ -5,7 +5,7 @@ const { Flex, Icon } = require("@chakra-ui/react");
 
 const NavItem = ({ icon, children,src, ...rest }) => {
   const router= useRouter()
-  console.log(router.asPath,src)
+  console.log('mas', router.asPath,src)
   
   return (
     // <Link href="/" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
@@ -46,7 +46,9 @@ const NavItem = ({ icon, children,src, ...rest }) => {
           as={icon}
         />
       )}
-      {children}
+      {children
+    
+      }
     </Flex>
     // </Link>
   );

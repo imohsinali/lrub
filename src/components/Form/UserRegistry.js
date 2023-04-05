@@ -6,7 +6,9 @@ import {
   FormLabel,
   Input,
   FormHelperText,
+  Select,
 } from "@chakra-ui/react";
+import { districtData } from "../utils/districts";
 
 export const Form1 = ({ formData, onChange }) => {
   return (
@@ -127,6 +129,33 @@ export const Form2 = ({ formData, onChange }) => {
             onChange({ ...formData, city: e.target.value });
           }}
         />
+      </FormControl>
+
+      <FormControl mt="2%" isRequired>
+        <FormLabel htmlFor="district" fontWeight={"normal"}>
+          District
+        </FormLabel>
+
+        <Select
+          id="district"
+          name="district"
+          autoComplete=""
+          placeholder="Select option"
+          value={formData.district}
+          onChange={(e) => {
+            onChange({ ...formData, district: e.target.value });
+          }}
+          size="sm"
+          w={"full"}
+          rounded="md"
+          h={10}
+        >
+          {districtData.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </Select>
       </FormControl>
 
       <FormControl as={GridItem} colSpan={[6, 3, null, 2]} isRequired>

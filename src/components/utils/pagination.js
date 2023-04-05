@@ -3,7 +3,7 @@ import * as React from "react";
 import { Paginate } from "react-paginate-chakra-ui";
   import { useBreakpointValue } from "@chakra-ui/react";
 
-export default function Pagination({ handlePageClick, page }) {
+export default function Pagination({ handlePageClick, page,p }) {
   console.log("pagination",Paginate);
 
 
@@ -29,7 +29,9 @@ return (
       fontWeight="blue"
       width="1px"
       borderColor="blue.500"
+      color='black'
       borderWidth="2px"
+      backgroundColor="gray.200"
       borderRadius="md"
       fontSize={{ base: "sm", md: "md" }}
       textAlign="center"

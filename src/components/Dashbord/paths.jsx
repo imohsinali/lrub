@@ -16,9 +16,12 @@ export const InspectorLinks = [
   { name: "Home", icon: FiHome, src: "/Inspector" },
   { name: "Verify User", icon: FiTrendingUp, src: "/Inspector/VerifyUser" },
   { name: "Verify Land", icon: FiCompass, src: "/Inspector/VerifyLand" },
-  { name: "Transfer Ownership", icon: FiStar, src: "/Inspector/TransferOwnership" },
+  {
+    name: "Transfer Ownership",
+    icon: FiStar,
+    src: "/Inspector/TransferOwnership",
+  },
 ];
-
 
 export const UserLinks = [
   { name: "Home", icon: FiHome, src: "/User" },

@@ -21,7 +21,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  let verifydate = new Date(userdata[0]?.verifydate * 1000); // convert seconds to milliseconds
+  let verifydate = new Date(userdata[0]?.registerdate * 1000); // convert seconds to milliseconds
   const date = new Date(verifydate.toUTCString());
 
   verifydate = date.toUTCString();
@@ -29,6 +29,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
   verifydate = date.toLocaleString("GMT", options);
 
   const verifyUser = async (address) => {
+    console.log('address', address)
     try {
       setLoading(true);
       await contract.verifyUser(address);
@@ -110,8 +111,8 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyUser(user?.address)}
-            isDisabled={userdata[0]?.isUserVerified}
+            onClick={() => verifyUser(user[0]?.address)}
+            isDisabled={!user[0]?.isUserVerified}
             isLoading={loading}
           >
             Confirm

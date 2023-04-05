@@ -13,6 +13,8 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Badge,
+  Image,
 } from "@chakra-ui/react";
 import { useContext } from "react";
 import {
@@ -79,10 +81,17 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
+                {/* <Badge count={<CheckCircleTwoTone twoToneColor="#52c41a" />}> */}
                 <Avatar
                   size={"sm"}
                   src={`https://gateway.pinata.cloud/ipfs/${data?.profilepic}`}
+                  style={{
+                    border: data?.isUserVerified
+                      ? "2px solid green"
+                      : "2px solid red",
+                  }}
                 />
+                {/* </Badge> */}
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"

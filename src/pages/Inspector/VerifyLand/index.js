@@ -18,48 +18,15 @@ import { Web3Context } from "@/components/context/web3Model";
 import VerifyLandModel from "@/components/Models/VerifyLandModel";
 
 const TableWithPagination = () => {
-  const { contract, setUser } = useContext(Web3Context);
+  const { land, setLandId } = useContext(Web3Context);
 
-  const { data: users } = useSWR(["data", contract], async () => {
-    const userAddresses = await contract.ReturnAllUserList();
-
-    const users = await Promise.all(
-      userAddresses.map(async (address) => {
-        const {
-          name,
-          city,
-          dob,
-          document,
-          profilepic,
-          isUserVerified,
-          cinc,
-          verfiedby,
-          verifydate,
-          email,
-        } = await contract.UserMapping(address);
-        return {
-          address,
-          name: ethers.utils.parseBytes32String(name),
-          city: ethers.utils.parseBytes32String(city),
-          email: ethers.utils.parseBytes32String(email),
-          verifydate: parseInt(verifydate._hex),
-          dob: ethers.utils.parseBytes32String(dob),
-          cnic: parseInt(cinc._hex),
-          verfiedby,
-          isUserVerified,
-          document,
-          profilepic,
-        };
-      })
-    );
-    return users;
-  });
-  console.log("dar", users);
-  const [currentPage, setCurrentPage] = useState(1);
+  
+  console.log("dar", land);
+  const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
   const indexOfLastPost = (currentPage + 1) * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = users
+  const currentPosts = land
     ?.slice(indexOfFirstPost, indexOfLastPost)
     .filter(Boolean);
 
@@ -83,21 +50,21 @@ const TableWithPagination = () => {
           <Thead fontSize={{ base: 14, md: 20 }}>
             <Tr fontSize={{ base: 12, md: 17 }}>
               <Th fontSize={{ base: 10, md: 17 }}>#</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Wallet Address</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Name</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>City</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Cnic</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Remove</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Owner Address</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>District</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>PropertyId</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>landArea Sqft</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Verify</Th>
             </Tr>
           </Thead>
           <Tbody>
             {currentPosts?.map((row, index) => (
               <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
                 <Td>{index}</Td>
-                <Td>{row.address}</Td>
-                <Td>{row.name.split("|").join(" ")}</Td>
-                <Td>{row.city}</Td>
-                <Td>{row.cnic}</Td>
+                <Td>{row?.ownerAddress}</Td>
+                <Td>{row?.district}</Td>
+                <Td>{row?.propertyPID}</Td>
+                <Td>{row?.landArea} sqft</Td>
                 <Td>
                   <Button
                     backgroundColor={"green"}
@@ -107,7 +74,7 @@ const TableWithPagination = () => {
                     onClick={() => {
                       setOpen(true);
 
-                      setUser(row.address);
+                      setLandId(row.id);
                     }}
                   >
                     Verify
@@ -120,7 +87,7 @@ const TableWithPagination = () => {
       </Box>
 
       {isOpen && (
-        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} user={users} />
+        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} land={land} />
       )}
 
       <Flex bgColor={"red"}>

@@ -7,8 +7,6 @@ const JoinCard = ({ image, title, description }) => {
       //   borderWidth="1px"
       //   borderRadius="lg"
       overflow="hidden"
-      h={500}
-      backgroundColor={'red'}
 
       //   transition="transform .2s"
       //   _hover={{ transform: "scale(1.05)" }}

@@ -41,7 +41,6 @@ export default function SidebarWithHeader({ children }) {
       setData(currentUser[0])
     }
   }, [router.pathname]);
-  console.log(data,'da')
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH={{base:"100vh", sm:"125vh"}} bg={useColorModeValue("gray.50", "gray.800")}>
@@ -60,7 +59,7 @@ export default function SidebarWithHeader({ children }) {
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent onClose={onClose} links={links} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}

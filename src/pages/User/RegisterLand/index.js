@@ -10,13 +10,12 @@ import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
 const AddLand = () => {
   const { contract, users, currentUser } = useContext(Web3Context);
-  console.log(users, currentUser);
-  const router = useRouter();
+  console.log(users,'as', currentUser);
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    landarea: "",
+    landArea: "",
     landPrice: "",
     landImage: "",
     landDocument: "",
@@ -25,24 +24,27 @@ const AddLand = () => {
     city: "",
     district: "",
     coord: "",
+    zoom:''
   });
   const toast = useToast();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log('form', formData);
+          const {
+            landArea,
+            landPrice,
+            landImage,
+            landDocument,
+            landPid,
+            landAddress,
+            city,
+            district,
+            coord,
+            zoom
+          } = formData;
 
     try {
-      const {
-        landArea,
-        landPrice,
-        landImage,
-        landDocument,
-        landPid,
-        landAddress,
-        city,
-        district,
-        coord,
-      } = formData;
+
 
       const nameRegex = /^[a-zA-Z]+$/; // Name regex
 
@@ -62,8 +64,9 @@ const AddLand = () => {
       setLoading(true);
       const imgeHash = await fileHash(landImage);
       const docHash = await fileHash(landDocument);
-      const temCoord = polygon.map((point) => point.join(",")).join(";");
+      const temCoord = coord.map((point) => point.join(",")).join(";");
       const allLatiLongi = temCoord + "/" + zoom;
+
       // function addLand(uint _area, bytes32 _landAddress,bytes32 _district, uint _landPrice, string memory  _allLatiLongi, uint _propertyPID, string memory  _document, string memory  _landpic) public {
 
       const transaction = await contract.addLand(
@@ -80,18 +83,6 @@ const AddLand = () => {
       );
 
       await transaction.wait();
-      const token = await new SignJWT({})
-        .setProtectedHeader({ alg: "HS256" })
-        .setJti(nanoid())
-        .setIssuedAt()
-        .setExpirationTime("1H")
-        .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_USER));
-      setCookie(null, "Usertoken", token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-        secure: process.env.NODE_ENV === "development",
-      });
-      router.push("/User");
       setLoading(false);
       toast({
         title: "Registered Successfully",
@@ -101,6 +92,10 @@ const AddLand = () => {
       });
     } catch (error) {
       setLoading(false);
+
+      const temCoord = coord.map((point) => point.join(",")).join(";");
+      const allLatiLongi = temCoord + "/" + zoom;
+      console.log(allLatiLongi)
 
       toast({
         title: "Something went wrong",
@@ -185,7 +180,7 @@ const AddLand = () => {
                 variant="outline"
                 w="6rem"
                 ml="5%"
-                isDisabled={step < 3}
+                isDisabled={step < 3 || !currentUser[0].isUserVerified}
                 _hover={{
                   variant: "solid",
                 }}

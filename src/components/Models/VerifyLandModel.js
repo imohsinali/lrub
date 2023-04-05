@@ -14,24 +14,27 @@ import {
 import { useContext, useState } from "react";
 import { Web3Context } from "../context/web3Model";
 
-export default function VerifyLandModel({ isOpen, setOpen, user }) {
-  const { contract, userAddress } = useContext(Web3Context);
-  const userdata = user?.filter((u) => u.address == userAddress);
-  console.log("moas", userdata[0], userAddress);
+export default function VerifyLandModel({ isOpen, setOpen,land }) {
+  const { contract, landId } = useContext(Web3Context);
+  console.log('land', land)
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  let verifydate = new Date(userdata[0]?.verifydate * 1000); // convert seconds to milliseconds
-  const date = new Date(verifydate.toUTCString());
 
-  verifydate = date.toUTCString();
-  const options = { hour12: true };
-  verifydate = date.toLocaleString("GMT", options);
 
-  const verifyUser = async (address) => {
+  const landdata = land?.filter((la) =>la.id== landId);
+  console.log("moas", landdata[0],landId);
+
+  // let verifydate = new Date(landdata[0]?.registerdate * 1000); // convert seconds to milliseconds
+  // const date = new Date(verifydate.toUTCString());
+
+  // verifydate = date.toUTCString();
+  // const options = { hour12: true };
+  // verifydate = date.toLocaleString("GMT", options);
+  const verifyLand = async (id) => {
     try {
       setLoading(true);
-      await contract.verifyUser(address);
+      await contract.verifyLand(id);
       toast({
         title: "Verified Susscesfully",
         status: "success",
@@ -60,23 +63,20 @@ export default function VerifyLandModel({ isOpen, setOpen, user }) {
           <Flex alignItems={"center"}>
             <Avatar
               alignSelf={"flex-start"}
-              src={`https://gateway.pinata.cloud/ipfs/${userdata[0]?.profilepic}`}
+              // src={`https://gateway.pinata.cloud/ipfs/${userdata[0]?.profilepic}`}
             />
-            <Text ml={20}>User Details</Text>
+            <Text ml={20}>
+              LandDetail id:{landdata[0].id} {landdata[0].isLandVerified?"veriifed":'none' }{" "}
+            </Text>
           </Flex>
         </ModalHeader>
         <ModalBody>
-          <p>Wallet Address: {userdata[0]?.address}</p>
-          <p>Name: {userdata[0]?.name.split("|").join(" ")}</p>
-          <p>CNIC: {userdata[0]?.cnic}</p>
-          <p>Date of Birth: {userdata[0]?.dob}</p>
-          <p>City: {userdata[0]?.city}</p>
           <p>
             Document:
             {
               <Button variant={"link"}>
                 <a
-                  href={`https://gateway.pinata.cloud/ipfs/${userdata[0]?.document}`}
+                  href={`https://gateway.pinata.cloud/ipfs/${landdata[0]?.document}`}
                   target="_blank"
                 >
                   View the details
@@ -84,11 +84,9 @@ export default function VerifyLandModel({ isOpen, setOpen, user }) {
               </Button>
             }
           </p>
-          <p>Email:{userdata[0]?.email}</p>
-          <p>verfiedby: {userdata[0]?.verfiedby}</p>
           <p>
-            {user[0]?.isUserVerified ? "Verified Date" : "Regsitered Date"}:
-            {verifydate}
+            {land[0]?.isLandVerified ? "Verified Date" : "Regsitered Date"}:
+            {/* {verifydate} */}
           </p>
         </ModalBody>
 
@@ -110,8 +108,8 @@ export default function VerifyLandModel({ isOpen, setOpen, user }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyUser(user?.address)}
-            isDisabled={userdata[0]?.isUserVerified}
+            onClick={() => verifyLand(landdata[0].id)}
+            // isDisabled={userdata[0]?.isUserVerified}
             isLoading={loading}
           >
             Confirm

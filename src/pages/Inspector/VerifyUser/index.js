@@ -21,43 +21,9 @@ import { Web3Context } from "@/components/context/web3Model";
 import VerifyUserModel from "@/components/Models/VerifyUserModel";
 
 const TableWithPagination = () => {
-  const { contract, setUser } = useContext(Web3Context);
+  const {  setUser,users } = useContext(Web3Context);
 
-  const { data: users } = useSWR(["data", contract], async () => {
-    const userAddresses = await contract.ReturnAllUserList();
-
-    const users = await Promise.all(
-      userAddresses.map(async (address) => {
-        const {
-          name,
-          city,
-          dob,
-          document,
-          profilepic,
-          isUserVerified,
-          cinc,
-          verfiedby,
-          verifydate,
-          email,
-        } = await contract.UserMapping(address);
-        return {
-          address,
-          name: ethers.utils.parseBytes32String(name),
-          city: ethers.utils.parseBytes32String(city),
-          email: ethers.utils.parseBytes32String(email),
-          verifydate: parseInt(verifydate._hex),
-          dob: ethers.utils.parseBytes32String(dob),
-          cnic: parseInt(cinc._hex),
-          verfiedby,
-          isUserVerified,
-          document,
-          profilepic,
-        };
-      })
-    );
-    return users;
-  });
-  console.log("dar", users);
+  
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
   const indexOfLastPost = (currentPage + 1) * postsPerPage;

@@ -33,13 +33,13 @@ const TableWithPagination = () => {
     return inpsectors;
   });
   console.log("dar", inspectors);
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const [postsPerPage] = useState(10);
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = inspectors?.slice(indexOfFirstPost, indexOfLastPost);
-
+const [currentPage, setCurrentPage] = useState(0);
+const [postsPerPage] = useState(10);
+const indexOfLastPost = (currentPage + 1) * postsPerPage;
+const indexOfFirstPost = indexOfLastPost - postsPerPage;
+const currentPosts = inspectors
+  ?.slice(indexOfFirstPost, indexOfLastPost)
+  .filter(Boolean);
   console.log("indexOfFirstPost", indexOfFirstPost);
 
   const handlePageClick = (p) => {

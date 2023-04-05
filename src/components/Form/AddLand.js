@@ -5,9 +5,7 @@ import {
   FormLabel,
   Input,
   Select,
-  Container,
   IconButton,
-  Button,
   Box,
 } from "@chakra-ui/react";
 
@@ -228,7 +226,7 @@ mapboxgl.accessToken =
 
     map.current.on("draw.create", (e) => {
       setPolygon(e.features[0].geometry.coordinates[0]);
-      onChange({ ...formData, coord: e.features[0].geometry.coordinates[0] });
+      onChange({ ...formData,  coord: e.features[0].geometry.coordinates[0] ,zoom:zoom });
       
     });
 
@@ -243,7 +241,7 @@ mapboxgl.accessToken =
 const router=useRouter()
   useEffect(() => {
     if (router.pathname === "/User/RegisterLand") {
-        console.log(router.pathname)
+      console.log(router.pathname);
       document.body.style.zoom = 1;
     } else {
       document.body.style.zoom = 0.8;

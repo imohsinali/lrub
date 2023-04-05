@@ -19,6 +19,7 @@ const UserRegistration = () => {
     email: "",
     cnic: 0,
     city: "",
+    district:'',
     profile: "",
     document: "",
   });
@@ -27,7 +28,7 @@ const UserRegistration = () => {
     e.preventDefault();
 
     try {
-      const { fname, lname, dob, cnic, city, document, profile, email } =
+      const { fname, lname, dob, cnic, city,district, document, profile, email } =
         formData;
 
       const dobDate = new Date(dob);
@@ -93,6 +94,7 @@ const UserRegistration = () => {
         stringToBytes32(name),
         stringToBytes32(dob),
         stringToBytes32(city),
+        stringToBytes32(district),
         Number(cnic),
         docHash,
 
@@ -102,18 +104,7 @@ const UserRegistration = () => {
       );
 
       await transaction.wait();
-      const token = await new SignJWT({})
-        .setProtectedHeader({ alg: "HS256" })
-        .setJti(nanoid())
-        .setIssuedAt()
-        .setExpirationTime("1H")
-        .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_USER));
-      setCookie(null, "Usertoken", token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-        secure: process.env.NODE_ENV === "development",
-      });
-      router.push("/User");
+      router.push("/");
       setLoading(false);
       toast({
         title: "Registered Successfully",

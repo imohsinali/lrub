@@ -7,9 +7,10 @@ import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
 import axios from "axios";
 import useSWR from "swr";
+import { getAlluser, Lands } from "./functions";
 
-const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
-// const contractAddress = "0xD46eD2856742C3741d6d558694aA5A7fb9f58e60";
+// const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
+const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
 
 const providerOptions = {
   walletconnect: {
@@ -48,6 +49,8 @@ const Web3Provider = ({ children }) => {
   const [pkr, setPkr] = useState(null);
   const [matic, setMatic] = useState(null);
   const [userAddress,setUser]=useState('')
+  const [landId, setLandId] = useState();
+
   const connectWallet = async () => {
     try {
       const web3Modal = await getWeb3Modal();
@@ -141,41 +144,30 @@ const Web3Provider = ({ children }) => {
       setMatic(null);
     }
   }
+  const [land, setLands] = useState();
+  const [users,setUsers]=useState()
 
-  const { data: users } = useSWR(["data", contract], async () => {
-    const userAddresses = await contract.ReturnAllUserList();
 
-    const users = await Promise.all(
-      userAddresses.map(async (address) => {
-        const {
-          name,
-          city,
-          dob,
-          document,
-          profilepic,
-          isUserVerified,
-          cinc,
-          verfiedby,
-          verifydate,
-          email,
-        } = await contract.UserMapping(address);
-        return {
-          address,
-          name: ethers.utils.parseBytes32String(name),
-          city: ethers.utils.parseBytes32String(city),
-          email: ethers.utils.parseBytes32String(email),
-          verifydate: parseInt(verifydate._hex),
-          dob: ethers.utils.parseBytes32String(dob),
-          cnic: parseInt(cinc._hex),
-          verfiedby,
-          isUserVerified,
-          document,
-          profilepic,
-        };
-      })
-    );
-    return users;
-  });
+  useEffect(() => {
+
+     const data =async()=>{
+      const users = await getAlluser(contract);
+     setUsers(users);
+
+      const lands=await Lands(contract)
+     setLands(lands)
+
+     }
+     data()
+    
+  }, [contract]);
+
+
+
+  console.log('lasn',land)
+
+
+  
   const currentUser = users?.filter((u) => u.address == account);
 
   const web3ContextValue = {
@@ -197,7 +189,10 @@ const Web3Provider = ({ children }) => {
     pkr,
     userAddress,
     setUser,
-    users
+    users,
+    land,
+    landId,
+    setLandId,
   };
 
 
