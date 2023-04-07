@@ -22,7 +22,7 @@ export const getAlluser = async (contract) => {
         email: ethers.utils.parseBytes32String(email),
         dob: ethers.utils.parseBytes32String(dob),
         cnic: parseInt(cinc?._hex),
-        registerdate:parseInt(registerdate?._hex),
+        registerdate: parseInt(registerdate?._hex),
         isUserVerified,
         document,
         profilepic,
@@ -31,8 +31,6 @@ export const getAlluser = async (contract) => {
   );
   return users;
 };
-
-
 
 export const Lands = async (contract) => {
   const allLandhex = await contract?.landsCount();
@@ -80,7 +78,7 @@ export const Lands = async (contract) => {
     })
   );
 
-  console.log('las;als',land)
+  console.log("las;als", land);
   const landinfo = await Promise?.all(
     landsArray?.map(async (id) => {
       const { timestamp, verfiedby } = await contract?.landinfo(id);
@@ -90,7 +88,6 @@ export const Lands = async (contract) => {
       };
     })
   );
-
 
   const requeststatus = {
     0: "pending",
@@ -116,4 +113,74 @@ export const Lands = async (contract) => {
   );
 
   return landsData;
+};
+
+export const RecivedRequest = async (contract) => {
+  const allLand = await contract.myReceivedLandRequests();
+  const request = await Promise.all(
+    allLand.map(async (id) => {
+      const { sellerId, buyerId, landId, reqId,bidPrice, requestStatus, isPaymentDone } =
+        await contract.LandRequestMapping(id);
+      return {
+        sellerId,
+        buyerId,
+        landId: parseInt(landId._hex),
+        reqId: parseInt(reqId._hex),
+        requestStatus,
+        bidPrice:parseInt(bidPrice._hex),
+        isPaymentDone,
+      };
+    })
+  );
+
+  
+  
+
+  const usersWithStatus = await Promise.all(
+    request.map(async (req) => {
+
+      return {
+        ...req,
+      };
+    })
+  );
+  return usersWithStatus;
+};
+
+
+
+
+export const SendRequest = async (contract) => {
+  const allLand = await contract.mySentLandRequests();
+  const request = await Promise.all(
+    allLand.map(async (id) => {
+      const {
+        sellerId,
+        buyerId,
+        landId,
+        reqId,
+        bidPrice,
+        requestStatus,
+        isPaymentDone,
+      } = await contract.LandRequestMapping(id);
+      return {
+        sellerId,
+        buyerId,
+        landId: parseInt(landId._hex),
+        reqId: parseInt(reqId._hex),
+        requestStatus,
+        bidPrice: parseInt(bidPrice._hex),
+        isPaymentDone,
+      };
+    })
+  );
+
+  const usersWithStatus = await Promise.all(
+    request.map(async (req) => {
+      return {
+        ...req,
+      };
+    })
+  );
+  return usersWithStatus;
 };

@@ -7,7 +7,7 @@ import WalletConnect from "@walletconnect/web3-provider";
 import { useRouter } from "next/router";
 import axios from "axios";
 import useSWR from "swr";
-import { getAlluser, Lands } from "./functions";
+import { getAlluser, Lands, RecivedRequest, SendRequest } from "./functions";
 
 // const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
 const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
@@ -48,7 +48,7 @@ const Web3Provider = ({ children }) => {
   const [contract, setContract] = useState();
   const [pkr, setPkr] = useState(null);
   const [matic, setMatic] = useState(null);
-  const [userAddress,setUser]=useState('')
+  const [userAddress, setUser] = useState("");
   const [landId, setLandId] = useState();
 
   const connectWallet = async () => {
@@ -159,18 +159,28 @@ const Web3Provider = ({ children }) => {
     { revalidateOnMount: true }
   );
 
-  console.log(land, users);
+  const { data: landstatus, error: statusError } = useSWR(
+    ["status", contract],
+    async () => await RecivedRequest(contract),
+    { revalidateOnMount: true }
+  );
+
+  const { data: sendRequest, error: sendreqError } = useSWR(
+    ["sendRequest", contract],
+    async () => await SendRequest(contract),
+    { revalidateOnMount: true }
+  );
 
 
+  console.log(land, users, landstatus,sendRequest);
 
   const currentUser = users?.filter((u) => u.address == account);
-  const currentUserLand=land?.filter((land)=>land.ownerAddress==account)
-  const landforSell=land?.filter((land)=>(land.isforSell
-  ))
-  console.log('sel', landforSell)
+  const currentUserLand = land?.filter((land) => land.ownerAddress == account);
+  const landforSell = land?.filter((land) => land.isforSell);
+  console.log("sel", landforSell);
 
-  console.log('asasas',landforSell)
-
+  console.log("asasas", landforSell);
+  const [mapzoom,setMapzoom]=useState(false)
   const web3ContextValue = {
     provider,
     library,
@@ -196,9 +206,11 @@ const Web3Provider = ({ children }) => {
     landId,
     landforSell,
     setLandId,
+    landstatus,
+    sendRequest,
+    mapzoom,
+    setMapzoom,
   };
-
-
 
   return (
     <Web3Context.Provider value={web3ContextValue}>

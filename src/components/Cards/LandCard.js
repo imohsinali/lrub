@@ -6,10 +6,16 @@ import {
   Divider,
   Button,
   useToast,
+  FormControl,
+  FormLabel,
+  InputGroup,
+  Input,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { Web3Context } from "../context/web3Model";
+import BuyLandModel from "../Models/BuyLandModel";
 
 const Card = ({
   id,
@@ -30,10 +36,14 @@ const Card = ({
   verfiedby,
   landStatus,
 }) => {
-  const { contract,account,currentUser } = useContext(Web3Context);
+  const { contract, account, currentUser, land, setLandId } =
+    useContext(Web3Context);
+
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [isOpen, setOpen] = useState(false);
+
   console.log("land id", id);
   const sellLand = async (id) => {
     try {
@@ -77,12 +87,11 @@ const Card = ({
       });
       setLoading(false);
     }
-
-
   };
+
   return (
     <Box
-      h={490}
+      h={ownerAddress == account ? 450 : 500}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -97,7 +106,7 @@ const Card = ({
       <Image
         src={`https://gateway.pinata.cloud/ipfs/${landpic}`}
         minwidth={340}
-        minH={280}
+        minH={230}
       />
 
       <Flex mb={2} justifyContent="space-between">
@@ -125,52 +134,73 @@ const Card = ({
       <Text color="gray.600" display={{}}>
         {/* {landpic} */}
       </Text>
+
       <Divider />
-      <Flex justifyContent={"space-between"} mt={2}>
-        <Button
-          variant="outline"
-          borderRadius={"10px"}
-          colorScheme="green"
-          isLoading={loading}
-          onClick={() => sellLand(id)}
-          isDisabled={ownerAddress==account}
-        >
-          Buy Land
-        </Button>
-        <Button
-          variant="ghost"
-          borderRadius={"10px"}
-          colorScheme="blue"
-          onClick={() => {
-            localStorage.setItem(
-              "landdetails",
-              JSON.stringify({
-                id,
-                district,
-                landpic,
-                landPrice,
-                allLatitudeLongitude,
-                document,
-                landArea,
-                ownerAddress,
-                propertyPID,
-                registerdate,
-                landAddress,
-                proxyownerAddress,
-                timestamp,
-                verfiedby,
-                isLandVerified,
-                isforSell,
-                landStatus,
-                isUserVerified: currentUser[0].isUserVerified,
-              })
-            );
-            router.push("MyLands/LandDetails");
-          }}
-        >
-          View Details
-        </Button>
-      </Flex>
+      
+      <Box display="flex" flexWrap="wrap">
+        <Flex justifyContent={"space-between"} mt={2} flex="1">
+          <Button
+            variant="outline"
+            borderRadius={"10px"}
+            colorScheme="green"
+            isLoading={loading}
+            onClick={() => {
+              setLandId(id);
+              setOpen(true);
+            }}
+            isDisabled={ownerAddress == account}
+          >
+            Make offer
+          </Button>
+        </Flex>
+        <Flex mt={2} flex="1" justifyContent="flex-end">
+          <Button
+            variant="ghost"
+            borderRadius={"10px"}
+            colorScheme="blue"
+            onClick={() => {
+              const [coord, zoom] = allLatitudeLongitude?.split("/");
+              const coordArray = coord?.split(";")?.map((pair) => {
+                const [longitude, latitude] = pair?.split(",");
+                return [Number(longitude), Number(latitude)];
+              });
+
+              localStorage.setItem(
+                "landdetails",
+                JSON.stringify({
+                  id,
+                  district,
+                  landpic,
+                  landPrice,
+                  zoom,
+                  coord1: coordArray[0][0],
+                  coord2: coordArray[0][1],
+                  coordArray,
+                  document,
+                  landArea,
+                  ownerAddress,
+                  propertyPID,
+                  registerdate,
+                  landAddress,
+                  proxyownerAddress,
+                  timestamp,
+                  verfiedby,
+                  isLandVerified,
+                  isforSell,
+                  landStatus,
+                  isUserVerified: currentUser[0].isUserVerified,
+                  currentUser: currentUser[0].address == account,
+                  link: "LandMarket",
+                })
+              );
+              router.push("LandDetails");
+            }}
+          >
+            View Details
+          </Button>
+        </Flex>
+      </Box>
+      {isOpen && <BuyLandModel isOpen={isOpen} setOpen={setOpen} land={land} />}
     </Box>
   );
 };

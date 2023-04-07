@@ -22,9 +22,7 @@ import { useRouter } from "next/router";
 export const Form1 = ({ formData, onChange }) => {
   return (
     <>
-      <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-        Add Land
-      </Heading>
+      
 
       <FormControl mr="5%" mt="2%" isRequired>
         <FormLabel htmlFor="landArea" fontWeight={"normal"}>
@@ -86,9 +84,7 @@ export const Form1 = ({ formData, onChange }) => {
 export const Form2 = ({ formData, onChange }) => {
   return (
     <>
-      <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-        Add Land
-      </Heading>
+      
       <FormControl mt="2%" mr="5%" isRequired>
         <FormLabel htmlFor="landPid" fontWeight={"normal"}>
           Property Id No
@@ -162,7 +158,7 @@ export const Form2 = ({ formData, onChange }) => {
 };
 
 
-export const Form3 = ({ formData, onChange }) => {
+export const Form3 = ({ formData, onChange,mapzoom }) => {
 
 
 mapboxgl.accessToken =
@@ -170,9 +166,9 @@ mapboxgl.accessToken =
 
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(65);
-  const [lat, setLat] = useState(30);
-  const [zoom, setZoom] = useState(4);
+  const [lng, setLng] = useState(0);
+  const [lat, setLat] = useState(0);
+  const [zoom, setZoom] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [polygon, setPolygon] = useState([]);
 
@@ -186,8 +182,19 @@ mapboxgl.accessToken =
       height: "calc(5vh - 130px)",
     //   width: "70%",
     });
-    handleDraw();
   });
+
+
+useEffect(() => {
+  map.current.easeTo({
+    zoom: 4,
+    duration: 6000,
+    center: [68, 29],
+  });
+
+      handleDraw();
+
+}, []);
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
@@ -226,7 +233,11 @@ mapboxgl.accessToken =
 
     map.current.on("draw.create", (e) => {
       setPolygon(e.features[0].geometry.coordinates[0]);
-      onChange({ ...formData,  coord: e.features[0].geometry.coordinates[0] ,zoom:zoom });
+onChange({
+  ...formData,
+  coord: e.features[0].geometry.coordinates[0],
+  zoom: map.current.getZoom(),
+});
       
     });
 
@@ -240,7 +251,7 @@ mapboxgl.accessToken =
 
 const router=useRouter()
   useEffect(() => {
-    if (router.pathname === "/User/RegisterLand") {
+    if (router.pathname === "/User/RegisterLand" || mapzoom) {
       console.log(router.pathname);
       document.body.style.zoom = 1;
     } else {
@@ -256,9 +267,7 @@ const router=useRouter()
 
   return (
     <>
-      <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-        Add Land
-      </Heading>
+      
       <Box width="100%" className="formPage" onSubmit={handleSearch}>
         <Flex className="search-bar" mb={4}>
           <Input

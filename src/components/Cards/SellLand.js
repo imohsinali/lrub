@@ -28,9 +28,9 @@ const Card = ({
   proxyownerAddress,
   timestamp,
   verfiedby,
-  landStatus
+  landStatus,
 }) => {
-  const { contract } = useContext(Web3Context);
+  const { contract,account } = useContext(Web3Context);
 
   const router = useRouter();
   const toast = useToast();
@@ -119,7 +119,7 @@ const Card = ({
           {landArea} Sqft
         </Text>
 
-        <Text display={"inline"} color={isLandVerified?'green':'red'}>
+        <Text display={"inline"} color={isLandVerified ? "green" : "red"}>
           {isLandVerified ? "verified" : "not verfied"}
         </Text>
       </Flex>
@@ -153,6 +153,12 @@ const Card = ({
           borderRadius={"10px"}
           colorScheme="blue"
           onClick={() => {
+            const [coord, zoom] = allLatitudeLongitude?.split("/");
+          const coordArray= coord?.split(";")?.map((pair) => {
+              const [longitude, latitude] = pair?.split(",");
+              return [Number(longitude), Number(latitude)];
+            });
+          
             localStorage.setItem(
               "landdetails",
               JSON.stringify({
@@ -160,7 +166,10 @@ const Card = ({
                 district,
                 landpic,
                 landPrice,
-                allLatitudeLongitude,
+                zoom,
+                coord1: coordArray[0][0],
+                coord2: coordArray[0][1],
+                coordArray,
                 document,
                 landArea,
                 ownerAddress,
@@ -172,10 +181,13 @@ const Card = ({
                 verfiedby,
                 isLandVerified,
                 isforSell,
+                account,
                 landStatus,
+                isUserVerified: true,
+                link: "MyLands",
               })
             );
-            router.push("MyLands/LandDetails");
+            router.push("LandDetails");
           }}
         >
           View Details

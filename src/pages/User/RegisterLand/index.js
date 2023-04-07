@@ -1,7 +1,7 @@
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 
 import React, { useContext, useEffect, useState } from "react";
-import { useToast } from "@chakra-ui/react";
+import { Heading, useToast } from "@chakra-ui/react";
 import { Form1, Form2, Form3 } from "@/components/Form/AddLand";
 import { useRouter } from "next/router";
 import { Web3Context } from "@/components/context/web3Model";
@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
 const AddLand = () => {
   const { contract, users, currentUser } = useContext(Web3Context);
-  console.log(users,'as', currentUser);
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
   const [loading, setLoading] = useState(false);
@@ -132,6 +131,9 @@ const AddLand = () => {
           mx="5%"
           isAnimated
         ></Progress>
+        <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
+          Add Land
+        </Heading>
         {step === 1 ? (
           <Form1 formData={formData} onChange={setFormData} />
         ) : step === 2 ? (

@@ -65,6 +65,8 @@ body{
   left: 10 !important;
 }
 
-.formPage{
-  zoom:1
+
+
+.formPage body {
+  zoom: 1 !important;
 }

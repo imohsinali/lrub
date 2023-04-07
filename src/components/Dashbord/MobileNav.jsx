@@ -23,6 +23,7 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import { Web3Context } from "../context/web3Model";
+import CurrencySelect from "../utils/Currency";
 
 const MobileNav = ({onOpen,role,data, ...rest }) => {
   const { disconnect } = useContext(Web3Context);
@@ -66,12 +67,7 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
       </Flex> */}
 
       <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FiBell />}
-        />
+        <CurrencySelect/>
 
         <Flex alignItems={"center"}>
           <Menu>
@@ -105,7 +101,7 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
                       : role == "Inspector"
                       ? "Inspector"
                       : role == "User"
-                      ? "User"
+                      ? ""
                       : "Gust"}
                   </Text>
                 </VStack>

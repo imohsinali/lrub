@@ -40,7 +40,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
         duration: 2000,
         isClosable: true,
       });
-      setOpen(false);
+      setOpen(false);userdata[0]?.address;
       setLoading(false);
     } catch (error) {
       toast({
@@ -112,7 +112,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyUser(user[0]?.address)}
+            onClick={() => verifyUser(userAddress)}
             isDisabled={!user[0]?.isUserVerified}
             isLoading={loading}
           >
