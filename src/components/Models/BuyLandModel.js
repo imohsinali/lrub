@@ -22,7 +22,7 @@ import { useContext, useState } from "react";
 import { Web3Context } from "../context/web3Model";
 
 export default function BuyLandModel({ isOpen, setOpen, land }) {
-  const { contract, landId, users } = useContext(Web3Context);
+  const { contract, landId, users, matic, pkr } = useContext(Web3Context);
   const [loading, setLoading] = useState(false);
   const [inPkr, setPkr] = useState(true);
   const [inPkr1, setPkr1] = useState(true);
@@ -34,12 +34,17 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
   const seller = users?.filter(
     (user) => user.address == landdata[0].ownerAddress
   );
-  console.log("sdsd", seller);
   const sendOffer = async (_landId, _bidPrice) => {
+    const price = Math.round(_bidPrice * matic);
+
     try {
       setLoading(true);
+      console.log(matic, price);
 
-     const offer= await contract.requestforBuyWithBid(Number(_landId), Number(_bidPrice));
+      const offer = await contract.requestforBuyWithBid(
+        Number(_landId),
+        Number(price)
+      );
       await offer.wait();
 
       toast({
@@ -48,10 +53,8 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
         duration: 2000,
         isClosable: true,
       });
-              setLoading(false);
-              setOpen(false);
-
-
+      setLoading(false);
+      setOpen(false);
     } catch (error) {
       toast({
         title: "Something Went Wrong",
@@ -87,7 +90,8 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
             variant={"unstyled"}
             onClick={() => setPkr(!inPkr)}
           >
-            Base Price{inPkr ? " PKR" : " Matic"}:{landdata[0].landPrice}
+            Base Price{inPkr ? " PKR" : " Matic"}:
+            {Math.round(landdata[0]?.landPrice * pkr)}
           </Button>
           <Flex mt={2} justifyContent="center" align={"center"}>
             <FormControl display={"flex"}>
@@ -141,7 +145,7 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => sendOffer(landdata[0].id, data)}
+            onClick={() => sendOffer(landdata[0]?.id, data)}
             // isDisabled={userdata[0]?.isUserVerified}
             isLoading={loading}
           >

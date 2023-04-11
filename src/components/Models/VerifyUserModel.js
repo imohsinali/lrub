@@ -32,15 +32,16 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
     console.log('address', address)
     try {
       setLoading(true);
-      await contract.verifyUser(address);
-      console.log('add',address)
+     const verified= await contract.verifyUser(address);
+      await verified.wait();
+
       toast({
         title: "Verified Susscesfully",
         status: "success",
         duration: 2000,
         isClosable: true,
       });
-      setOpen(false);userdata[0]?.address;
+      setOpen(false);
       setLoading(false);
     } catch (error) {
       toast({
@@ -53,6 +54,8 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
       setLoading(false);
     }
   };
+
+  console.log('iusrer',user[0])
 
   return (
     <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
@@ -113,7 +116,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
             mr={3}
             colorScheme="blue"
             onClick={() => verifyUser(userAddress)}
-            isDisabled={!user[0]?.isUserVerified}
+            isDisabled={userdata[0]?.isUserVerified}
             isLoading={loading}
           >
             Confirm

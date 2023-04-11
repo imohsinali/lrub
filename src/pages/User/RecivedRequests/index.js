@@ -17,7 +17,8 @@ import { Web3Context } from "@/components/context/web3Model";
 import VerifyLandModel from "@/components/Models/VerifyLandModel";
 
 const TableWithPagination = () => {
-  const { land, setLandId, landstatus, contract } = useContext(Web3Context);
+  const { land, setLandId, landstatus, contract, pkr } =
+    useContext(Web3Context);
     const [loadingRow, setLoadingRow] = useState(null);
 
 
@@ -36,7 +37,7 @@ const TableWithPagination = () => {
     return filteredLand?.length > 0 ? filteredLand[0].landPrice : null;
   };
 
-
+console.log('aland', landstatus)
 
   const handlePageClick = (p) => {
     setCurrentPage(p);
@@ -112,8 +113,8 @@ const TableWithPagination = () => {
                 <Td>{row.landId}</Td>
 
                 <Td>{row?.buyerId}</Td>
-                <Td>{landPrice(row?.landId)}</Td>
-                <Td>{row?.bidPrice}</Td>
+                <Td>{landPrice(row?.landId)*pkr}</Td>
+                <Td>{row?.bidPrice*pkr}</Td>
                 <Td>{requeststatus[row?.requestStatus]}</Td>
 
                 <Td>

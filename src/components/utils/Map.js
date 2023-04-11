@@ -17,8 +17,8 @@ useEffect(() => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/satellite-streets-v11",
-      center: [70, 30],
-      zoom: 1,
+      center: [65, 28],
+      zoom: 5,
       height: "calc(5vh - 130px)",
     });
   }  
@@ -29,11 +29,16 @@ useEffect(() => {
 useEffect(() => {
   
 
-    map.current.easeTo({
-      zoom: zoom,
-      duration: 6000,
-      center: [lng, lat],
-    });
+
+
+    map.current.flyTo({
+center: [lng, lat],
+zoom: zoom,
+speed: 1,
+curve: 1,
+easing(t) {
+return t;
+}});
     
     if (coordArray) {
       handleDraw(coordArray);

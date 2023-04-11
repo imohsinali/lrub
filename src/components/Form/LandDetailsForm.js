@@ -17,7 +17,7 @@ import { Web3Context } from "../context/web3Model";
 import fileHash from "../utils/IPFS";
 
 export default function LandDetailsForm({ landid }) {
-  const { contract } = useContext(Web3Context);
+  const { contract,matic } = useContext(Web3Context);
 
   const [area, setArea] = useState("");
   const [numberOfPlots, setNumberOfPlots] = useState("");
@@ -124,7 +124,7 @@ export default function LandDetailsForm({ landid }) {
   const handlePriceSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-
+    const landprice=Math.round(matic*price)
     try {
       const plotting = await contract.changeDetails(
         landid,
@@ -133,7 +133,7 @@ export default function LandDetailsForm({ landid }) {
         false,
         false,
         false,
-        Number(price),
+        Number(landprice),
         "",
         ""
       );
@@ -163,6 +163,46 @@ export default function LandDetailsForm({ landid }) {
     coord: "",
     zoom: "",
   });
+
+  const handleCoordSubmit = async () => {
+    setLoading(true);
+
+    const temCoord = formData.coord.map((point) => point.join(",")).join(";");
+    const allLatiLongi = temCoord + "/" + formData.zoom;
+    console.log(allLatiLongi);
+    try {
+      const plotting = await contract.changeDetails(
+        landid,
+        false,
+        false,
+        false,
+        true,
+        false,
+        0,
+        "",
+        allLatiLongi
+      );
+      await plotting.wait();
+      toast({
+        title: "Coordinates Changed Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setLoading(false);
+    } catch (error) {
+      console.log(error, landid);
+
+      toast({
+        title: "Something went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+    setLoading(false);
+  };
 
   return (
     <Box margin="auto">
@@ -233,6 +273,7 @@ export default function LandDetailsForm({ landid }) {
               bgColor={"green"}
               width={40}
               height={40}
+              allLatiLongi
               alt=""
             />
           }
@@ -422,7 +463,13 @@ export default function LandDetailsForm({ landid }) {
               mapzoom={chnageOption.coordB}
             />
           </Flex>
-          <Button type="submit" marginTop="0.1rem" variant={"outline"}>
+          <Button
+            type="submit"
+            marginTop="0.1rem"
+            variant={"outline"}
+            isLoading={loading}
+            onClick={handleCoordSubmit}
+          >
             Save
           </Button>
         </Box>

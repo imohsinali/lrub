@@ -24,7 +24,7 @@ const TableWithPagination = () => {
     3: "paymentdone",
     4: "completed",
   };
-  const { land, setLandId, sendRequest } = useContext(Web3Context);
+  const { land, setLandId, sendRequest, pkr } = useContext(Web3Context);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
@@ -77,8 +77,8 @@ const TableWithPagination = () => {
                 <Td>{row.landId}</Td>
 
                 <Td>{row?.sellerId}</Td>
-                <Td>{landPrice(row?.landId)}</Td>
-                <Td>{row?.bidPrice}</Td>
+                <Td>{Math.round(landPrice(row?.landId)*pkr)}</Td>
+                <Td>{row?.bidPrice*pkr}</Td>
                 <Td>{requeststatus[row?.requestStatus]}</Td>
                 <Td>
                   <Button

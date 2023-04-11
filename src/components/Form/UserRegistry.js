@@ -89,7 +89,19 @@ export const Form1 = ({ formData, onChange }) => {
             onChange({ ...formData, email: e.target.value });
           }}
         />
-        <FormHelperText>We'll never share your email.</FormHelperText>
+      </FormControl>
+      <FormControl mt="2%" isRequired>
+        <FormLabel htmlFor="phone" fontWeight={"normal"}>
+          phone number
+        </FormLabel>
+        <Input
+          id="phone"
+          type="phone"
+          value={formData.phone}
+          onChange={(e) => {
+            onChange({ ...formData, phone: e.target.value });
+          }}
+        />
       </FormControl>
     </>
   );

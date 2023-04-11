@@ -36,7 +36,7 @@ const Card = ({
   verfiedby,
   landStatus,
 }) => {
-  const { contract, account, currentUser, land, setLandId } =
+  const { contract, account, currentUser, land, setLandId, matic,pkr } =
     useContext(Web3Context);
 
   const router = useRouter();
@@ -125,7 +125,7 @@ const Card = ({
         <Text as="span" fontWeight="bold">
           Price:{" "}
         </Text>
-        {landPrice}Pkr
+        {Math.round(landPrice * pkr)}Pkr
       </Text>
       <Text fontSize="xl" fontWeight="light" mb="2">
         {landAddress}
@@ -136,7 +136,7 @@ const Card = ({
       </Text>
 
       <Divider />
-      
+
       <Box display="flex" flexWrap="wrap">
         <Flex justifyContent={"space-between"} mt={2} flex="1">
           <Button
@@ -148,7 +148,7 @@ const Card = ({
               setLandId(id);
               setOpen(true);
             }}
-            isDisabled={ownerAddress == account}
+            isDisabled={ownerAddress == account || landStatus == "paymentdone"}
           >
             Make offer
           </Button>

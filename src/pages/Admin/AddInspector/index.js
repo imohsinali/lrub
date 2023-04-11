@@ -92,7 +92,7 @@ const UserRegistration = () => {
       const name = fname + "|" + lname;
           // function addLandInspector(address _addr, bytes32 _name, bytes32 _dob, uint _cinc, bytes32 _designation, bytes32 _city,bytes32 _district ,bytes32  _email,uint _phone) public returns (bool) {
 
-     await contract.addLandInspector(
+   const addInspector=  await contract.addLandInspector(
        waddress,
        stringToBytes32(name),
        stringToBytes32(dob),
@@ -104,6 +104,8 @@ const UserRegistration = () => {
        Number(phone),
        { gasLimit: 1000000 }
      );
+
+     await addInspector.wait()
 
 
       setLoading(false);

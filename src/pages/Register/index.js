@@ -17,6 +17,7 @@ const UserRegistration = () => {
     fname: "",
     dob: "",
     email: "",
+    phone:0,
     cnic: 0,
     city: "",
     district:'',
@@ -28,7 +29,7 @@ const UserRegistration = () => {
     e.preventDefault();
 
     try {
-      const { fname, lname, dob, cnic, city,district, document, profile, email } =
+      const { fname, lname, dob, cnic, city,district, document, profile, email,phone } =
         formData;
 
       const dobDate = new Date(dob);
@@ -100,6 +101,8 @@ const UserRegistration = () => {
 
         imgeHash,
         stringToBytes32(email),
+        stringToBytes32(phone),
+
         { gasLimit: 1000000 }
       );
 

@@ -8,9 +8,13 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import useSWR from "swr";
 import { getAlluser, Lands, RecivedRequest, SendRequest } from "./functions";
+// const contractAddress = "0x0421587b973034bB7388B4fDC73416937543c29d";
+// const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
+// const contractAddress = "0x8d1bcb280f3ca175e7aa9b5fb19e4f198bd71de2";
+const contractAddress = "0xA80E52f0248ab5C67a4DC8Fe0f125a209332904b";
 
-// const contractAddress = "0x81Ad7380ae722619d37A216708105f42E1C372e1";
-const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
+;
+
 
 const providerOptions = {
   walletconnect: {
@@ -136,16 +140,14 @@ const Web3Provider = ({ children }) => {
   async function fetchData() {
     try {
       const { data } = await axios.get("/api/matic");
-      setPkr(data.PkrUsd);
-      setMatic(data.MaticUsd);
+      setPkr(data.PkrUsd / data.MaticUsd);
+      setMatic(data.MaticUsd / data.PkrUsd);
     } catch (error) {
       console.error(error);
       setPkr(null);
       setMatic(null);
     }
   }
-  // const [land, setLands] = useState();
-  // const [users,setUsers]=useState()
 
   const { data: users, error: userError } = useSWR(
     ["users", contract],
@@ -171,8 +173,7 @@ const Web3Provider = ({ children }) => {
     { revalidateOnMount: true }
   );
 
-
-  console.log(land, users, landstatus,sendRequest);
+  console.log(land, users, landstatus, sendRequest);
 
   const currentUser = users?.filter((u) => u.address == account);
   const currentUserLand = land?.filter((land) => land.ownerAddress == account);
@@ -180,7 +181,7 @@ const Web3Provider = ({ children }) => {
   console.log("sel", landforSell);
 
   console.log("asasas", landforSell);
-  const [mapzoom,setMapzoom]=useState(false)
+  const [mapzoom, setMapzoom] = useState(false);
   const web3ContextValue = {
     provider,
     library,

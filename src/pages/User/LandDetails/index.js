@@ -16,6 +16,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoibW9oYWluYmFsdGkiLCJhIjoiY2xhNGE2ZWd0MHg4ZTNwbXpiN2Q3a2ZsYiJ9.2J8OizwcJnm4U0Idhsu5IA";
 
 const Myland = () => {
+  const {contract}=useContext(Web3Context)
   const router = useRouter();
   const [land, setLand] = useState();
   const [lng, setLng] = useState(70);
@@ -30,7 +31,11 @@ const Myland = () => {
     setZoom(land?.zoom);
     setCoordArray(land?.coordArray);
   }, []);
+const handle=async()=>{
+        const hos = await contract.getLandHistoryId(7);
+        console.log('buy',hos)
 
+}
   return (
     <SidebarWithHeader>
       <Flex mt={20}>
@@ -150,6 +155,9 @@ const Myland = () => {
             <Text as="span" fontWeight="bold">
               Document:{" "}
             </Text>
+            <Button variant={"outline"} onClick={() => handle()}>
+              clic
+            </Button>
             <Button variant={"link"}>
               {land?.isUserVerified ? (
                 <Link
@@ -167,9 +175,7 @@ const Myland = () => {
       </Flex>
       {land?.ownerAddress == land?.account &&
         land?.isLandVerified &&
-        !land?.isforSell && (
-          <LandDetailsForm landid={land?.id} />
-        )}
+        !land?.isforSell && <LandDetailsForm landid={land?.id} />}
     </SidebarWithHeader>
   );
 };

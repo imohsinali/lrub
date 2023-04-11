@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-
 export const getAlluser = async (contract) => {
   const userAddresses = await contract?.ReturnAllUserList();
   const users = await Promise?.all(
@@ -12,16 +11,20 @@ export const getAlluser = async (contract) => {
         profilepic,
         isUserVerified,
         registerdate,
-        cinc,
+        cnic,
         email,
+        phone,
+        district,
       } = await contract.UserMapping(address);
       return {
         address,
         name: ethers.utils.parseBytes32String(name),
         city: ethers.utils.parseBytes32String(city),
+        district: ethers.utils.parseBytes32String(district),
         email: ethers.utils.parseBytes32String(email),
+        phone: ethers.utils.parseBytes32String(phone),
         dob: ethers.utils.parseBytes32String(dob),
-        cnic: parseInt(cinc?._hex),
+        cnic: parseInt(cnic?._hex),
         registerdate: parseInt(registerdate?._hex),
         isUserVerified,
         document,
@@ -29,7 +32,26 @@ export const getAlluser = async (contract) => {
       };
     })
   );
-  return users;
+
+  const userInfo = await Promise?.all(
+    userAddresses?.map(async (address) => {
+      const { verfiedby, verifydate } = await contract?.userinfo(address);
+      return {
+        verifydate: parseInt(verifydate?._hex),
+        verfiedby,
+      };
+    })
+  );
+
+  // Combine user information and user verification information
+  const usersWithInfo = users.map((user, index) => {
+    return {
+      ...user,
+      ...userInfo[index],
+    };
+  });
+console.log('suer', usersWithInfo)
+  return usersWithInfo;
 };
 
 export const Lands = async (contract) => {
@@ -39,6 +61,8 @@ export const Lands = async (contract) => {
   for (let i = 0; i < totalLands; i++) {
     landsArray.push(i + 1);
   }
+
+  console.log("ashdo", totalLands);
 
   const land = await Promise?.all(
     landsArray?.map(async (landid) => {
@@ -62,7 +86,7 @@ export const Lands = async (contract) => {
         id: parseInt(id?._hex),
 
         landArea: parseInt(area?._hex),
-        landPrice: parseInt(landPrice?._hex),
+        landPrice: parseInt(landPrice?._hex) / 10 ** 18,
         propertyPID: parseInt(propertyPID?._hex),
         registerdate: parseInt(registerdate?._hex),
         landAddress: ethers.utils.parseBytes32String(landAddress),
@@ -112,6 +136,8 @@ export const Lands = async (contract) => {
     })
   );
 
+  console.log("fun", landsData);
+
   return landsData;
 };
 
@@ -119,26 +145,29 @@ export const RecivedRequest = async (contract) => {
   const allLand = await contract.myReceivedLandRequests();
   const request = await Promise.all(
     allLand.map(async (id) => {
-      const { sellerId, buyerId, landId, reqId,bidPrice, requestStatus, isPaymentDone } =
-        await contract.LandRequestMapping(id);
+      const {
+        sellerId,
+        buyerId,
+        landId,
+        reqId,
+        bidPrice,
+        requestStatus,
+        isPaymentDone,
+      } = await contract.LandRequestMapping(id);
       return {
         sellerId,
         buyerId,
         landId: parseInt(landId._hex),
         reqId: parseInt(reqId._hex),
         requestStatus,
-        bidPrice:parseInt(bidPrice._hex),
+        bidPrice: parseInt(bidPrice._hex) / 10 ** 18,
         isPaymentDone,
       };
     })
   );
 
-  
-  
-
   const usersWithStatus = await Promise.all(
     request.map(async (req) => {
-
       return {
         ...req,
       };
@@ -146,9 +175,6 @@ export const RecivedRequest = async (contract) => {
   );
   return usersWithStatus;
 };
-
-
-
 
 export const SendRequest = async (contract) => {
   const allLand = await contract.mySentLandRequests();
@@ -182,5 +208,40 @@ export const SendRequest = async (contract) => {
       };
     })
   );
+  console.log("asaks", usersWithStatus);
+
   return usersWithStatus;
+};
+
+export const landRequest = async (contract) => {
+  const allLandhex = await contract?.landsCount();
+  const totalLands = parseInt(allLandhex?._hex);
+  const landsArray = [];
+  for (let i = 0; i < totalLands; i++) {
+    landsArray.push(i + 1);
+  }
+  const request = await Promise.all(
+    landsArray.map(async (id) => {
+      const {
+        sellerId,
+        buyerId,
+        landId,
+        reqId,
+        bidPrice,
+        requestStatus,
+        isPaymentDone,
+      } = await contract.LandRequestMapping(id);
+      return {
+        sellerId,
+        buyerId,
+        landId: parseInt(landId._hex),
+        reqId: parseInt(reqId._hex),
+        requestStatus,
+        bidPrice: parseInt(bidPrice._hex),
+        isPaymentDone,
+      };
+    })
+  );
+
+  return request;
 };

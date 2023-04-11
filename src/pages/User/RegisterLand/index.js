@@ -3,13 +3,13 @@ import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import React, { useContext, useEffect, useState } from "react";
 import { Heading, useToast } from "@chakra-ui/react";
 import { Form1, Form2, Form3 } from "@/components/Form/AddLand";
-import { useRouter } from "next/router";
 import { Web3Context } from "@/components/context/web3Model";
 import fileHash from "@/components/utils/IPFS";
 import { ethers } from "ethers";
 import { Progress, Box, ButtonGroup, Button, Flex } from "@chakra-ui/react";
+import { adjustPrice } from "@/components/utils/adjustPrice";
 const AddLand = () => {
-  const { contract, users, currentUser } = useContext(Web3Context);
+  const { contract, pkr, matic, currentUser } = useContext(Web3Context);
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(50);
   const [loading, setLoading] = useState(false);
@@ -23,28 +23,30 @@ const AddLand = () => {
     city: "",
     district: "",
     coord: "",
-    zoom:''
+    zoom: "",
   });
   const toast = useToast();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('form', formData);
-          const {
-            landArea,
-            landPrice,
-            landImage,
-            landDocument,
-            landPid,
-            landAddress,
-            city,
-            district,
-            coord,
-            zoom
-          } = formData;
+    console.log("form", formData);
+    const {
+      landArea,
+      landPrice,
+      landImage,
+      landDocument,
+      landPid,
+      landAddress,
+      city,
+      district,
+      coord,
+      zoom,
+    } = formData;
+    // const integerPart = Math.floor(landPricematic);
+    // const decimalPart = (landPricematic - integerPart) * 10 ** 18;
+    // const value = ethers.BigNumber.from(decimalPart);
 
+    // console.log(integerPart, decimalPart * 10 ** 18, value);
     try {
-
-
       const nameRegex = /^[a-zA-Z]+$/; // Name regex
 
       if (landAddress.length <= 10) {
@@ -61,6 +63,15 @@ const AddLand = () => {
         alert("Please Save the Location on Map");
       }
       setLoading(true);
+      const landPricematic = landPrice * matic;
+      const integerPart = Math.floor(landPricematic * 10 ** 18).toString();
+
+      const value = ethers.BigNumber.from(integerPart);
+      // value = ethers.BigNumber.from(decimalPart * 10 ** 18);
+
+      console.log(integerPart, value);
+
+      // console.log(landPricematic);
       const imgeHash = await fileHash(landImage);
       const docHash = await fileHash(landDocument);
       const temCoord = coord.map((point) => point.join(",")).join(";");
@@ -72,7 +83,7 @@ const AddLand = () => {
         Number(landArea),
         stringToBytes32(landAddress),
         stringToBytes32(district),
-        Number(landPrice),
+        value,
         allLatiLongi,
         Number(landPid),
         docHash,
@@ -94,7 +105,7 @@ const AddLand = () => {
 
       const temCoord = coord.map((point) => point.join(",")).join(";");
       const allLatiLongi = temCoord + "/" + zoom;
-      console.log(allLatiLongi)
+      console.log(allLatiLongi);
 
       toast({
         title: "Something went wrong",

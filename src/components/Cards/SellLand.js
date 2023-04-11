@@ -30,7 +30,7 @@ const Card = ({
   verfiedby,
   landStatus,
 }) => {
-  const { contract,account } = useContext(Web3Context);
+  const { contract,account,matic,pkr } = useContext(Web3Context);
 
   const router = useRouter();
   const toast = useToast();
@@ -127,7 +127,11 @@ const Card = ({
         <Text as="span" fontWeight="bold">
           Price:{" "}
         </Text>
-        {landPrice}Pkr
+        {Math.round( landPrice*pkr)}
+        asaks
+        {
+          (pkr)
+        }
       </Text>
       <Text fontSize="xl" fontWeight="light" mb="2">
         {landAddress}
@@ -154,11 +158,11 @@ const Card = ({
           colorScheme="blue"
           onClick={() => {
             const [coord, zoom] = allLatitudeLongitude?.split("/");
-          const coordArray= coord?.split(";")?.map((pair) => {
+            const coordArray = coord?.split(";")?.map((pair) => {
               const [longitude, latitude] = pair?.split(",");
               return [Number(longitude), Number(latitude)];
             });
-          
+
             localStorage.setItem(
               "landdetails",
               JSON.stringify({
