@@ -1,5 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
-import Image from "next/image";
+import { Box, Flex, Image } from "@chakra-ui/react";
 import styled, { keyframes } from "styled-components";
 
 const moveUpDown = keyframes`
@@ -31,13 +30,13 @@ function AirbnbCard() {
         position="relative"
         borderRadius="lg"
         overflow="hidden"
-        height="50%"
+      
       >
         <Image
           src={'/images/About-Us-Banner.jpg'}
           alt={'Image'}
           width={1500}
-          height={100}
+          height={'70%'}
         />
         <Box
           position="absolute"
@@ -50,7 +49,7 @@ function AirbnbCard() {
           justifyContent="end"
         >
           <Flex width={{base:200,md:400, xl:600}}>
-            <AnimatedImage src={"/images/land2.png"} width={600} height={600} />
+            <AnimatedImage src={"/images/land2.png"} width={600} height={'60%'} />
           </Flex>
         </Box>
       </Box>
