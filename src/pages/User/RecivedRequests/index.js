@@ -113,8 +113,8 @@ console.log('aland', landstatus)
                 <Td>{row.landId}</Td>
 
                 <Td>{row?.buyerId}</Td>
-                <Td>{landPrice(row?.landId)*pkr}</Td>
-                <Td>{row?.bidPrice*pkr}</Td>
+                <Td>{Math.round(landPrice(row?.landId)*pkr)}</Td>
+                <Td>{Math.round(row?.bidPrice*pkr)}</Td>
                 <Td>{requeststatus[row?.requestStatus]}</Td>
 
                 <Td>

@@ -29,8 +29,9 @@ const TableWithPagination = () => {
   );
 
   const lands = landrequest?.filter(
-    (land) => land.requestStatus == 3 || land.requestStatus == 4
+    (land) => land.requestStatus==4 ||land.requestStatus==3
   );
+  console.log('land',lands)
   const requeststatus = {
     0: "pending",
     1: "accepted",
@@ -92,6 +93,7 @@ const TableWithPagination = () => {
                           id: land?.landId,
                           seller: land?.sellerId,
                           buyer: land?.buyerId,
+                          reqId:land?.reqId
                         })
                       );
                     }}

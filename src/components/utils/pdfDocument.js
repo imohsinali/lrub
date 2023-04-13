@@ -1,24 +1,26 @@
-import { ethers } from "ethers";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
-const stopCapture = async (
+import { timeStamp } from "./timeStamp";
+const MakePdf = async (
   imgbSeller,
   imgbBuyer,
   imgbWitness,
   witness,
-  users,
+  seller,
+  buyer,
   insp,
-  land,
+  land
 ) => {
-    
+  console.log(
+    "seller",
 
+    land?.ownerAddress
+  );
+  const pdfDoc = await PDFDocument?.create();
+  const Sellerimage = await pdfDoc?.embedPng(imgbSeller);
+  const Buyerimage = await pdfDoc?.embedPng(imgbBuyer);
+  const Witnessimage = await pdfDoc?.embedPng(imgbWitness);
 
-  const pdfDoc = await PDFDocument.create();
-  const Sellerimage = await pdfDoc.embedPng(imgbSeller);
-  const Buyerimage = await pdfDoc.embedPng(imgbBuyer);
-  const Witnessimage = await pdfDoc.embedPng(imgbWitness);
-
-
-  const page = pdfDoc.addPage([1200, 900]);
+  const page = pdfDoc?.addPage([1200, 900]);
   const { width, height } = page.getSize();
   const imgWidth = Math.min(width / 3, Sellerimage.width / 3);
   const imgHeight = Math.min(height / 3, Sellerimage.height / 3);
@@ -54,7 +56,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[0].name, {
+  page.drawText(seller?.name, {
     x: 200,
     y: height - imgHeight - 180,
     size: 12,
@@ -70,7 +72,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[0].address, {
+  page.drawText(seller?.address, {
     x: 200,
     y: height - imgHeight - 210,
     size: 12,
@@ -86,7 +88,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[0].cinc, {
+  page.drawText(seller?.cnic.toString(), {
     x: 200,
     y: height - imgHeight - 240,
     size: 12,
@@ -101,7 +103,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[0].city, {
+  page.drawText(seller?.city, {
     x: 200,
     y: height - imgHeight - 270,
     size: 12,
@@ -117,7 +119,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[0].email, {
+  page.drawText(seller?.email, {
     x: 200,
     y: height - imgHeight - 300,
     size: 12,
@@ -148,7 +150,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[1].name, {
+  page.drawText(buyer?.name, {
     x: 800,
     y: height - imgHeight - 180,
     size: 12,
@@ -164,7 +166,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[1].address, {
+  page.drawText(buyer?.address, {
     x: 800,
     y: height - imgHeight - 210,
     size: 12,
@@ -172,7 +174,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText("Cinc:", {
+  page.drawText("Cnic:", {
     x: 700,
     y: height - imgHeight - 240,
     size: 12,
@@ -180,7 +182,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[1].cinc, {
+  page.drawText(buyer?.cnic.toString(), {
     x: 800,
     y: height - imgHeight - 240,
     size: 12,
@@ -195,7 +197,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[1].city, {
+  page.drawText(buyer?.city, {
     x: 800,
     y: height - imgHeight - 270,
     size: 12,
@@ -211,7 +213,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(users[1].email, {
+  page.drawText(buyer?.email, {
     x: 800,
     y: height - imgHeight - 300,
     size: 12,
@@ -242,7 +244,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(witness.name, {
+  page.drawText(witness?.name, {
     x: 200,
     y: height - imgHeight - 570,
     size: 12,
@@ -258,7 +260,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(witness.address, {
+  page.drawText(witness?.address, {
     x: 200,
     y: height - imgHeight - 600,
     size: 12,
@@ -273,7 +275,6 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-
   page.drawText("Owner Address:", {
     x: 700,
     y: height - imgHeight - 400,
@@ -282,7 +283,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(land[0]?.ownerAddress, {
+  page.drawText(land?.ownerAddress.toString(), {
     x: 800,
     y: height - imgHeight - 400,
     size: 12,
@@ -297,7 +298,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(land[0]?.landAddress, {
+  page.drawText(land?.landAddress, {
     x: 800,
     y: height - imgHeight - 430,
     size: 12,
@@ -313,7 +314,7 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(land[0]?.area.toString(), {
+  page.drawText(land?.landArea.toString(), {
     x: 800,
     y: height - imgHeight - 460,
     size: 12,
@@ -328,46 +329,30 @@ const stopCapture = async (
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(land[0]?.landPrice.toString(), {
+  page.drawText(land?.landPrice.toString(), {
     x: 800,
     y: height - imgHeight - 490,
     size: 12,
     font: await pdfDoc.embedFont(StandardFonts.Helvetica),
     color: rgb(0, 0, 0),
   });
-page.drawText("Property Id:", {
-  x: 700,
-  y: height - imgHeight - 520,
-  size: 12,
-  font: await pdfDoc.embedFont(StandardFonts.Helvetica),
-  color: rgb(0, 0, 0),
-});
+  page.drawText("Property Id:", {
+    x: 700,
+    y: height - imgHeight - 520,
+    size: 12,
+    font: await pdfDoc.embedFont(StandardFonts.Helvetica),
+    color: rgb(0, 0, 0),
+  });
 
-page.drawText(land[0]?.propertyPID.toString(), {
-  x: 800,
-  y: height - imgHeight - 520,
-  size: 12,
-  font: await pdfDoc.embedFont(StandardFonts.Helvetica),
-  color: rgb(0, 0, 0),
-});
+  page.drawText(land?.propertyPID.toString(), {
+    x: 800,
+    y: height - imgHeight - 520,
+    size: 12,
+    font: await pdfDoc.embedFont(StandardFonts.Helvetica),
+    color: rgb(0, 0, 0),
+  });
 
-page.drawText("Physical Servy No:", {
-  x: 700,
-  y: height - imgHeight - 550,
-  size: 12,
-  font: await pdfDoc.embedFont(StandardFonts.Helvetica),
-  color: rgb(0, 0, 0),
-});
-
-page.drawText(land[0]?.physicalSurveyNumber, {
-  x: 800,
-  y: height - imgHeight - 550,
-  size: 12,
-  font: await pdfDoc.embedFont(StandardFonts.Helvetica),
-  color: rgb(0, 0, 0),
-});
-
-  page.drawText("Verified By:", {
+  page.drawText("Transfered by:", {
     x: 880,
     y: height - imgHeight - 680,
     size: 12,
@@ -383,16 +368,21 @@ page.drawText(land[0]?.physicalSurveyNumber, {
     color: rgb(0, 0, 0),
   });
 
-  page.drawText("TimeStamp:", {
+  page.drawText("Transfered date:", {
     x: 800,
     y: height - imgHeight - 730,
     size: 12,
     font: await pdfDoc.embedFont(StandardFonts.Helvetica),
     color: rgb(0, 0, 0),
   });
-  const date = new Date();
-  const timestamp = date.getTime().toString();
-  page.drawText(timestamp, {
+  const time = new Date();
+  const timestamp = time.getTime().toString();
+  let verifydate = new Date(timestamp / 1);
+  const date = new Date(verifydate.toUTCString());
+  verifydate = date.toUTCString();
+  const options = { hour12: true };
+  verifydate = date.toLocaleString("GMT", options);
+  page.drawText(verifydate, {
     x: 870,
     y: height - imgHeight - 730,
     size: 12,
@@ -402,8 +392,7 @@ page.drawText(land[0]?.physicalSurveyNumber, {
 
   const pdfBytes = await pdfDoc.save();
 
-  return pdfBytes
-  
+  return pdfBytes;
 };
 
-export default stopCapture;
+export default MakePdf;

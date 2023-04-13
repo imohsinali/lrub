@@ -18,6 +18,7 @@ import {
   ModalCloseButton,
   Divider,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { useContext, useState } from "react";
 import { Web3Context } from "../context/web3Model";
 
@@ -35,16 +36,15 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
     (user) => user.address == landdata[0].ownerAddress
   );
   const sendOffer = async (_landId, _bidPrice) => {
-    const price = Math.round(_bidPrice * matic);
+    const landPricematic = _bidPrice * matic;
+    const integerPart = Math.floor(landPricematic * 10 ** 18).toString();
+
+    const value = ethers.BigNumber.from(integerPart);
 
     try {
       setLoading(true);
-      console.log(matic, price);
 
-      const offer = await contract.requestforBuyWithBid(
-        Number(_landId),
-        Number(price)
-      );
+      const offer = await contract.requestforBuyWithBid(Number(_landId), value);
       await offer.wait();
 
       toast({

@@ -50,7 +50,7 @@ export const getAlluser = async (contract) => {
       ...userInfo[index],
     };
   });
-console.log('suer', usersWithInfo)
+  console.log("suer", usersWithInfo);
   return usersWithInfo;
 };
 
@@ -195,7 +195,7 @@ export const SendRequest = async (contract) => {
         landId: parseInt(landId._hex),
         reqId: parseInt(reqId._hex),
         requestStatus,
-        bidPrice: parseInt(bidPrice._hex),
+        bidPrice: parseInt(bidPrice._hex) / 10 ** 18,
         isPaymentDone,
       };
     })
@@ -221,7 +221,7 @@ export const landRequest = async (contract) => {
     landsArray.push(i + 1);
   }
   const request = await Promise.all(
-    landsArray.map(async (id) => {
+    [1,2,3,4,5].map(async (id) => {
       const {
         sellerId,
         buyerId,
@@ -237,11 +237,13 @@ export const landRequest = async (contract) => {
         landId: parseInt(landId._hex),
         reqId: parseInt(reqId._hex),
         requestStatus,
-        bidPrice: parseInt(bidPrice._hex),
+        bidPrice: parseInt(bidPrice._hex) / 10 ** 18,
         isPaymentDone,
       };
     })
   );
+
+  console.log("land",request)
 
   return request;
 };

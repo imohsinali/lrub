@@ -31,31 +31,30 @@ export default function PaymentModel({ isOpen, setOpen }) {
 
   //   const landdata = land?.filter((la) => la.id == landId);
 
-  const MakeAPayment = async (address, req, value) => {
-    console.log(
-      "pau",
-      address,
-      req,
-      ethers.utils.parseEther(Math.round(value).toString())
-    );
+  const MakeAPayment = async (address, req, _value) => {
+    console.log(_value);
+    const integerPart = Math.floor(_value * 10 ** 18).toString();
+
+    const value = ethers.BigNumber.from(integerPart);
+    console.log(value, integerPart);
 
     try {
       setLoading(true);
-     let a=0
-      // function (address payable _receiver, uint _requestId) public payable {
-      await contract.makePayment(address, req, {
-        value: ethers.utils.parseEther(Math.round(value/10**18).toString()),
+      const paymentDone = await contract.makePayment(address, req, {
+        value: value,
       });
+      await paymentDone.wait();
+
+      setOpen(false);
+      setLoading(false);
       toast({
         title: "Verified Susscesfully",
         status: "success",
         duration: 2000,
         isClosable: true,
       });
-      setOpen(false);
-      setLoading(false);
     } catch (error) {
-        console.log(error);
+      console.log(error);
 
       toast({
         title: "Something Went Wrong",
@@ -81,9 +80,10 @@ export default function PaymentModel({ isOpen, setOpen }) {
           <Text>{paymentland?.sellerId}</Text>
           <Divider />
           <Text fontSize={"1.4rem"}>Amount in PKR</Text>
-          <Text>{paymentland?.landPrice}</Text>
+          <Text>{Math.round(paymentland?.landPrice * pkr)}</Text>
 
           <Text fontSize={"1.4rem"}>Amount in MATIC</Text>
+          {<Text>{paymentland?.landPrice?.toFixed(3)}</Text>}
         </ModalBody>
         <Divider />
         <ModalFooter>

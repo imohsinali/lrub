@@ -5,8 +5,6 @@ pragma solidity ^0.8.0;
 contract landregistry {
     address payable contractOwner;
 
-
-
     receive() external payable {}
 
     constructor() {
@@ -61,19 +59,16 @@ contract landregistry {
     struct LandInfo {
         address verfiedby;
         uint verfydate;
-
-
     }
 
-    struct LandPriceInfo{
+    struct LandPriceInfo {
         uint id;
         uint basePrice;
         uint landPrice;
-
     }
     struct UserInfo {
         address verfiedby;
-          uint  verifydate;
+        uint verifydate;
     }
 
     struct LandHistory {
@@ -107,7 +102,7 @@ contract landregistry {
     uint public userCount;
     uint public landsCount;
     uint public documentId;
-    uint requestCount;
+    uint public requestCount;
 
     mapping(address => User) public UserMapping;
 
@@ -128,7 +123,7 @@ contract landregistry {
 
     mapping(uint => LandInfo) public landinfo;
     mapping(address => UserInfo) public userinfo;
-    mapping (uint =>LandPriceInfo) public landPriceInfo;
+    mapping(uint => LandPriceInfo) public landPriceInfo;
 
     function AndandRemoveProxyOwner(
         uint landId,
@@ -345,7 +340,7 @@ contract landregistry {
                     payable(msg.sender),
                     block.timestamp
                 )
-        //         
+                //
             );
         } else {
             revert();
@@ -394,15 +389,22 @@ contract landregistry {
                 );
                 MyLands[msg.sender].push(landsCount);
                 allLandList[1].push(landsCount);
-// uint parentId;
-        // uint childCount;
-        // uint childId;
-        // uint area;
-        // address parentAddress;
-        // uint timestamp;
+                // uint parentId;
+                // uint childCount;
+                // uint childId;
+                // uint area;
+                // address parentAddress;
+                // uint timestamp;
 
                 landHistory[landsCount].push(
-                    LandHistory(id, 0, 0, newarea,payable(msg.sender), block.timestamp)
+                    LandHistory(
+                        id,
+                        0,
+                        0,
+                        newarea,
+                        payable(msg.sender),
+                        block.timestamp
+                    )
                 );
 
                 // update history for the parent land
@@ -436,8 +438,6 @@ contract landregistry {
     ) public view returns (LandHistory[] memory) {
         return landHistory[landId];
     }
-
-
 
     function ReturnAllLandList() public view returns (uint[] memory) {
         return allLandList[1];
@@ -516,8 +516,11 @@ contract landregistry {
         if (acceptreject && !LandRequestMapping[_requestId].isPaymentDone) {
             if (LandRequestMapping[_requestId].bidPrice > 0) {
                 // Update the land price with the bid price
-                 LandPriceInfo(_requestId,lands[LandRequestMapping[_requestId].landId]
-                    .landPrice,LandRequestMapping[_requestId].bidPrice);
+                LandPriceInfo(
+                    _requestId,
+                    lands[LandRequestMapping[_requestId].landId].landPrice,
+                    LandRequestMapping[_requestId].bidPrice
+                );
 
                 lands[LandRequestMapping[_requestId].landId]
                     .landPrice = LandRequestMapping[_requestId].bidPrice;
@@ -585,9 +588,7 @@ contract landregistry {
         return paymentDoneList[1];
     }
 
-    function transferDeceasedOwnership(
-        address deceased
-    ) public {
+    function transferDeceasedOwnership(address deceased) public {
         require(isLandInspector(msg.sender));
         UserMapping[deceased].death = true;
         uint[] memory landIds = MyLands[deceased];

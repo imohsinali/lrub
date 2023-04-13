@@ -13,7 +13,6 @@ import {
 import Pagination from "@/components/utils/pagination";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import { Web3Context } from "@/components/context/web3Model";
-import VerifyLandModel from "@/components/Models/VerifyLandModel";
 import PaymentModel from "@/components/Models/paymentModel";
 
 const TableWithPagination = () => {
@@ -24,7 +23,7 @@ const TableWithPagination = () => {
     3: "paymentdone",
     4: "completed",
   };
-  const { land, setLandId, sendRequest, pkr } = useContext(Web3Context);
+  const { land, sendRequest, pkr } = useContext(Web3Context);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
@@ -77,8 +76,8 @@ const TableWithPagination = () => {
                 <Td>{row.landId}</Td>
 
                 <Td>{row?.sellerId}</Td>
-                <Td>{Math.round(landPrice(row?.landId)*pkr)}</Td>
-                <Td>{row?.bidPrice*pkr}</Td>
+                <Td>{Math.round(landPrice(row?.landId) * pkr)}</Td>
+                <Td>{Math.round(row?.bidPrice * pkr)}</Td>
                 <Td>{requeststatus[row?.requestStatus]}</Td>
                 <Td>
                   <Button

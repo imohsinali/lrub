@@ -127,11 +127,8 @@ const Card = ({
         <Text as="span" fontWeight="bold">
           Price:{" "}
         </Text>
-        {Math.round( landPrice*pkr)}
-        asaks
-        {
-          (pkr)
-        }
+        {Math.round( landPrice*pkr)} {" "}
+        pkr
       </Text>
       <Text fontSize="xl" fontWeight="light" mb="2">
         {landAddress}

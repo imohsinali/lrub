@@ -4,64 +4,97 @@ import * as React from "react";
 import { useState, useRef, useContext } from "react";
 import { useEffect } from "react";
 import Profiledetail from "@/components/Cards/profileDetails";
-import { Flex } from "@chakra-ui/react";
+import { Button, Container, Flex, Text, useToast } from "@chakra-ui/react";
 import { Web3Context } from "@/components/context/web3Model";
+import LandDetails from "@/components/Cards/landDetails";
+import { useRouter } from "next/router";
+import MakePdf from "@/components/utils/pdfDocument";
+import fileHash from "@/components/utils/IPFS";
+import pdfHash from "@/components/utils/pdfHash";
+import Link from "next/link";
+import getCameraStreams from "@/components/utils/cameraStream";
 
 const TableWithPagination = () => {
   const [camera1, setCamera1] = useState(null);
   const [camera2, setCamera2] = useState(null);
   const [camera3, setCamera3] = useState(null);
   const [landdata, setlanddata] = useState();
+  const [reqId, setReqId] = useState();
   const [seller, setseller] = useState();
   const [buyer, setbuyer] = useState();
-
-  // const [landtoTransfer,setlandTotransfer]=useState()
-
-  const { users, land } = useContext(Web3Context);
+  const [witness, setWitnessAdress] = useState();
+  const [imgbSeller, setByteSeller] = useState([]);
+  const [imgbBuyer, setByteBuyer] = useState([]);
+  const [imgbWitness, setByteWitness] = useState([]);
+  const [doc, setDoc] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { users, land, account } = useContext(Web3Context);
+  const toast = useToast();
 
   useEffect(() => {
     const landdata = JSON.parse(localStorage?.getItem("Transfer"));
     const landtotransfer = land?.filter((la) => la.id == landdata?.id);
     const seller = users?.filter((user) => user.address == landdata.seller);
     const buyer = users?.filter((user) => user.address == landdata.buyer);
-    // setlanddata(...landtotransfer);
-    if (seller && buyer) {
+    if (seller && buyer && landtotransfer) {
       setseller(...seller);
       setbuyer(...buyer);
+      setlanddata(...landtotransfer);
+      setReqId(landdata.reqId);
     }
   }, [users, land]);
-  console.log("ise", buyer, seller, landdata);
 
   useEffect(() => {
-    const getCameraStreams = async () => {
-      try {
-        const stream1 = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        setCamera1(stream1);
+    getCameraStreams(setCamera1, setCamera2, setCamera3);
+  }, [!imgbBuyer && !imgbSeller && !imgbWitness]);
 
-        const stream2 = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        setCamera2(stream2);
+  const handleTransfer = async (id) => {
+      setCamera3(null);
+      setCamera2(null);
+      setCamera1(null);
+    try {
+      setLoading(true);
 
-        const stream3 = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        setCamera3(stream3);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+      const pp = await MakePdf(
+        imgbSeller,
+        imgbBuyer,
+        imgbWitness,
+        witness,
+        seller,
+        buyer,
+        account,
+        landdata
+      );
 
-    getCameraStreams();
-  }, []);
+      const url1 = await pdfHash(pp);
+      setDoc(url1);
+
+      const trasferd = await contract.transferOwnership(id, url1, {
+        gasLimit: 200000,
+      });
+      await trasferd.wait();
+
+      setLoading(false);
+      toast({
+        title: "Transferd Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Something Went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+
+
+      setLoading(false);
+    }
+  };
 
   return (
-    // <ProtectedRoute>
     <SidebarWithHeader bgColor={"#F7FAFC"}>
       <Flex
         justifyContent={"space-between"}
@@ -69,11 +102,63 @@ const TableWithPagination = () => {
         wrap={{ base: "wrap", sm: "nowrap" }}
       >
         {seller && (
-          <Profiledetail stream={camera1} user={seller} title={"Seller info"} />
+          <Profiledetail
+            setBytes={setByteSeller}
+            stream={camera1}
+            user={seller}
+            title={"Seller info"}
+          />
         )}
         {buyer && (
-          <Profiledetail stream={camera2} user={buyer} title={"Buyer info"} />
+          <Profiledetail
+            setBytes={setByteBuyer}
+            stream={camera2}
+            user={buyer}
+            title={"Buyer info"}
+          />
         )}
+      </Flex>
+
+      <Flex
+        justifyContent={"space-between"}
+        width="100%"
+        wrap={{ base: "wrap", sm: "nowrap" }}
+      >
+        {
+          <Profiledetail
+            setBytes={setByteWitness}
+            stream={camera3}
+            title={"Witness info"}
+            user={setWitnessAdress}
+          />
+        }
+
+        <Flex mt={12} width={"100%"}>
+          {landdata && <LandDetails land={landdata} user={"inspector"} />}
+        </Flex>
+      </Flex>
+      <Flex alignItems={"center"} justifyContent="center" mt={5}>
+        <Flex direction={"column"}>
+          {doc && (
+            <Button>
+              <Link
+                href={`https://gateway.pinata.cloud/ipfs/${doc}`}
+                target="_blank"
+              >
+                View Documnt
+              </Link>
+            </Button>
+          )}
+          <Button
+            color={"green"}
+            padding={5}
+            fontSize={"1.2rem"}
+            onClick={() => handleTransfer(reqId)}
+            isLoading={loading}
+          >
+            Transfer
+          </Button>
+        </Flex>
       </Flex>
     </SidebarWithHeader>
   );
