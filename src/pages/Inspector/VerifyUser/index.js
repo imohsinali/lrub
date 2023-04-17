@@ -14,16 +14,19 @@ import {
 } from "@chakra-ui/react";
 import Pagination from "@/components/utils/pagination";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
-import { ethers } from "ethers";
-import RemoveModel from "@/components/Models/RemoveModel";
 import useSWR from "swr";
 import { Web3Context } from "@/components/context/web3Model";
 import VerifyUserModel from "@/components/Models/VerifyUserModel";
+import { getAlluser } from "@/components/context/functions";
 
 const TableWithPagination = () => {
-  const {  setUser,users } = useContext(Web3Context);
+  const { setUser, contract } = useContext(Web3Context);
+  const { data: users, error: userError } = useSWR(
+    ["user", contract],
+    async () => await getAlluser(contract),
+    { revalidateOnMount: true }
+  );
 
-  
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
   const indexOfLastPost = (currentPage + 1) * postsPerPage;
@@ -56,7 +59,7 @@ const TableWithPagination = () => {
               <Th fontSize={{ base: 10, md: 17 }}>Name</Th>
               <Th fontSize={{ base: 10, md: 17 }}>City</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Cnic</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Remove</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Verify</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -66,7 +69,9 @@ const TableWithPagination = () => {
                 <Td>
                   <Flex>
                     <Text>{row.address}</Text>
-                   {row.isUserVerified&&<Image ml={1}  width={5} src={"/images/verified.png"} />}
+                    {row.isUserVerified && (
+                      <Image ml={1} width={5} src={"/images/verified.png"} />
+                    )}
                   </Flex>
                 </Td>
                 <Td>{row.name.split("|").join(" ")}</Td>
@@ -74,7 +79,14 @@ const TableWithPagination = () => {
                 <Td>{row.cnic}</Td>
                 <Td>
                   <Button
-                    backgroundColor={"green"}
+                    backgroundColor={
+                      row?.isUserVerified ? "green.400" : "gray.300"
+                    }
+                    color={row?.isUserVerified ? "whiteAlpha.800" : "black.100"}
+                    _hover={{
+                      color: "white",
+                      backgroundColor: "cyan.400",
+                    }}
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
@@ -84,7 +96,7 @@ const TableWithPagination = () => {
                       setUser(row.address);
                     }}
                   >
-                    Verify
+                    {row?.isUserVerified ? "Verified" : " Verify"}
                   </Button>
                 </Td>
               </Tr>

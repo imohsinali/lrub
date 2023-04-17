@@ -59,6 +59,8 @@ contract landregistry {
     struct LandInfo {
         address verfiedby;
         uint verfydate;
+        bool directed;
+        uint childs;
     }
 
     struct LandPriceInfo {
@@ -70,6 +72,15 @@ contract landregistry {
         address verfiedby;
         uint verifydate;
     }
+    struct TransferInfo {
+        uint id;
+        address seller;
+        address buyer;
+        address witness;
+        address verfiedby;
+        uint landid;
+        uint transferdate;
+    }
 
     struct LandHistory {
         uint parentId;
@@ -77,7 +88,8 @@ contract landregistry {
         uint childId;
         uint area;
         address parentAddress;
-        uint timestamp;
+        uint parentIdRegisterdDate;
+        uint childIdRegisterDate;
     }
 
     struct LandRequest {
@@ -92,11 +104,12 @@ contract landregistry {
 
     enum reqStatus {
         requested,
-        accepted,
         rejected,
+        accepted,
         paymentdone,
         commpleted
     }
+
 
     uint public inspectorsCount;
     uint public userCount;
@@ -124,27 +137,7 @@ contract landregistry {
     mapping(uint => LandInfo) public landinfo;
     mapping(address => UserInfo) public userinfo;
     mapping(uint => LandPriceInfo) public landPriceInfo;
-
-    function AndandRemoveProxyOwner(
-        uint landId,
-        address payable proxyOwner,
-        bool x
-    ) public {
-        if (
-            lands[landId].ownerAddress == msg.sender &&
-            lands[landId].isLandVerified
-        ) {
-            if (x) {
-                lands[landId].proxyownerAddress = proxyOwner;
-            }
-
-            if (!x && lands[landId].proxyownerAddress == proxyOwner) {
-                lands[landId].proxyownerAddress = contractOwner;
-            }
-        } else {
-            revert();
-        }
-    }
+    mapping(uint => TransferInfo) public transferInfo;
 
     function isContractOwner(address _addr) public view returns (bool) {
         if (_addr == contractOwner) return true;
@@ -338,9 +331,9 @@ contract landregistry {
                     0,
                     _area,
                     payable(msg.sender),
-                    block.timestamp
+                    block.timestamp,
+                    0
                 )
-                //
             );
         } else {
             revert();
@@ -359,11 +352,15 @@ contract landregistry {
         ) {
             uint parentPID = lands[id].propertyPID;
 
+            LandHistory storage lastHistory = landHistory[id][
+                landHistory[id].length - 1
+            ];
+            uint newNumPlots = lastHistory.childCount + numplots;
+
             for (uint i = 1; i <= numplots && lands[id].area >= newarea; i++) {
                 lands[id].area -= newarea;
                 landsCount++;
 
-                // Generate a unique propertyPID for the new subplot
                 uint subplotPID = uint(
                     keccak256(
                         abi.encodePacked(block.timestamp, landsCount, parentPID)
@@ -389,12 +386,6 @@ contract landregistry {
                 );
                 MyLands[msg.sender].push(landsCount);
                 allLandList[1].push(landsCount);
-                // uint parentId;
-                // uint childCount;
-                // uint childId;
-                // uint area;
-                // address parentAddress;
-                // uint timestamp;
 
                 landHistory[landsCount].push(
                     LandHistory(
@@ -403,19 +394,36 @@ contract landregistry {
                         0,
                         newarea,
                         payable(msg.sender),
-                        block.timestamp
+                        block.timestamp,
+                        0
                     )
                 );
+                landinfo[landsCount] = LandInfo(
+                    landinfo[id].verfiedby,
+                    landinfo[id].verfydate,
+                    false,
+                    0
+                );
+
+                landinfo[id] = LandInfo(
+                    landinfo[id].verfiedby,
+                    landinfo[id].verfydate,
+                    true,
+                    newNumPlots
+                );
+
+                // Calculate the new numplots value by adding the previous numplots value to the new one
 
                 // update history for the parent land
                 landHistory[id].push(
                     LandHistory(
                         id,
-                        numplots,
+                        newNumPlots,
                         landsCount,
                         newarea,
                         payable(msg.sender),
-                        lands[id].registerdate
+                        lands[id].registerdate,
+                        block.timestamp
                     )
                 );
             }
@@ -433,10 +441,10 @@ contract landregistry {
         return false;
     }
 
-    function getLandHistoryId(
-        uint landId
+    function getLandHistory(
+        uint256 id
     ) public view returns (LandHistory[] memory) {
-        return landHistory[landId];
+        return landHistory[id];
     }
 
     function ReturnAllLandList() public view returns (uint[] memory) {
@@ -451,7 +459,12 @@ contract landregistry {
             InspectorMapping[msg.sender].district == lands[_id].district
         ) {
             lands[_id].isLandVerified = true;
-            landinfo[_id] = LandInfo(msg.sender, block.timestamp);
+            landinfo[_id] = LandInfo(
+                msg.sender,
+                block.timestamp,
+                true,
+                landinfo[_id].childs
+            );
         } else {
             revert();
         }
@@ -469,6 +482,28 @@ contract landregistry {
         return allLandInspectorList[1];
     }
 
+    function AndandRemoveProxyOwner(
+        uint landId,
+        address payable proxyOwner,
+        bool _addRemove
+    ) public {
+        if (
+            lands[landId].ownerAddress == msg.sender &&
+            lands[landId].isLandVerified &&
+            !lands[landId].isforSell
+        ) {
+            if (_addRemove) {
+                lands[landId].proxyownerAddress = proxyOwner;
+            }
+
+            if (!_addRemove && lands[landId].proxyownerAddress == proxyOwner) {
+                lands[landId].proxyownerAddress = contractOwner;
+            }
+        } else {
+            revert();
+        }
+    }
+
     function changeDetails(
         uint _landId,
         bool s,
@@ -480,9 +515,25 @@ contract landregistry {
         string memory _newPic,
         string memory _allLatiLongi
     ) public {
+        uint requestId;
+        uint[] memory requestIDs = MyReceivedLandRequest[
+            lands[_landId].ownerAddress
+        ];
+        for (uint k = 0; k < requestIDs.length; k++) {
+            if (LandRequestMapping[requestIDs[k]].landId == _landId) {
+                requestId = requestIDs[k];
+                break;
+            }
+        }
+
+        bool isPaymentDone = LandRequestMapping[requestId].isPaymentDone;
+        reqStatus status = LandRequestMapping[requestId].requestStatus;
+
         if (
             lands[_landId].ownerAddress == msg.sender &&
-            lands[_landId].isLandVerified
+            lands[_landId].isLandVerified &&
+            !isPaymentDone &&
+            !(status == reqStatus.accepted)
         ) {
             if (s) {
                 lands[_landId].isforSell = sell;
@@ -510,10 +561,22 @@ contract landregistry {
         return MySentLandRequest[msg.sender];
     }
 
-    function acceptRequest(uint _requestId, bool acceptreject) public {
-        require(LandRequestMapping[_requestId].sellerId == msg.sender);
 
-        if (acceptreject && !LandRequestMapping[_requestId].isPaymentDone) {
+
+    function acceptRequest(uint _requestId, bool acceptreject) public {
+        require(
+            LandRequestMapping[_requestId].sellerId == msg.sender,
+            "Only the seller can accept or reject a request."
+        );
+        require(
+            LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
+            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,
+            
+            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
+        );
+
+        if (acceptreject) {
+            // Accept the request
             if (LandRequestMapping[_requestId].bidPrice > 0) {
                 // Update the land price with the bid price
                 LandPriceInfo(
@@ -521,24 +584,53 @@ contract landregistry {
                     lands[LandRequestMapping[_requestId].landId].landPrice,
                     LandRequestMapping[_requestId].bidPrice
                 );
-
                 lands[LandRequestMapping[_requestId].landId]
                     .landPrice = LandRequestMapping[_requestId].bidPrice;
             }
 
             LandRequestMapping[_requestId].requestStatus = reqStatus.accepted;
-        } else if (
-            !acceptreject && !LandRequestMapping[_requestId].isPaymentDone
-        ) {
+
+            uint landId = LandRequestMapping[_requestId].landId;
+            
+
+            for (uint i = 1; i <= requestCount; i++) {
+                if (LandRequestMapping[i].landId == landId && i != _requestId &&!LandRequestMapping[i].isPaymentDone) {
+                    LandRequestMapping[i].requestStatus = reqStatus.rejected;
+                }
+            }
+
+        } else {
             LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
         }
+
+        
     }
 
+    
+
     function requestforBuyWithBid(uint _landId, uint _bidPrice) public {
+        uint requestId;
+        uint[] memory requestIDs = MyReceivedLandRequest[
+            lands[_landId].ownerAddress
+        ];
+        for (uint k = 0; k < requestIDs.length; k++) {
+            if (LandRequestMapping[requestIDs[k]].landId == _landId) {
+                requestId = requestIDs[k];
+                break;
+            }
+        }
+
+        bool isPaymentDone = LandRequestMapping[requestId].isPaymentDone;
+        reqStatus status = LandRequestMapping[requestId].requestStatus;
+
         if (
             UserMapping[msg.sender].isUserVerified &&
             lands[_landId].isLandVerified &&
-            msg.sender != lands[_landId].ownerAddress
+            msg.sender != lands[_landId].ownerAddress &&
+            !isPaymentDone &&
+            !(status == reqStatus.accepted)&&
+            !(status == reqStatus.commpleted)
+
         ) {
             requestCount++;
             LandRequestMapping[requestCount] = LandRequest(
@@ -559,10 +651,6 @@ contract landregistry {
         }
     }
 
-    // function getLandPrice(uint id) public view returns(uint) {
-    //     return lands[id].landPrice;
-    // }
-
     function makePayment(
         address payable _receiver,
         uint _requestId
@@ -571,6 +659,8 @@ contract landregistry {
             LandRequestMapping[_requestId].buyerId == msg.sender &&
             LandRequestMapping[_requestId].requestStatus ==
             reqStatus.accepted &&
+            LandRequestMapping[_requestId].requestStatus !=
+            reqStatus.paymentdone&&
             LandRequestMapping[_requestId].sellerId == _receiver &&
             msg.value == lands[LandRequestMapping[_requestId].landId].landPrice
         ) {
@@ -622,39 +712,56 @@ contract landregistry {
 
     function transferOwnership(
         uint _requestId,
-        string memory documentUrl
+        string memory documentUrl,
+        address witness
     ) public {
-        require(isLandInspector(msg.sender));
         if (
-            LandRequestMapping[_requestId].isPaymentDone == false &&
+            isLandInspector(msg.sender) &&
+            LandRequestMapping[_requestId].isPaymentDone &&
             InspectorMapping[msg.sender].district ==
-            lands[LandRequestMapping[_requestId].landId].district
-        ) revert();
-        documentId++;
+            lands[LandRequestMapping[_requestId].landId].district &&
+            UserMapping[witness].isUserVerified &&
+            witness != LandRequestMapping[_requestId].sellerId &&
+            witness != LandRequestMapping[_requestId].buyerId
+        ) {
+            documentId++;
 
-        LandRequestMapping[_requestId].requestStatus = reqStatus.commpleted;
-        MyLands[LandRequestMapping[_requestId].buyerId].push(
-            LandRequestMapping[_requestId].landId
-        );
-
-        uint len = MyLands[LandRequestMapping[_requestId].sellerId].length;
-        for (uint i = 0; i < len; i++) {
-            if (
-                MyLands[LandRequestMapping[_requestId].sellerId][i] ==
+            LandRequestMapping[_requestId].requestStatus = reqStatus.commpleted;
+            MyLands[LandRequestMapping[_requestId].buyerId].push(
                 LandRequestMapping[_requestId].landId
-            ) {
-                MyLands[LandRequestMapping[_requestId].sellerId][i] = MyLands[
-                    LandRequestMapping[_requestId].sellerId
-                ][len - 1];
-                //MyLands[LandRequestMapping[_requestId].sellerId].length--;
-                MyLands[LandRequestMapping[_requestId].sellerId].pop();
-                break;
-            }
-        }
+            );
 
-        lands[LandRequestMapping[_requestId].landId].document = documentUrl;
-        lands[LandRequestMapping[_requestId].landId].isforSell = false;
-        lands[LandRequestMapping[_requestId].landId]
-            .ownerAddress = LandRequestMapping[_requestId].buyerId;
+            uint len = MyLands[LandRequestMapping[_requestId].sellerId].length;
+            for (uint i = 0; i < len; i++) {
+                if (
+                    MyLands[LandRequestMapping[_requestId].sellerId][i] ==
+                    LandRequestMapping[_requestId].landId
+                ) {
+                    MyLands[LandRequestMapping[_requestId].sellerId][
+                        i
+                    ] = MyLands[LandRequestMapping[_requestId].sellerId][
+                        len - 1
+                    ];
+                    MyLands[LandRequestMapping[_requestId].sellerId].pop();
+                    break;
+                }
+            }
+
+            transferInfo[documentId] = TransferInfo(
+                documentId,
+                LandRequestMapping[_requestId].sellerId,
+                LandRequestMapping[_requestId].buyerId,
+                witness,
+                msg.sender,
+                LandRequestMapping[_requestId].landId,
+                block.timestamp
+            );
+            lands[LandRequestMapping[_requestId].landId].document = documentUrl;
+            lands[LandRequestMapping[_requestId].landId].isforSell = false;
+            lands[LandRequestMapping[_requestId].landId]
+                .ownerAddress = LandRequestMapping[_requestId].buyerId;
+        } else {
+            revert();
+        }
     }
 }

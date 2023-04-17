@@ -57,7 +57,7 @@ export default function PaymentModel({ isOpen, setOpen }) {
       console.log(error);
 
       toast({
-        title: "Something Went Wrong",
+        title: error.message,
         status: "error",
         duration: 2000,
         isClosable: true,

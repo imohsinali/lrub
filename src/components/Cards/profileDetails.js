@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Container,
@@ -17,6 +18,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { hasUtf16BOM } from "pdf-lib";
 import React, { useContext } from "react";
 import { useRef } from "react";
 import { useState } from "react";
@@ -55,7 +57,7 @@ const Profiledetail = ({ setBytes, stream, user, title }) => {
           status: "success",
           duration: 2000,
           isClosable: true,
-          position:'top'
+          position: "top",
         });
       } else {
         toast({
@@ -80,10 +82,11 @@ const Profiledetail = ({ setBytes, stream, user, title }) => {
       videoRef.current.play();
       cleanupFunctions.push(() => {
         stream.getTracks().forEach((track) => track.stop());
-      });}
+      });
+    }
     return () => {
       cleanupFunctions.forEach((cleanup) => cleanup());
-    }
+    };
   }, [stream]);
 
   const handleCapture = () => {
@@ -97,7 +100,6 @@ const Profiledetail = ({ setBytes, stream, user, title }) => {
     }
   };
 
-  
   return (
     <Flex
       borderWidth="0.5px"
@@ -205,9 +207,20 @@ const Profiledetail = ({ setBytes, stream, user, title }) => {
 
 export default Profiledetail;
 
-const UserInfo = ({ user }) => {
+export const UserInfo = ({ user, role }) => {
   return (
     <Flex flexDirection="column" flex={1}>
+      {role == "user" && (
+        <Avatar
+          size={'2xl'}
+          borderRadius={10}
+          src={`https://gateway.pinata.cloud/ipfs/${user?.profilepic}`}
+          style={{
+            border: user?.isUserVerified ? "5px solid green" : "5px solid red",
+          }}
+          mb={2}
+        />
+      )}
       <Text mb={2}>
         <Text as="span" fontWeight="bold">
           Wallet Address:{" "}

@@ -12,21 +12,25 @@ import {
 } from "@chakra-ui/react";
 import Pagination from "@/components/utils/pagination";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
-import { ethers } from "ethers";
-import useSWR from "swr";
 import { Web3Context } from "@/components/context/web3Model";
 import VerifyLandModel from "@/components/Models/VerifyLandModel";
+import { Lands } from "@/components/context/functions";
+import useSWR from "swr";
 
 const TableWithPagination = () => {
-  const { land, setLandId } = useContext(Web3Context);
+  const { setLandId, contract } = useContext(Web3Context);
 
-  
-  console.log("dar", land);
+  const { data: lands, error: landError } = useSWR(
+    ["lands", contract],
+    async () => await Lands(contract),
+    { revalidateOnMount: true }
+  );
+
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
   const indexOfLastPost = (currentPage + 1) * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = land
+  const currentPosts = lands
     ?.slice(indexOfFirstPost, indexOfLastPost)
     .filter(Boolean);
 
@@ -67,7 +71,14 @@ const TableWithPagination = () => {
                 <Td>{row?.landArea} sqft</Td>
                 <Td>
                   <Button
-                    backgroundColor={"green"}
+                    backgroundColor={
+                      row?.isLandVerified ? "green.400" : "gray.300"
+                    }
+                    color={row?.isLandVerified? 'whiteAlpha.800': "black.100"}
+                    _hover={{
+                      color: "white",
+                      backgroundColor: "cyan.400",
+                    }}
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
@@ -77,7 +88,7 @@ const TableWithPagination = () => {
                       setLandId(row.id);
                     }}
                   >
-                    Verify
+                    {row?.isLandVerified ? "Verified" : " Verify"}
                   </Button>
                 </Td>
               </Tr>
@@ -87,7 +98,7 @@ const TableWithPagination = () => {
       </Box>
 
       {isOpen && (
-        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} land={land} />
+        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} land={lands} />
       )}
 
       <Flex bgColor={"red"}>

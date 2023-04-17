@@ -208,7 +208,7 @@ export default function LandDetailsForm({ landid }) {
     <Box margin="auto">
       <Heading
         textAlign={"center"}
-        fontSize={"2rem"}
+        fontSize={{ base: "1rem", sm: "2rem" }}
         as="h5"
         mt={3}
         marginBottom="1rem"
@@ -216,9 +216,14 @@ export default function LandDetailsForm({ landid }) {
         Change Land Details of Land {landid}
       </Heading>
 
-      <HStack>
+      <Flex
+        justifyContent={"space-evenly"}
+        direction={{ base: "column", sm: "row" }}
+        gap={4}
+      >
         <Button
           colorScheme="twitter"
+          minW={100}
           p={2}
           leftIcon={
             <Image
@@ -314,11 +319,15 @@ export default function LandDetailsForm({ landid }) {
           {" "}
           Dimensions
         </Button>
-      </HStack>
+      </Flex>
 
       {chnageOption.plotingB && (
         <Box>
-          <Text fontSize={"1.5rem"} marginBottom="0.2rem" mt={2}>
+          <Text
+            fontSize={{ base: "1rem", sm: "1.5rem" }}
+            marginBottom="0.2rem"
+            mt={2}
+          >
             Ploting the Land
           </Text>
           <Flex
@@ -368,7 +377,11 @@ export default function LandDetailsForm({ landid }) {
 
       {chnageOption.priceB && (
         <Box>
-          <Text fontSize={"1.5rem"} marginBottom="0.2rem" mt={2}>
+          <Text
+            marginBottom="0.2rem"
+            mt={2}
+            fontSize={{ base: "1rem", sm: "1.5rem" }}
+          >
             Change the Price of Land
           </Text>
           <Flex
@@ -409,7 +422,11 @@ export default function LandDetailsForm({ landid }) {
 
       {chnageOption.picB && (
         <Box>
-          <Text fontSize={"1.5rem"} marginBottom="0.2rem" mt={2}>
+          <Text
+            fontSize={{ base: "1rem", sm: "1.5rem" }}
+            marginBottom="0.2rem"
+            mt={2}
+          >
             Change the Image of Land
           </Text>
           <Flex
@@ -448,7 +465,11 @@ export default function LandDetailsForm({ landid }) {
 
       {chnageOption.coordB && (
         <Box>
-          <Text fontSize={"1.5rem"} marginBottom="0.2rem" mt={2}>
+          <Text
+            fontSize={{ base: "1rem", sm: "1.5rem" }}
+            marginBottom="0.2rem"
+            mt={2}
+          >
             Change the Coordinate of Land
           </Text>
           <Flex

@@ -31,7 +31,7 @@ const Card = ({
   landStatus,
 }) => {
   const { contract,account,matic,pkr } = useContext(Web3Context);
-
+  console.log(pkr,'pkr')
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ const Card = ({
     try {
       if (isLandVerified) {
         setLoading(true);
-        await contract.changeDetails(
+      const sell=  await contract.changeDetails(
           id,
           true,
           false,
@@ -54,13 +54,14 @@ const Card = ({
             gasLimit: 1000000,
           }
         );
+        await sell.wait()
+        setLoading(false);
         toast({
           title: "Changed Susscesfully",
           status: "success",
           duration: 2000,
           isClosable: true,
         });
-        setLoading(false);
       } else if (!isLandVerified) {
         toast({
           title: "Land is Not verified",
@@ -127,7 +128,7 @@ const Card = ({
         <Text as="span" fontWeight="bold">
           Price:{" "}
         </Text>
-        {Math.round( landPrice*pkr)} {" "}
+        { Math.round(landPrice*pkr)} {" "}
         pkr
       </Text>
       <Text fontSize="xl" fontWeight="light" mb="2">
@@ -198,8 +199,7 @@ const Card = ({
   );
 };
 
-const LandCard = () => {
-  const { currentUserLand } = useContext(Web3Context);
+const LandCard = ({ currentUserLand }) => {
 
   return (
     <Flex wrap={"wrap"} alignItems={"center"} justifyContent={"space-evenly"}>

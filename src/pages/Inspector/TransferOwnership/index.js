@@ -9,6 +9,7 @@ import {
   Td,
   Button,
   Flex,
+  Link,
 } from "@chakra-ui/react";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import { Web3Context } from "@/components/context/web3Model";
@@ -29,9 +30,9 @@ const TableWithPagination = () => {
   );
 
   const lands = landrequest?.filter(
-    (land) => land.requestStatus==4 ||land.requestStatus==3
+    (land) => land.requestStatus == 4 || land.requestStatus == 3
   );
-  console.log('land',lands)
+  console.log("land", lands);
   const requeststatus = {
     0: "pending",
     1: "accepted",
@@ -57,7 +58,6 @@ const TableWithPagination = () => {
               <Th fontSize={{ base: 10, md: 17 }}>Land Id</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Seller Address</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Buyer Address</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>View Document</Th>
 
               <Th fontSize={{ base: 10, md: 17 }}>Status</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Transfer</Th>
@@ -72,14 +72,17 @@ const TableWithPagination = () => {
 
                 <Td>{shortenEthereumAddress(land?.sellerId)}</Td>
                 <Td>{shortenEthereumAddress(land?.buyerId)}</Td>
-                <Td>
-                  <Button variant={"link"}>View</Button>
-                </Td>
+              
 
                 <Td>{requeststatus[land?.requestStatus]}</Td>
                 <Td>
                   <Button
-                    backgroundColor={"green"}
+                    backgroundColor={"green.400"}
+                    color={"whiteAlpha.800"}
+                    _hover={{
+                      color: "white",
+                      backgroundColor: "cyan.400",
+                    }}
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
@@ -93,7 +96,7 @@ const TableWithPagination = () => {
                           id: land?.landId,
                           seller: land?.sellerId,
                           buyer: land?.buyerId,
-                          reqId:land?.reqId
+                          reqId: land?.reqId,
                         })
                       );
                     }}

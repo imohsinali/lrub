@@ -18,8 +18,9 @@ import PaymentModel from "@/components/Models/paymentModel";
 const TableWithPagination = () => {
   const requeststatus = {
     0: "pending",
-    1: "accepted",
-    2: "rejected",
+    1: "rejected",
+    2: "accepted",
+
     3: "paymentdone",
     4: "completed",
   };
@@ -85,7 +86,7 @@ const TableWithPagination = () => {
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
-                    isDisabled={row?.requestStatus != 1}
+                    isDisabled={row?.requestStatus != 2}
                     onClick={() => {
                       const dataToStore = {
                         landId: row.landId,

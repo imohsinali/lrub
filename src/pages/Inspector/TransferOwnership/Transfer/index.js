@@ -15,6 +15,7 @@ import Link from "next/link";
 import getCameraStreams from "@/components/utils/cameraStream";
 
 const TableWithPagination = () => {
+  const { contract } = useContext(Web3Context);
   const [camera1, setCamera1] = useState(null);
   const [camera2, setCamera2] = useState(null);
   const [camera3, setCamera3] = useState(null);
@@ -49,9 +50,9 @@ const TableWithPagination = () => {
   }, [!imgbBuyer && !imgbSeller && !imgbWitness]);
 
   const handleTransfer = async (id) => {
-      setCamera3(null);
-      setCamera2(null);
-      setCamera1(null);
+    setCamera3(null);
+    setCamera2(null);
+    setCamera1(null);
     try {
       setLoading(true);
 
@@ -68,10 +69,13 @@ const TableWithPagination = () => {
 
       const url1 = await pdfHash(pp);
       setDoc(url1);
+      console.log("id", witness?.address, id, url1);
 
-      const trasferd = await contract.transferOwnership(id, url1, {
-        gasLimit: 200000,
-      });
+      const trasferd = await contract.transferOwnership(
+        id,
+        url1,
+        witness?.address
+      );
       await trasferd.wait();
 
       setLoading(false);
@@ -82,13 +86,13 @@ const TableWithPagination = () => {
         isClosable: true,
       });
     } catch (error) {
+      console.log(error);
       toast({
         title: "Something Went Wrong",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
-
 
       setLoading(false);
     }

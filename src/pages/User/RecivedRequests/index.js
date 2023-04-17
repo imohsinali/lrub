@@ -19,8 +19,7 @@ import VerifyLandModel from "@/components/Models/VerifyLandModel";
 const TableWithPagination = () => {
   const { land, setLandId, landstatus, contract, pkr } =
     useContext(Web3Context);
-    const [loadingRow, setLoadingRow] = useState(null);
-
+  const [loadingRow, setLoadingRow] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(10);
@@ -37,7 +36,7 @@ const TableWithPagination = () => {
     return filteredLand?.length > 0 ? filteredLand[0].landPrice : null;
   };
 
-console.log('aland', landstatus)
+  console.log("aland", landstatus);
 
   const handlePageClick = (p) => {
     setCurrentPage(p);
@@ -72,11 +71,10 @@ console.log('aland', landstatus)
     }
   };
 
-
   const requeststatus = {
     0: "pending",
-    1: "accepted",
-    2: "rejected",
+    1: "rejected",
+    2: "accepted",
     3: "paymentdone",
     4: "completed",
   };
@@ -100,9 +98,9 @@ console.log('aland', landstatus)
               <Th fontSize={{ base: 10, md: 17 }}>Actual Price</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Offer Price</Th>
               <Th fontSize={{ base: 10, md: 17 }}>Status</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Reject</Th>
 
               <Th fontSize={{ base: 10, md: 17 }}>Accept</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Reject</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -113,8 +111,8 @@ console.log('aland', landstatus)
                 <Td>{row.landId}</Td>
 
                 <Td>{row?.buyerId}</Td>
-                <Td>{Math.round(landPrice(row?.landId)*pkr)}</Td>
-                <Td>{Math.round(row?.bidPrice*pkr)}</Td>
+                <Td>{Math.round(landPrice(row?.landId) * pkr)}</Td>
+                <Td>{Math.round(row?.bidPrice * pkr)}</Td>
                 <Td>{requeststatus[row?.requestStatus]}</Td>
 
                 <Td>
@@ -129,7 +127,7 @@ console.log('aland', landstatus)
                     isLoading={row.reqId === loadingRow}
                     isDisabled={row.requestStatus > 0}
                   >
-                    {row.requestStatus == 2 ? "Rejected" : "Reject"}
+                    {row.requestStatus == 1 ? "Rejected" : "Reject"}
                   </Button>
                 </Td>
                 <Td>
@@ -142,11 +140,9 @@ console.log('aland', landstatus)
                       AcceptReject(row.reqId, true);
                     }}
                     isLoading={row.reqId === loadingRow}
-                    isDisabled={row.requestStatus > 0 }
+                    isDisabled={row.requestStatus > 0}
                   >
-                    {row.requestStatus > 0 && row.requestStatus != 2
-                      ? "Accepted"
-                      : "Accept"}
+                    {row.requestStatus > 1 ? "Accepted" : "Accept"}
                   </Button>
                 </Td>
               </Tr>

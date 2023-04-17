@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { Web3Context } from "../context/web3Model";
+import shortenEthereumAddress from "../utils/shortenAddress";
+import { timeStamp } from "../utils/timeStamp";
 
 export default function VerifyUserModel({ isOpen, setOpen, user }) {
   const { contract, userAddress } = useContext(Web3Context);
@@ -21,18 +23,18 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  let verifydate = new Date(userdata[0]?.registerdate * 1000); // convert seconds to milliseconds
-  const date = new Date(verifydate.toUTCString());
+  let registerdate = new Date(userdata[0]?.registerdate * 1000); // convert seconds to milliseconds
+  const date = new Date(registerdate.toUTCString());
 
-  verifydate = date.toUTCString();
+  registerdate = date.toUTCString();
   const options = { hour12: true };
-  verifydate = date.toLocaleString("GMT", options);
+  registerdate = date.toLocaleString("GMT", options);
 
   const verifyUser = async (address) => {
-    console.log('address', address)
+    console.log("address", address);
     try {
       setLoading(true);
-     const verified= await contract.verifyUser(address);
+      const verified = await contract.verifyUser(address);
       await verified.wait();
 
       toast({
@@ -55,7 +57,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
     }
   };
 
-  console.log('iusrer',user[0])
+  console.log("iusrer", user[0]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
@@ -71,7 +73,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
           </Flex>
         </ModalHeader>
         <ModalBody>
-          <p>Wallet Address: {userdata[0]?.address}</p>
+          <p>Wallet Address: {shortenEthereumAddress(userdata[0]?.address)}</p>
           <p>Name: {userdata[0]?.name.split("|").join(" ")}</p>
           <p>CNIC: {userdata[0]?.cnic}</p>
           <p>Date of Birth: {userdata[0]?.dob}</p>
@@ -90,11 +92,17 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
             }
           </p>
           <p>Email:{userdata[0]?.email}</p>
-          <p>verfiedby: {userdata[0]?.verfiedby}</p>
-          <p>
-            {user[0]?.isUserVerified ? "Verified Date" : "Regsitered Date"}:
-            {verifydate}
-          </p>
+          <p>Register Date: {registerdate}</p>
+          {userdata[0]?.isUserVerified && (
+            <>
+              <p>verfiedby: {shortenEthereumAddress(userdata[0]?.verfiedby)}</p>
+
+              <p>
+                Verified Date:
+                {timeStamp(userdata[0]?.verifydate)}
+              </p>
+            </>
+          )}
         </ModalBody>
 
         <ModalFooter>

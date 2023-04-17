@@ -17,7 +17,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoibW9oYWluYmFsdGkiLCJhIjoiY2xhNGE2ZWd0MHg4ZTNwbXpiN2Q3a2ZsYiJ9.2J8OizwcJnm4U0Idhsu5IA";
 
 const Myland = () => {
-  const { contract } = useContext(Web3Context);
+  const { contract ,pkr} = useContext(Web3Context);
   const router = useRouter();
   const [land, setLand] = useState();
   const [lng, setLng] = useState(70);
@@ -51,7 +51,7 @@ const Myland = () => {
         <Map zoom={zoom} lat={lat} lng={lng} coordArray={coordArray} />
       )}
 
-      <LandDetails land={land} user={'user'} />
+      <LandDetails land={land} user={"user"} pkr={pkr} />
 
       {land?.ownerAddress == land?.account &&
         land?.isLandVerified &&

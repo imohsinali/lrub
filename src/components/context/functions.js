@@ -105,10 +105,19 @@ export const Lands = async (contract) => {
   console.log("las;als", land);
   const landinfo = await Promise?.all(
     landsArray?.map(async (id) => {
-      const { timestamp, verfiedby } = await contract?.landinfo(id);
+      const { verfydate, verfiedby } = await contract?.landinfo(id);
       return {
-        timestamp: parseInt(timestamp?._hex),
+        timestamp: parseInt(verfydate?._hex),
         verfiedby,
+      };
+    })
+  );
+
+  const landPriceInfo = await Promise?.all(
+    landsArray?.map(async (id) => {
+      const { basePrice } = await contract?.landPriceInfo(id);
+      return {
+        basePrice: parseInt(basePrice?._hex),
       };
     })
   );
@@ -131,6 +140,7 @@ export const Lands = async (contract) => {
       return {
         ...landItem,
         ...landinfo[index],
+        ...landPriceInfo[index],
         landStatus: status,
       };
     })
@@ -166,9 +176,20 @@ export const RecivedRequest = async (contract) => {
     })
   );
 
-  const usersWithStatus = await Promise.all(
-    request.map(async (req) => {
+  const landPriceInfo = await Promise?.all(
+    allLand?.map(async (id) => {
+      const { basePrice } = await contract?.landPriceInfo(id);
       return {
+        basePrice: parseInt(basePrice?._hex),
+      };
+    })
+  );
+
+  const usersWithStatus = await Promise.all(
+    request.map(async (req, index) => {
+      return {
+        ...landPriceInfo[index],
+
         ...req,
       };
     })
@@ -221,7 +242,7 @@ export const landRequest = async (contract) => {
     landsArray.push(i + 1);
   }
   const request = await Promise.all(
-    [1,2,3,4,5].map(async (id) => {
+    [1, 2, 3, 4, 5].map(async (id) => {
       const {
         sellerId,
         buyerId,
@@ -243,7 +264,7 @@ export const landRequest = async (contract) => {
     })
   );
 
-  console.log("land",request)
+  console.log("land", request);
 
   return request;
 };

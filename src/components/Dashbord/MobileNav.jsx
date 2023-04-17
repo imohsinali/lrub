@@ -16,6 +16,7 @@ import {
   Badge,
   Image,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useContext } from "react";
 import {
   FiMenu,
@@ -26,6 +27,7 @@ import { Web3Context } from "../context/web3Model";
 import CurrencySelect from "../utils/Currency";
 
 const MobileNav = ({onOpen,role,data, ...rest }) => {
+  const router =useRouter()
   const { disconnect } = useContext(Web3Context);
   return (
     <Flex
@@ -114,7 +116,8 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem>Profile</MenuItem>
+              
+              <MenuItem onClick={()=>router.push('/User/Profile')}>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
               <MenuItem

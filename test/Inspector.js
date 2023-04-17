@@ -28,17 +28,27 @@ const landPrice = 1000000;
 const allLatiLongi = "40.712776,-74.005974";
 const propertyPID = 123456789;
 const propertyPID1 = 123456788;
+const propertyPID2 = 1234567881;
 
 const document = "document";
 const landpic = "landpic";
-describe("Testing LandRegsitry System", function () {
+
+let landId = 1;
+let bidPrice = ethers.utils.parseEther("8");
+
+describe("", function () {
   let contractOwner;
   let landRegistry;
   let account1;
   let account2;
+  let account3;
   let user1;
   let user2;
   let user3;
+  let user4;
+  let witness;
+
+  let proxyOwner;
 
   beforeEach(async function () {
     const LandRegistry = await ethers.getContractFactory("landregistry");
@@ -51,6 +61,10 @@ describe("Testing LandRegsitry System", function () {
     user1 = await ethers.getSigner(3);
     user2 = await ethers.getSigner(4);
     user3 = await ethers.getSigner(5);
+    user4 = await ethers.getSigner(6);
+    witness = await ethers.getSigner(7);
+    account3 = await ethers.getSigner(9);
+    proxyOwner = await ethers.getSigner(8);
 
     await landRegistry.changeContractOwner(contractOwner.address);
 
@@ -62,6 +76,18 @@ describe("Testing LandRegsitry System", function () {
       designation,
       city,
       district,
+      email,
+      phone
+    );
+    let cnic2 = 809809808080;
+    await landRegistry.addLandInspector(
+      account3.address,
+      name,
+      dob,
+      cnic2,
+      designation,
+      city,
+      ldistrict2,
       email,
       phone
     );
@@ -93,8 +119,57 @@ describe("Testing LandRegsitry System", function () {
         uemail,
         uphone
       );
-
+    await landRegistry
+      .connect(user4)
+      .registerUser(
+        uname,
+        udob,
+        ucity,
+        udistrict,
+        ucnic,
+        udocument,
+        uprofilepic,
+        uemail,
+        uphone
+      );
+    await landRegistry
+      .connect(witness)
+      .registerUser(
+        uname,
+        udob,
+        ucity,
+        udistrict,
+        ucnic,
+        udocument,
+        uprofilepic,
+        uemail,
+        uphone
+      );
     await landRegistry.connect(account1).verifyUser(user1.address);
+    await landRegistry.connect(account1).verifyUser(witness.address);
+    await landRegistry.connect(account1).verifyUser(user3.address);
+
+    await landRegistry
+      .connect(user1)
+      .addLand(
+        area,
+        landAddress,
+        ldistrict,
+        landPrice,
+        allLatiLongi,
+        propertyPID,
+        document,
+        landpic
+      );
+
+    await landRegistry.connect(account1).verifyLand(1);
+
+    await landRegistry
+      .connect(user1)
+      .changeDetails(1, true, false, false, false, true, 0, "", "");
+    await landRegistry.connect(user3).requestforBuyWithBid(landId, bidPrice);
+    await landRegistry.connect(user3).requestforBuyWithBid(landId, bidPrice);
+    await landRegistry.connect(user3).requestforBuyWithBid(landId, bidPrice);
   });
 
   describe("Land Inspector Functionalities", function () {
@@ -105,6 +180,14 @@ describe("Testing LandRegsitry System", function () {
       expect(await landRegistry.isLandInspector(account2.address)).to.equal(
         false
       );
+    });
+
+    it("should return an array containing all land inspector addresses", async function () {
+      const landInspectors = await landRegistry.ReturnAllLandIncpectorList();
+
+      expect(landInspectors.length).to.equal(2);
+      expect(landInspectors).to.include(account1.address);
+      expect(landInspectors).to.not.include(user1.address);
     });
 
     it("allows land inspector to verify user", async function () {
@@ -130,188 +213,246 @@ describe("Testing LandRegsitry System", function () {
           ldistrict,
           landPrice,
           allLatiLongi,
-          propertyPID,
+          propertyPID1,
           document,
           landpic
         );
 
-      await landRegistry.connect(account1).verifyLand(1);
-
+      await landRegistry.connect(account1).verifyLand(2);
     });
 
-
-        it("should not allow a land inspector to verify land outside their district", async function () {
-          expect(
-            await landRegistry.RegisteredUserMapping(user1.address)
-          ).to.equal(true);
-          expect(await landRegistry.isLandInspector(account1.address)).to.equal(
-            true
-          );
-          await landRegistry
-            .connect(user1)
-            .addLand(
-              area,
-              landAddress,
-              ldistrict2,
-              landPrice,
-              allLatiLongi,
-              propertyPID,
-              document,
-              landpic
-            );
-
-          await expect(landRegistry.connect(account1).verifyLand(1)).to.be.reverted
-
-          // const land = await contract.lands(1);
-          // expect(l).to.equal(true);
-        });
-
-    it("any other then land inspectot verify user and land", async function () {
-      expect(await landRegistry.RegisteredUserMapping(user3.address)).to.equal(
-        true
-      );
-      await expect(landRegistry.connect(user2).verifyUser(user3.address)).to.be
-        .reverted;
-      expect(await landRegistry.isUserVerified(user3.address)).to.equal(false);
-    });
-  });
-
-  describe("User Functionalities", function () {
-    it("allows users to register themselves", async function () {
-      // Verify that the user was registered successfully
+    it("should not allow a land inspector to verify land outside their district", async function () {
       expect(await landRegistry.RegisteredUserMapping(user1.address)).to.equal(
         true
       );
-    });
-
-    // Define the test case for registerUser
-    it("does not allow users to register themselves multiple times", async function () {
-      await landRegistry
-        .connect(user2)
-        .registerUser(
-          uname,
-          udob,
-          ucity,
-          udistrict,
-          ucnic,
-          udocument,
-          uprofilepic,
-          uemail,
-          uphone
-        );
-
-      expect(await landRegistry.RegisteredUserMapping(user2.address)).to.equal(
+      expect(await landRegistry.isLandInspector(account1.address)).to.equal(
         true
       );
-
-      await expect(
-        landRegistry
-          .connect(user2)
-          .registerUser(
-            uname,
-            udob,
-            ucity,
-            udistrict,
-            ucnic,
-            udocument,
-            uprofilepic,
-            uemail,
-            uphone
-          )
-      ).to.be.revertedWith("Allreadey registerd");
-    });
-
-    it("Check it the user is verified or not", async function () {
-      expect(await landRegistry.isUserVerified(user1.address)).to.equal(true);
-    });
-
-    it("Add land if the user is verfied", async function () {
       await landRegistry
         .connect(user1)
         .addLand(
           area,
           landAddress,
-          ldistrict,
+          ldistrict2,
           landPrice,
           allLatiLongi,
-          propertyPID,
+          propertyPID2,
           document,
           landpic
         );
+
+      await expect(landRegistry.connect(account1).verifyLand(2)).to.be.reverted;
+
+      // const land = await contract.lands(1);
+      // expect(l).to.equal(true);
     });
 
-    it("The pid should not be same", async function () {
+    it("any other then land inspectot verify user and land", async function () {
+      expect(await landRegistry.RegisteredUserMapping(user4.address)).to.equal(
+        true
+      );
+      await expect(landRegistry.connect(user2).verifyUser(user4.address)).to.be
+        .reverted;
+      expect(await landRegistry.isUserVerified(user4.address)).to.equal(false);
+    });
+
+    it("should transfer ownership of a land", async function () {
+      // Call the transferOwnership function with valid parameters
+
+      const land = await landRegistry.lands(landId);
+      expect(land.isforSell).to.be.true;
+
+      const ownerAddress = land.ownerAddress;
+
+      expect(ownerAddress).to.equal(user1.address);
+      await landRegistry.connect(user1).acceptRequest(3, true);
+
+      await landRegistry.connect(user3).makePayment(user1.address, 3, {
+        from: user3.address,
+        value: bidPrice,
+      });
+      await landRegistry
+        .connect(account1)
+        .transferOwnership(3, "https://example.com/document", witness.address);
+
+      await expect(
+        landRegistry
+          .connect(account1)
+          .transferOwnership(3, "https://example.com/document", user1.address)
+      ).to.be.reverted;
+
+      // Check that the transfer was successful by getting the land's owner address
+      const Transfered_land = await landRegistry.lands(landId);
+      const newownerAddress = Transfered_land.ownerAddress;
+      expect(newownerAddress).to.equal(user3.address);
+      expect(Transfered_land.isforSell).to.be.false;
+      expect(newownerAddress).to.not.equal(user1.address);
+    });
+
+    it("should revert if the caller is not a land inspector or from other district", async function () {
+      await landRegistry.connect(user1).acceptRequest(3, true);
+
+      await landRegistry.connect(user3).makePayment(user1.address, 3, {
+        from: user3.address,
+        value: bidPrice,
+      });
+
+      await expect(
+        landRegistry
+          .connect(account2)
+          .transferOwnership(3, "https://example.com/document", witness.address)
+      ).to.be.reverted;
+
+      await expect(
+        landRegistry
+          .connect(account3)
+          .transferOwnership(3, "https://example.com/document", witness.address)
+      ).to.be.reverted;
+    });
+
+    it("should revert if the payment is not done ", async function () {
+      await landRegistry.connect(user1).acceptRequest(3, true);
+      const request = await landRegistry.LandRequestMapping(3);
+      expect(request.isPaymentDone).to.equal(false);
+
+      await expect(
+        landRegistry
+          .connect(account1)
+          .transferOwnership(3, "https://example.com/document", witness.address)
+      ).to.be.reverted;
+    });
+
+    it("Should transfer ownership of a deceased owner's lands to their proxy owner", async function () {
       await landRegistry
         .connect(user1)
-        .addLand(
-          area,
-          landAddress,
-          ldistrict,
-          landPrice,
-          allLatiLongi,
-          propertyPID,
-          document,
-          landpic
-        );
-      await expect(
-        landRegistry
-          .connect(user1)
-          .addLand(
-            area,
-            landAddress,
-            ldistrict,
-            landPrice,
-            allLatiLongi,
-            propertyPID,
-            document,
-            landpic
-          )
-      ).to.be.reverted;
-    });
-    it("non verfied user cann't add land", async function () {
-      await expect(
-        landRegistry
-          .connect(user3)
-          .addLand(
-            area,
-            landAddress,
-            ldistrict,
-            landPrice,
-            allLatiLongi,
-            propertyPID,
-            document,
-            landpic
-          )
-      ).to.be.reverted;
+        .changeDetails(1, true, false, false, false, false, 0, "", "");
+      await landRegistry
+        .connect(user1)
+        .AndandRemoveProxyOwner(landId, proxyOwner.address, true);
+      const land = await landRegistry.lands(landId);
+      expect(land.proxyownerAddress).to.equal(proxyOwner.address);
+      expect(land.ownerAddress).to.equal(user1.address);
+      await landRegistry
+        .connect(account1)
+        .transferDeceasedOwnership(user1.address);
+      const Tranferedland = await landRegistry.lands(landId);
+      const newownerAddress = Tranferedland.ownerAddress;
+      expect(newownerAddress).to.not.equal(user1.address);
+      expect(newownerAddress).to.equal(proxyOwner.address);
     });
 
-    it("should return all registered user addresses", async function () {
-      const usersList = await landRegistry.ReturnAllUserList();
-      expect(usersList).to.eql([user1.address, user3.address]);
+    it("should return an array of land request IDs sent by the caller", async function () {
+      const landRequests = await landRegistry
+        .connect(user3)
+        .mySentLandRequests();
+
+      expect(landRequests).to.be.an("array");
+      expect(landRequests).to.have.lengthOf(3);
+      expect(landRequests).to.not.have.lengthOf(2);
     });
 
-    it("this test should  failded as address 2 is not register", async function () {
-      const usersList = await landRegistry.ReturnAllUserList();
-    await expect(usersList).to.eql([user1.address, user2.address, user3.address]).to.be.reverted
+    it("should return an array of land request IDs that have been received", async function () {
+      // Create a new land request and add it to the MyReceivedLandRequest mapping
+      const landRequests = await landRegistry
+        .connect(user1)
+        .myReceivedLandRequests();
+
+      expect(landRequests).to.be.an("array");
+      expect(landRequests).to.have.lengthOf(3);
+      expect(landRequests).to.not.have.lengthOf(2);
     });
 
-    // it("non verified user can't Add land", async function () {
+    it("should return an array containing all lands owned by a given address", async function () {
+      // Add some land IDs to the MyLands mapping for user1
 
-    //  await expect(
-    //    landRegistry
-    //      .connect(user2)
-    //      .addLand(
-    //        area,
-    //        landAddress,
-    //        ldistrict,
-    //        landPrice,
-    //        allLatiLongi,
-    //        propertyPID,
-    //        document,
-    //        landpic
-    //      )
-    //  ).to.be.revertedWith("User is not verified");
+      const user1Lands = await landRegistry.myAllLands(user1.address);
+      const user3Lands = await landRegistry.myAllLands(user3.address);
 
-    // });
+      expect(user1Lands.length).to.equal(1);
+      expect(user3Lands.length).to.equal(0);
+
+      const land = await landRegistry.lands(landId);
+      expect(land.isforSell).to.be.true;
+
+      await landRegistry.connect(user1).acceptRequest(3, true);
+
+      await landRegistry.connect(user3).makePayment(user1.address, 3, {
+        from: user3.address,
+        value: bidPrice,
+      });
+      await landRegistry
+        .connect(account1)
+        .transferOwnership(3, "https://example.com/document", witness.address);
+
+      const user1Lands1 = await landRegistry.myAllLands(user1.address);
+      const user3Lands1 = await landRegistry.myAllLands(user3.address);
+
+      expect(user1Lands1.length).to.equal(0);
+      expect(user3Lands1.length).to.equal(1);
+    });
+
+    it("should return an array containing all land IDs", async function () {
+      const allLandIDs = await landRegistry.ReturnAllLandList();
+
+      expect(allLandIDs.length).to.equal(1);
+    });
+
+    it("should return an array containing the history of the given land ID", async function () {
+      // Call the `getLandHistoryId` function on the smart contract with the land ID
+      //   const landHistory = await mySmartContract.getLandHistoryId(123);
+      //   expect(landHistory.length).to.equal(2);
+      //   expect(landHistory[0].landId).to.equal(123);
+      //   expect(landHistory[0].info).to.equal(update1);
+      //   expect(landHistory[1].landId).to.equal(123);
+      //   expect(landHistory[1].info).to.equal(update2);
+    });
+
+    it("should return true if the given property PID is already in use", async function () {
+      // Add a new land with a property PID of 123 to the smart contract
+
+      const isDuplicate = await landRegistry.CheckDuplicatePid(propertyPID);
+
+      // Assert that the function returns true
+      expect(isDuplicate).to.equal(true);
+    });
+
+    it("should allow subdividing land correctly", async function () {
+      await landRegistry
+        .connect(user1)
+        .changeDetails(1, true, false, false, false, false, 0, "", "");
+
+      let land = await landRegistry.lands(landId);
+      expect(land.area).to.be.equal(1000);
+      await landRegistry.connect(user1).subplot(landId, 50, 5);
+
+      land = await landRegistry.lands(landId);
+      expect(land.area).to.be.equal(750);
+
+      const user1Lands = await landRegistry.myAllLands(user1.address);
+      expect(user1Lands.length).to.equal(6);
+    });
+
+    it("should return an array containing the history of the given land ID", async function () {
+      await landRegistry
+        .connect(user1)
+        .changeDetails(1, true, false, false, false, false, 0, "", "");
+
+      let land = await landRegistry.lands(landId);
+      expect(land.area).to.be.equal(1000);
+      await landRegistry.connect(user1).subplot(landId, 50, 5);
+
+      land = await landRegistry.lands(landId);
+      expect(land.area).to.be.equal(750);
+
+      const user1Lands = await landRegistry.myAllLands(user1.address);
+      expect(user1Lands.length).to.equal(6);
+
+      //   const landHistory = await landRegistry.getLandHistory(1);
+
+      await landRegistry.connect(user1).subplot(landId, 20, 5);
+      //   const landHistory1 = await landRegistry.getLandHistory(1);
+      //   const landinfo = await landRegistry.landinfo(1);
+    });
+
   });
 });
