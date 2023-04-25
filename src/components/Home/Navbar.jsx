@@ -16,15 +16,15 @@ import useSWR from "swr";
 
 import { Web3Context } from "../context/web3Model";
 import { SignJWT } from "jose";
-import {nanoid} from 'nanoid'
+import { nanoid } from "nanoid";
 import { setCookie } from "nookies";
 export default function Navbar() {
   const toast = useToast();
 
   const router = useRouter();
-  const { account, connectWallet, contract,matic } = useContext(Web3Context);
+  const { account, connectWallet, contract, matic } = useContext(Web3Context);
   const [loginClicked, setLogin] = useState(false);
-  console.log(matic)
+  console.log(matic);
 
   function handleSetPath(_roleA, _roleI, _roleU) {
     // const secret = ;
@@ -85,8 +85,8 @@ export default function Navbar() {
 
           const Admin1 = await contract?.isContractOwner(account);
           const Inpector = await contract?.isLandInspector(account);
-          const UserRegistered =await contract?.RegisteredUserMapping(account);
-          console.log("login called",UserRegistered); // add this line
+          const UserRegistered = await contract?.RegisteredUserMapping(account);
+          console.log("login called", UserRegistered); // add this line
 
           loginPage(role, Admin1, Inpector, UserRegistered);
         } catch (error) {
@@ -99,7 +99,6 @@ export default function Navbar() {
     loginClicked && login();
   }, [loginClicked, account, contract]);
 
-
   const loginPage = async (role, Admin, Inpector, UserRegistered) => {
     try {
       if (role?.Admin && Admin) {
@@ -109,11 +108,11 @@ export default function Navbar() {
           .setIssuedAt()
           .setExpirationTime("1H")
           .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_ADMIN));
-          setCookie(null, "Admintoken", token, {
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
-            secure: process.env.NODE_ENV === "development",
-          });
+        setCookie(null, "Admintoken", token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: process.env.NODE_ENV === "development",
+        });
         router.push("/Admin");
         toastSuccess();
       }
@@ -121,7 +120,8 @@ export default function Navbar() {
       if (role?.Admin && !Admin) {
         router.reload();
         toastError();
-      } else if (role?.Inspector && Inpector) {
+      }
+      if (role?.Inspector && Inpector) {
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
@@ -135,11 +135,14 @@ export default function Navbar() {
         });
         router.push("/Inspector");
         toastSuccess();
-      } else if (role?.Inspector && !Inpector) {
+      }
+      if (role?.Inspector && !Inpector) {
         router.reload();
 
         toastError();
-      } else if (role?.User && UserRegistered) {
+      }
+      if (role?.User && UserRegistered) {
+        console.log("userasd");
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
@@ -153,7 +156,8 @@ export default function Navbar() {
         });
         router.push("/User");
         toastSuccess();
-      } else if (role?.User && !UserRegistered) {
+      }
+      if (role?.User && !UserRegistered) {
         router.push("/Register");
         toastSuccess();
       } else {
@@ -283,7 +287,6 @@ export default function Navbar() {
     </Flex>
   );
 }
-
 
 // export async  function getServerSideProps()
 // {

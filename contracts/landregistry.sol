@@ -14,14 +14,11 @@ contract landregistry {
     struct LandInspector {
         uint id;
         address addr;
-        bytes32 name;
-        bytes32 dob;
-        uint cnic;
-        bytes32 city;
-        bytes32 district;
-        bytes32 designation;
-        bytes32 email;
-        uint phone;
+        bytes32 posdistrict;
+        address addby;
+        uint timeStamp;
+        uint totaluserVerification;
+        uint totallandVerification;
     }
 
     struct User {
@@ -59,18 +56,19 @@ contract landregistry {
     struct LandInfo {
         address verfiedby;
         uint verfydate;
-        bool directed;
         uint childs;
+        verStatus verfiactionStatus;
     }
 
     struct LandPriceInfo {
         uint id;
         uint basePrice;
-        uint landPrice;
+        uint bidPrice;
     }
     struct UserInfo {
         address verfiedby;
         uint verifydate;
+        verStatus verfiactionStatus;
     }
     struct TransferInfo {
         uint id;
@@ -108,6 +106,13 @@ contract landregistry {
         accepted,
         paymentdone,
         commpleted
+    }
+    enum verStatus{
+        requested,
+        rejected,
+        directedVerified,
+        indirectedVerified,
+        addbyAdmin
     }
 
 
@@ -154,43 +159,30 @@ contract landregistry {
 
     function addLandInspector(
         address _addr,
-        bytes32 _name,
-        bytes32 _dob,
-        uint _cinc,
-        bytes32 _designation,
-        bytes32 _city,
-        bytes32 _district,
-        bytes32 _email,
-        uint _phone
+        bytes32 _posdistrict
     ) public returns (bool) {
         // Check if the caller is the contract owner and the inspector is not already registered
         if (
             msg.sender == contractOwner &&
-            RegisteredInspectorMapping[_addr] == false
+            RegisteredInspectorMapping[_addr] == false&&
+            RegisteredUserMapping[_addr]==true
         ) {
             // Check if the CNIC already exists in the inspectors mapping
-            for (uint i = 0; i < inspectorsCount; i++) {
-                if (
-                    InspectorMapping[allLandInspectorList[1][i]].cnic == _cinc
-                ) {
-                    revert();
-                }
-            }
+            
             // Update the inspectors mapping and lists
+            UserMapping[_addr].isUserVerified = true;
+            userinfo[_addr] = UserInfo(msg.sender, block.timestamp,verStatus.directedVerified);
             RegisteredInspectorMapping[_addr] = true;
             inspectorsCount++;
             allLandInspectorList[1].push(_addr);
             InspectorMapping[_addr] = LandInspector(
                 inspectorsCount,
                 _addr,
-                _name,
-                _dob,
-                _cinc,
-                _city,
-                _district,
-                _designation,
-                _email,
-                _phone
+                _posdistrict,
+                msg.sender,
+                block.timestamp,
+                0,
+                0
             );
             return true;
         } else {
@@ -242,6 +234,14 @@ contract landregistry {
             // The user is already registered.
             revert("Allreadey registerd");
         } else {
+
+            for (uint i = 0; i < userCount; i++) {
+                if (
+                    UserMapping[allUsersList[1][i]].cnic == _cinc
+                ) {
+                    revert("duplicate cnic");
+                }
+            }
             // require(!RegisteredUserMapping[msg.sender]);
 
             RegisteredUserMapping[msg.sender] = true;
@@ -263,22 +263,41 @@ contract landregistry {
                 block.timestamp
             );
             //emit Registration(msg.sender);
+
+        userinfo[msg.sender] = UserInfo(address(0), 0,verStatus.requested);
+
         }
     }
 
-    function verifyUser(address _userId) public {
+    function verifyUserAccepted(address _userId) public {
         if (
             isLandInspector(msg.sender) &&
             _userId != msg.sender &&
             UserMapping[_userId].district ==
-            InspectorMapping[msg.sender].district
+            InspectorMapping[msg.sender].posdistrict
         ) {
             UserMapping[_userId].isUserVerified = true;
-            userinfo[_userId] = UserInfo(msg.sender, block.timestamp);
+            userinfo[_userId] = UserInfo(msg.sender, block.timestamp,verStatus.directedVerified);
         } else {
             revert();
         }
     }
+
+
+    function verifyUserRejected(address _userId) public {
+        if (
+            isLandInspector(msg.sender) &&
+            _userId != msg.sender &&
+            UserMapping[_userId].district ==
+            InspectorMapping[msg.sender].posdistrict
+        ) {
+            UserMapping[_userId].isUserVerified = true;
+            userinfo[_userId] = UserInfo(msg.sender, block.timestamp,verStatus.rejected);
+        } else {
+            revert();
+        }
+    }
+
 
     function isUserVerified(address id) public view returns (bool) {
         return UserMapping[id].isUserVerified;
@@ -334,7 +353,16 @@ contract landregistry {
                     block.timestamp,
                     0
                 )
+
+
             );
+
+                  landinfo[landsCount] = LandInfo(
+                    address(0),
+                    0,
+                    0,
+                    verStatus.requested
+                );
         } else {
             revert();
         }
@@ -401,15 +429,15 @@ contract landregistry {
                 landinfo[landsCount] = LandInfo(
                     landinfo[id].verfiedby,
                     landinfo[id].verfydate,
-                    false,
-                    0
+                    0,
+                    verStatus.indirectedVerified
                 );
 
                 landinfo[id] = LandInfo(
                     landinfo[id].verfiedby,
                     landinfo[id].verfydate,
-                    true,
-                    newNumPlots
+                    newNumPlots,
+                    verStatus.directedVerified
                 );
 
                 // Calculate the new numplots value by adding the previous numplots value to the new one
@@ -451,19 +479,38 @@ contract landregistry {
         return allLandList[1];
     }
 
-    function verifyLand(uint _id) public {
+    function verifyLandAccepted(uint _id) public {
         if (
             isLandInspector(msg.sender) &&
             lands[_id].ownerAddress != msg.sender &&
             UserMapping[lands[_id].ownerAddress].isUserVerified &&
-            InspectorMapping[msg.sender].district == lands[_id].district
+            InspectorMapping[msg.sender].posdistrict == lands[_id].district
         ) {
             lands[_id].isLandVerified = true;
             landinfo[_id] = LandInfo(
                 msg.sender,
                 block.timestamp,
-                true,
-                landinfo[_id].childs
+                landinfo[_id].childs,
+                verStatus.directedVerified
+            );
+        } else {
+            revert();
+        }
+    }
+
+    function verifyLandRejected(uint _id) public {
+        if (
+            isLandInspector(msg.sender) &&
+            lands[_id].ownerAddress != msg.sender &&
+            UserMapping[lands[_id].ownerAddress].isUserVerified &&
+            InspectorMapping[msg.sender].posdistrict == lands[_id].district
+        ) {
+            lands[_id].isLandVerified = true;
+            landinfo[_id] = LandInfo(
+                msg.sender,
+                block.timestamp,
+                landinfo[_id].childs,
+                verStatus.rejected
             );
         } else {
             revert();
@@ -563,7 +610,7 @@ contract landregistry {
 
 
 
-    function acceptRequest(uint _requestId, bool acceptreject) public {
+    function acceptRequest(uint _requestId) public {
         require(
             LandRequestMapping[_requestId].sellerId == msg.sender,
             "Only the seller can accept or reject a request."
@@ -575,17 +622,15 @@ contract landregistry {
             "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
         );
 
-        if (acceptreject) {
             // Accept the request
             if (LandRequestMapping[_requestId].bidPrice > 0) {
                 // Update the land price with the bid price
-                LandPriceInfo(
+               landPriceInfo[_requestId]= LandPriceInfo(
                     _requestId,
                     lands[LandRequestMapping[_requestId].landId].landPrice,
                     LandRequestMapping[_requestId].bidPrice
                 );
-                lands[LandRequestMapping[_requestId].landId]
-                    .landPrice = LandRequestMapping[_requestId].bidPrice;
+                
             }
 
             LandRequestMapping[_requestId].requestStatus = reqStatus.accepted;
@@ -599,13 +644,29 @@ contract landregistry {
                 }
             }
 
-        } else {
-            LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
-        }
+        
 
         
     }
 
+
+    function rejectRequest(uint _requestId) public {
+        require(
+            LandRequestMapping[_requestId].sellerId == msg.sender,
+            "Only the seller can accept or reject a request."
+        );
+        require(
+            LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
+            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,
+            
+            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
+        );
+
+       
+            LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
+
+        
+    }
     
 
     function requestforBuyWithBid(uint _landId, uint _bidPrice) public {
@@ -662,7 +723,7 @@ contract landregistry {
             LandRequestMapping[_requestId].requestStatus !=
             reqStatus.paymentdone&&
             LandRequestMapping[_requestId].sellerId == _receiver &&
-            msg.value == lands[LandRequestMapping[_requestId].landId].landPrice
+            msg.value == landPriceInfo[_requestId].bidPrice
         ) {
             LandRequestMapping[_requestId].requestStatus = reqStatus
                 .paymentdone;
@@ -687,7 +748,7 @@ contract landregistry {
             Land storage land = lands[landId];
             if (
                 land.ownerAddress == deceased &&
-                InspectorMapping[msg.sender].district == land.district
+                InspectorMapping[msg.sender].posdistrict == land.district
             ) {
                 documentId++;
                 land.isforSell = false;
@@ -718,7 +779,7 @@ contract landregistry {
         if (
             isLandInspector(msg.sender) &&
             LandRequestMapping[_requestId].isPaymentDone &&
-            InspectorMapping[msg.sender].district ==
+            InspectorMapping[msg.sender].posdistrict ==
             lands[LandRequestMapping[_requestId].landId].district &&
             UserMapping[witness].isUserVerified &&
             witness != LandRequestMapping[_requestId].sellerId &&

@@ -10,8 +10,10 @@ import useSWR from "swr";
 import { getAlluser, Lands, RecivedRequest, SendRequest } from "./functions";
 // const contractAddress = "0x0421587b973034bB7388B4fDC73416937543c29d";
 // const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
-// const contractAddress = "0x8d1bcb280f3ca175e7aa9b5fb19e4f198bd71de2";
-const contractAddress = "0xAca1b2d9d4e6E6Fa32d6818De3ca67b7052fBdE0";
+
+// const contractAddress = "0xAca1b2d9d4e6E6Fa32d6818De3ca67b7052fBdE0";
+const contractAddress = "0x8b5018C3de4e271464809bc3A6a2509e154343D8";
+// 
 
 ;
 
