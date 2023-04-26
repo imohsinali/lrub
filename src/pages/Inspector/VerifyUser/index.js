@@ -18,8 +18,11 @@ import useSWR from "swr";
 import { Web3Context } from "@/components/context/web3Model";
 import VerifyUserModel from "@/components/Models/VerifyUserModel";
 import { getAlluser } from "@/components/context/functions";
+import { useClipboard } from '@chakra-ui/react'
 
 const TableWithPagination = () => {
+const { onCopy, value, setValue, hasCopied } = useClipboard("");
+
   const { setUser, contract } = useContext(Web3Context);
   const { data: users, error: userError } = useSWR(
     ["user", contract],
@@ -69,7 +72,9 @@ const TableWithPagination = () => {
                 <Td>{index}</Td>
                 <Td>
                   <Flex>
-                    <Text>{row.address}</Text>
+                    <Text>{row.address} 
+                    
+                     </Text>
                     {row.isUserVerified && (
                       <Image ml={1} width={5} src={"/images/verified.png"} />
                     )}

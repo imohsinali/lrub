@@ -41,7 +41,7 @@ const MobileNav = ({ onOpen, role, data, ...rest }) => {
       top={0}
       left={0}
       right={0}
-      zIndex={10}
+      zIndex={10000}
     >
       <IconButton
         display={{ base: "flex", md: "none" }}

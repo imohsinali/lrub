@@ -89,10 +89,14 @@ const SidebarContent = ({ onClose,links, ...rest }) => {
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
+      zIndex={10000}
       h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between" 
+      
+      zIndex={10000}
+      >
         <Link href="/">
           <Image src="/images/nlogo.jpg" width={70} height={55} alt="image" />
         </Link>
