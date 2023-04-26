@@ -13,10 +13,7 @@ import { getAlluser, Lands, RecivedRequest, SendRequest } from "./functions";
 
 // const contractAddress = "0xAca1b2d9d4e6E6Fa32d6818De3ca67b7052fBdE0";
 const contractAddress = "0x8b5018C3de4e271464809bc3A6a2509e154343D8";
-// 
-
-;
-
+//
 
 const providerOptions = {
   walletconnect: {
@@ -186,12 +183,37 @@ const Web3Provider = ({ children }) => {
   console.log("asasas", landforSell);
   const [mapzoom, setMapzoom] = useState(false);
 
-const getBlock=async()=>{
-const oneDayAgoTimestamp = Math.floor(Date.now() / 1000) - 24 * 60 * 60;
+  const getBlock = async () => {
+    const oneDayAgoTimestamp = Math.floor(Date.now() / 1000) - 24 * 60 * 60;
 
-const currentBlockNumber = await library?.getBlockNumber();
-console.log("estimatedBlockNumber", currentBlockNumber);
-}
+    const currentBlockNumber = await library?.getBlockNumber();
+    console.log("estimatedBlockNumber", currentBlockNumber);
+  };
+
+  const [totalUser, settotalUser] = useState();
+  const [totalLand, settotalLand] = useState();
+  const [totalInsp, settotalInsp] = useState();
+  const [totalLandTransfer, settotalLandTransfer] = useState();
+
+  // uint public inspectorsCount;
+  // uint public userCount;
+  // uint public landsCount;
+  // uint public documentId;
+
+  useEffect(() => {
+    const fun = async () => {
+      const user = await contract?.userCount();
+      settotalUser(parseInt(user?._hex));
+      const land = await contract?.landsCount();
+      settotalLand(parseInt(land?._hex));
+
+      const insp = await contract?.inspectorsCount();
+      settotalInsp(parseInt(insp?._hex));
+      const transfer = await contract?.documentId();
+      settotalLandTransfer(parseInt(transfer?._hex));
+    };
+    fun();
+  }, [contract]);
   const web3ContextValue = {
     provider,
     library,
@@ -204,6 +226,10 @@ console.log("estimatedBlockNumber", currentBlockNumber);
     verified,
     contract,
     currentUser,
+    totalUser,
+    totalLand,
+    totalInsp,
+    totalLandTransfer,
     connectWallet,
     refreshState,
     disconnect,
