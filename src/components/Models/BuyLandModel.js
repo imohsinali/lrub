@@ -70,7 +70,7 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
   return (
     <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
       <ModalOverlay w={"110%"} h={"110%"} />
-      <ModalContent m={{ base: 200, sm: 100 }} ml={{ base: "", sm: "40%" }}>
+      <ModalContent m={{ base: 200, sm: 50 }} ml={{ base: "", sm: "40%" }}>
         <ModalCloseButton />
 
         <ModalHeader mt={{ base: "4", sm: "" }}>

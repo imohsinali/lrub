@@ -27,8 +27,6 @@ export default function Navbar() {
   console.log(matic);
 
   function handleSetPath(_roleA, _roleI, _roleU) {
-    // const secret = ;
-
     console.log("ajsdkaj", process?.env?.NEXT_PUBLIC_SECRET_ADMIN);
     const role = {
       Admin: _roleA,
@@ -86,7 +84,7 @@ export default function Navbar() {
           const Admin1 = await contract?.isContractOwner(account);
           const Inpector = await contract?.isLandInspector(account);
           const UserRegistered = await contract?.RegisteredUserMapping(account);
-          console.log("login called", UserRegistered); // add this line
+          console.log("login called", Admin1); // add this line
 
           loginPage(role, Admin1, Inpector, UserRegistered);
         } catch (error) {
@@ -117,11 +115,10 @@ export default function Navbar() {
         toastSuccess();
       }
 
-      if (role?.Admin && !Admin) {
+      else if (role?.Admin && !Admin) {
         router.reload();
         toastError();
-      }
-      if (role?.Inspector && Inpector) {
+      } else if (role?.Inspector && Inpector) {
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
@@ -135,14 +132,11 @@ export default function Navbar() {
         });
         router.push("/Inspector");
         toastSuccess();
-      }
-      if (role?.Inspector && !Inpector) {
+      } else if (role?.Inspector && !Inpector) {
         router.reload();
 
         toastError();
-      }
-      if (role?.User && UserRegistered) {
-        console.log("userasd");
+      } else if (role?.User && UserRegistered) {
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
@@ -156,8 +150,7 @@ export default function Navbar() {
         });
         router.push("/User");
         toastSuccess();
-      }
-      if (role?.User && !UserRegistered) {
+      } else if (role?.User && !UserRegistered) {
         router.push("/Register");
         toastSuccess();
       } else {

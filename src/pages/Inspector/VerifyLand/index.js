@@ -16,9 +16,11 @@ import { Web3Context } from "@/components/context/web3Model";
 import VerifyLandModel from "@/components/Models/VerifyLandModel";
 import { Lands } from "@/components/context/functions";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 
 const TableWithPagination = () => {
-  const { setLandId, contract } = useContext(Web3Context);
+  const router = useRouter();
+  const { setLandId, contract,currentUser,account } = useContext(Web3Context);
 
   const { data: lands, error: landError } = useSWR(
     ["lands", contract],
@@ -74,7 +76,7 @@ const TableWithPagination = () => {
                     backgroundColor={
                       row?.isLandVerified ? "green.400" : "gray.300"
                     }
-                    color={row?.isLandVerified? 'whiteAlpha.800': "black.100"}
+                    color={row?.isLandVerified ? "whiteAlpha.800" : "black.100"}
                     _hover={{
                       color: "white",
                       backgroundColor: "cyan.400",
@@ -82,11 +84,47 @@ const TableWithPagination = () => {
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
-                    onClick={() => {
-                      setOpen(true);
 
-                      setLandId(row.id);
+                    onClick={() => {
+                      const [coord, zoom] = row?.allLatitudeLongitude?.split("/");
+                      const coordArray = coord?.split(";")?.map((pair) => {
+                        const [longitude, latitude] = pair?.split(",");
+                        return [Number(longitude), Number(latitude)];
+                      });
+        
+                      localStorage.setItem(
+                        "landdetails",
+                        JSON.stringify({
+                          id:row?.id,
+                          district:row?.district,
+                          landpic:row?.landpic,
+                          landPrice: row?.landPrice,
+                          zoom,
+                          coord1: coordArray[0][0],
+                          coord2: coordArray[0][1],
+                          coordArray,
+                          document:row?.document,
+                          landArea:row?.landArea,
+                          ownerAddress:row?.ownerAddress,
+                          propertyPID:row?.propertyPID,
+                          registerdate:row?.registerdate,
+                          landAddress:row?.landAddress,
+                          proxyownerAddress:row?.proxyownerAddress,
+                          timestamp:row?.timestamp,
+                          verfiedby:row?.verfiedby,
+                          isLandVerified:row?.isLandVerified,
+                          isforSell:row?.isforSell,
+                          landStatus:row?.landStatus,
+                          isUserVerified: currentUser[0].isUserVerified,
+                          currentUser: currentUser[0].address == account,
+                          link: "LandMarket",
+                          role:'landVerification'
+                        })
+                      );
+                      router.push("/Inspector/VerifyLand/Verification");
+
                     }}
+                    
                   >
                     {row?.isLandVerified ? "Verified" : " Verify"}
                   </Button>
@@ -97,11 +135,7 @@ const TableWithPagination = () => {
         </Table>
       </Box>
 
-      {isOpen && (
-        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} land={lands} />
-      )}
-
-      <Flex bgColor={"red"}>
+      <Flex bgColor={"red"} display={{ base: "flex", sm: "none" }}>
         <Pagination handlePageClick={handlePageClick} page={currentPage} />
       </Flex>
     </SidebarWithHeader>

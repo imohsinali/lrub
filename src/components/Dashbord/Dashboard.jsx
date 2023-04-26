@@ -35,6 +35,8 @@ export default function SidebarWithHeader({ children }) {
       } else if (router.pathname.startsWith("/Inspector")) {
         setLinks(InspectorLinks);
         setRole("Inspector");
+        setData(currentUser[0]);
+
       } else if (router.pathname.startsWith("/User")) {
         setLinks(UserLinks);
         setRole("User");

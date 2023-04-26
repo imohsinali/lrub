@@ -56,7 +56,7 @@ export default async function authenticate(req) {
     const redirectUrl = `https://lrub.netlify.app?message=${encodeURIComponent(
       "Access to this page is restricted. Please log in to continue."
     )}`;
-    return NextResponse.redirect(redirectUrl);
+    // return NextResponse.redirect(redirectUrl);
   }
   // Allow the request to proceed if the user is authenticated or the page is not an admin page
   return NextResponse.next();

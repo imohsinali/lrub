@@ -44,21 +44,20 @@ const TableWithPagination = () => {
   };
 
   const toast = useToast();
-  const AcceptReject = async (reqId, desion) => {
+  const Accept = async (reqId) => {
     try {
       setLoadingRow(reqId);
 
-      const offer = await contract.acceptRequest(Number(reqId), desion);
-      await offer.wait();
+      const accepted = await contract.acceptRequest(Number(reqId));
+      await accepted.wait();
 
       toast({
-        title: "Offered Susscesfully",
+        title: "Accept Susscesfully",
         status: "success",
         duration: 2000,
         isClosable: true,
       });
       setLoadingRow(null);
-      setOpen(false);
     } catch (error) {
       toast({
         title: "Something Went Wrong",
@@ -66,7 +65,31 @@ const TableWithPagination = () => {
         duration: 2000,
         isClosable: true,
       });
-      setOpen(false);
+      setLoadingRow(null);
+    }
+  };
+
+  const Reject = async (reqId) => {
+    try {
+      setLoadingRow(reqId);
+
+      const reject = await contract.rejectRequest(Number(reqId));
+      await reject.wait();
+
+      toast({
+        title: "reject Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setLoadingRow(null);
+    } catch (error) {
+      toast({
+        title: "Something Went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
       setLoadingRow(null);
     }
   };
@@ -122,10 +145,10 @@ const TableWithPagination = () => {
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
                     onClick={() => {
-                      AcceptReject(row.reqId, false);
+                      Reject(row.reqId);
                     }}
                     isLoading={row.reqId === loadingRow}
-                    isDisabled={row.requestStatus > 0}
+                    isDisabled={row.requestStatus > 2}
                   >
                     {row.requestStatus == 1 ? "Rejected" : "Reject"}
                   </Button>
@@ -137,10 +160,10 @@ const TableWithPagination = () => {
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
                     onClick={() => {
-                      AcceptReject(row.reqId, true);
+                      Accept(row.reqId);
                     }}
                     isLoading={row.reqId === loadingRow}
-                    isDisabled={row.requestStatus > 0}
+                    isDisabled={row.requestStatus > 2}
                   >
                     {row.requestStatus > 1 ? "Accepted" : "Accept"}
                   </Button>
@@ -151,9 +174,7 @@ const TableWithPagination = () => {
         </Table>
       </Box>
 
-      {isOpen && (
-        <VerifyLandModel isOpen={isOpen} setOpen={setOpen} land={land} />
-      )}
+
 
       <Flex bgColor={"red"}>
         <Pagination handlePageClick={handlePageClick} page={currentPage} />

@@ -27,10 +27,34 @@ export default function VerifyLandModel({ isOpen, setOpen,land }) {
   const landdata = land?.filter((la) =>la.id== landId);
 
   
-  const verifyLand = async (id) => {
+  const verifyLandA = async (id) => {
     try {
       setLoading(true);
-      await contract.verifyLand(id);
+      await contract.verifyLandAccepted(id);
+      toast({
+        title: "Verified Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+      setLoading(false);
+    } catch (error) {
+      toast({
+        title: "Something Went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+      setLoading(false);
+    }
+  };
+
+  const verifyLandR = async (id) => {
+    try {
+      setLoading(true);
+      await contract.verifyLandAccepted(id);
       toast({
         title: "Verified Susscesfully",
         status: "success",
@@ -52,9 +76,9 @@ export default function VerifyLandModel({ isOpen, setOpen,land }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+    <Modal isOpen={isOpen} onClose={() => setOpen(false)} zIndex={1}>
       <ModalOverlay w={"110%"} h={"110%"} />
-      <ModalContent m={{ base: 10, sm: 10 }} ml={{ base: "", sm: "40%" }}>
+      <ModalContent m={{ base: 10, sm: 10 }} ml={{ base: "", sm: "20%" }} >
         <ModalHeader>
           <Flex alignItems={"center"}>
             <Avatar
@@ -84,6 +108,20 @@ export default function VerifyLandModel({ isOpen, setOpen,land }) {
           >
             Cancel
           </Button>
+
+          <Button
+            backgroundColor={"red"}
+            borderRadius={15}
+            p={{ base: 2, md: 5 }}
+            fontSize={{ base: 10, md: 14 }}
+            mr={3}
+            colorScheme="blue"
+            onClick={() => verifyLandR(landdata[0].id)}
+            isDisabled={landdata[0]?.isLandVerified}
+            isLoading={loading}
+          >
+            Reject
+          </Button>
           <Button
             backgroundColor={"green"}
             borderRadius={15}
@@ -91,7 +129,7 @@ export default function VerifyLandModel({ isOpen, setOpen,land }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyLand(landdata[0].id)}
+            onClick={() => verifyLandA(landdata[0].id)}
             isDisabled={landdata[0]?.isLandVerified}
             isLoading={loading}
           >

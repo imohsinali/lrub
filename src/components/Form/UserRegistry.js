@@ -133,7 +133,6 @@ export const Form2 = ({ formData, onChange }) => {
           autoComplete="city"
           focusBorderColor="brand.400"
           shadow="sm"
-          size="sm"
           w="full"
           rounded="md"
           value={formData.city}
@@ -157,7 +156,6 @@ export const Form2 = ({ formData, onChange }) => {
           onChange={(e) => {
             onChange({ ...formData, district: e.target.value });
           }}
-          size="sm"
           w={"full"}
           rounded="md"
           h={10}
@@ -169,6 +167,8 @@ export const Form2 = ({ formData, onChange }) => {
           ))}
         </Select>
       </FormControl>
+
+      <Flex display={{base:"block", sm:"flex"}}>
 
       <FormControl as={GridItem} colSpan={[6, 3, null, 2]} isRequired>
         <FormLabel
@@ -190,8 +190,7 @@ export const Form2 = ({ formData, onChange }) => {
           autoComplete="Profile pic"
           focusBorderColor="brand.400"
           shadow="sm"
-          size="sm"
-          w="full"
+          w={{base:"full",sm:"xs"}}
           rounded="md"
           onChange={(e) => {
             onChange({ ...formData, profile: e.target.files[0] });
@@ -220,14 +219,14 @@ export const Form2 = ({ formData, onChange }) => {
 "
           focusBorderColor="brand.400"
           shadow="sm"
-          size="sm"
-          w="full"
+          w={{base:"full",sm: "sm"}}
           rounded="md"
           onChange={(e) => {
             onChange({ ...formData, document: e.target.files[0] });
           }}
         />
       </FormControl>
+      </Flex>
     </>
   );
 };

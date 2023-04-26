@@ -43,6 +43,7 @@ const TableWithPagination = () => {
   };
 
   const [isOpen, setOpen] = useState(false);
+
   return (
     // <ProtectedRoute>
     <SidebarWithHeader bgColor={"#F7FAFC"}>
@@ -96,7 +97,10 @@ const TableWithPagination = () => {
                       setUser(row.address);
                     }}
                   >
-                    {row?.isUserVerified ? "Verified" : " Verify"}
+                    {
+                    
+                   row?.verStatus === 3 ? "Verified by Admin" : row?.verStatus === 2 ? "Verified" : row?.verStatus === 1 ? "Rejected" : "Requested"
+                    }
                   </Button>
                 </Td>
               </Tr>

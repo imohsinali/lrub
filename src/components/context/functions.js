@@ -35,10 +35,11 @@ export const getAlluser = async (contract) => {
 
   const userInfo = await Promise?.all(
     userAddresses?.map(async (address) => {
-      const { verfiedby, verifydate } = await contract?.userinfo(address);
+      const { verfiedby, verifydate,verfiactionStatus } = await contract?.userinfo(address);
       return {
         verifydate: parseInt(verifydate?._hex),
         verfiedby,
+        verStatus:verfiactionStatus
       };
     })
   );

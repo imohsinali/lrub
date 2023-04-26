@@ -37,9 +37,9 @@ export default function LandInspectorModal({ isOpen, setOpen, landInspector }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+    <Modal isOpen={isOpen} onClose={() => setOpen(false)} >
       <ModalOverlay w={"110%"} h={"110%"} />
-      <ModalContent m={{ base: 200, sm: 100 }} ml={{ base: "", sm: "40%" }}>
+      <ModalContent  ml={{ base: "0", sm: "40%" }}>
         <ModalHeader>Land Inspector Details</ModalHeader>
         <ModalBody>
           <p>Wallet Address: {landInspector?.address}</p>
@@ -50,7 +50,6 @@ export default function LandInspectorModal({ isOpen, setOpen, landInspector }) {
           <p>District: {landInspector?.district}</p>
           <p>Phone:{landInspector?.phone}</p>
           <p>Email:{landInspector?.email}</p>
-          <p>Designation: {landInspector?.designation}</p>
         </ModalBody>
         <ModalFooter>
           <Button

@@ -9,37 +9,27 @@ import useSWR from "swr";
 import { Web3Context } from "@/components/context/web3Model";
 
 const TableWithPagination = () => {
-  const { contract } = useContext(Web3Context);
+  const { contract, users } = useContext(Web3Context);
 
-  const { data: inspectors } = useSWR(["data", contract], async () => {
-    const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
-    const inpsectors = await Promise.all(
-      inspectorAddresses.map(async (address) => {
-        const { name, city, dob, designation, cnic, district, email, phone } =
-          await contract.InspectorMapping(address);
-        return {
-          address,
-          name: ethers.utils.parseBytes32String(name),
-          city: ethers.utils.parseBytes32String(city),
-          district: ethers.utils.parseBytes32String(district),
-          email: ethers.utils.parseBytes32String(email),
-          phone: parseInt(phone._hex),
-          dob: ethers.utils.parseBytes32String(dob),
-          cnic: parseInt(cnic._hex),
-          designation: ethers.utils.parseBytes32String(designation),
-        };
-      })
-    );
-    return inpsectors;
-  });
+  const { data: inspectors } = useSWR(
+    ["inspector", contract, users],
+    async () => {
+      const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
+      const inspectors = users.filter((user) =>
+        inspectorAddresses.includes(user.address)
+      );
+
+      return inspectors;
+    }
+  );
   console.log("dar", inspectors);
-const [currentPage, setCurrentPage] = useState(0);
-const [postsPerPage] = useState(10);
-const indexOfLastPost = (currentPage + 1) * postsPerPage;
-const indexOfFirstPost = indexOfLastPost - postsPerPage;
-const currentPosts = inspectors
-  ?.slice(indexOfFirstPost, indexOfLastPost)
-  .filter(Boolean);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [postsPerPage] = useState(10);
+  const indexOfLastPost = (currentPage + 1) * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = inspectors
+    ?.slice(indexOfFirstPost, indexOfLastPost)
+    .filter(Boolean);
   console.log("indexOfFirstPost", indexOfFirstPost);
 
   const handlePageClick = (p) => {
@@ -50,58 +40,59 @@ const currentPosts = inspectors
   const [isOpen, setOpen] = useState(false);
   return (
     // <ProtectedRoute>
-      <SidebarWithHeader bgColor={"#F7FAFC"}>
-        {/* <FiltersBox/> */}
-        <Box overflowX="auto">
-          <Table
-            variant={{ base: "unstyled", md: "simple" }}
-            mt={{ base: 20, md: 20 }}
-          >
-            <Thead fontSize={{ base: 14, md: 20 }}>
-              <Tr fontSize={{ base: 12, md: 17 }}>
-                <Th fontSize={{ base: 10, md: 17 }}>#</Th>
-                <Th fontSize={{ base: 10, md: 17 }}>Wallet Address</Th>
-                <Th fontSize={{ base: 10, md: 17 }}>Name</Th>
-                <Th fontSize={{ base: 10, md: 17 }}>City</Th>
-                <Th fontSize={{ base: 10, md: 17 }}>Cnic</Th>
-                <Th fontSize={{ base: 10, md: 17 }}>Remove</Th>
+    <SidebarWithHeader bgColor={"#F7FAFC"}>
+      {/* <FiltersBox/> */}
+      <Box overflowX="auto">
+        <Table
+          variant={{ base: "unstyled", md: "simple" }}
+          mt={{ base: 20, md: 20 }}
+        >
+          <Thead fontSize={{ base: 14, md: 20 }}>
+            <Tr fontSize={{ base: 12, md: 17 }}>
+              <Th fontSize={{ base: 10, md: 17 }}>#</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Wallet Address</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Posting District</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Cnic</Th>
+              <Th fontSize={{ base: 10, md: 17 }}>Remove</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {currentPosts?.map((row, index) => (
+              <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
+                <Td>{index}</Td>
+                <Td>{row.address}</Td>
+                <Td>{row.city}</Td>
+                <Td>{row.cnic}</Td>
+                <Td>
+                  <Button
+                    backgroundColor={"red"}
+                    color="white"
+                    _hover={{
+                      backgroundColor:"red.200"
+                    }}
+                    borderRadius={15}
+                    p={{ base: 2, md: 5 }}
+                    fontSize={{ base: 10, md: 14 }}
+                    onClick={() => setOpen(true)}
+                  >
+                    Remove
+                  </Button>
+                  {isOpen && (
+                    <RemoveModel
+                      isOpen={isOpen}
+                      setOpen={setOpen}
+                      landInspector={row}
+                    />
+                  )}
+                </Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {currentPosts?.map((row, index) => (
-                <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
-                  <Td>{index}</Td>
-                  <Td>{row.address}</Td>
-                  <Td>{row.name.split('|').join(" ")}</Td>
-                  <Td>{row.city}</Td>
-                  <Td>{row.cnic}</Td>
-                  <Td>
-                    <Button
-                      backgroundColor={"red"}
-                      borderRadius={15}
-                      p={{ base: 2, md: 5 }}
-                      fontSize={{ base: 10, md: 14 }}
-                      onClick={() => setOpen(true)}
-                    >
-                      Remove
-                    </Button>
-                    {isOpen && (
-                      <RemoveModel
-                        isOpen={isOpen}
-                        setOpen={setOpen}
-                        landInspector={row}
-                      />
-                    )}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </Box>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
 
-        <Pagination handlePageClick={handlePageClick} page={currentPage} />
-      </SidebarWithHeader>
-    
+      <Pagination handlePageClick={handlePageClick} page={currentPage} />
+    </SidebarWithHeader>
   );
 };
 

@@ -43,7 +43,7 @@ const LandDetails = ({ land, user,pkr }) => {
           <Divider />
         </>
       )}
-      <LandInfo land={land}/>
+      <LandInfo land={land} pkr={pkr}/>
 
    
     </Flex>

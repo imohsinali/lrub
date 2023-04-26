@@ -30,11 +30,11 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
   const options = { hour12: true };
   registerdate = date.toLocaleString("GMT", options);
 
-  const verifyUser = async (address) => {
+  const verifyUserA = async (address) => {
     console.log("address", address);
     try {
       setLoading(true);
-      const verified = await contract.verifyUser(address);
+      const verified = await contract.verifyUserAccepted(address);
       await verified.wait();
 
       toast({
@@ -57,12 +57,39 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
     }
   };
 
+
+  const verifyUserR = async (address) => {
+    console.log("address", address);
+    try {
+      setLoading(true);
+      const verified = await contract.verifyUserRejected(address);
+      await verified.wait();
+
+      toast({
+        title: "reject Susscesfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+      setLoading(false);
+    } catch (error) {
+      toast({
+        title: "Something Went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      setOpen(false);
+      setLoading(false);
+    }
+  };
   console.log("iusrer", user[0]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
       <ModalOverlay w={"110%"} h={"110%"} />
-      <ModalContent m={{ base: 200, sm: 100 }} ml={{ base: "", sm: "40%" }}>
+      <ModalContent  ml={{ base: "", sm: "40%" }}>
         <ModalHeader>
           <Flex alignItems={"center"}>
             <Avatar
@@ -116,6 +143,20 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
           >
             Cancel
           </Button>
+
+          <Button
+            backgroundColor={"red"}
+            borderRadius={15}
+            p={{ base: 2, md: 5 }}
+            fontSize={{ base: 10, md: 14 }}
+            mr={3}
+            colorScheme="blue"
+            onClick={() => verifyUserR(userAddress)}
+            isDisabled={userdata[0]?.isUserVerified}
+            isLoading={loading}
+          >
+            Reject
+          </Button>
           <Button
             backgroundColor={"green"}
             borderRadius={15}
@@ -123,7 +164,7 @@ export default function VerifyUserModel({ isOpen, setOpen, user }) {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyUser(userAddress)}
+            onClick={() => verifyUserA(userAddress)}
             isDisabled={userdata[0]?.isUserVerified}
             isLoading={loading}
           >

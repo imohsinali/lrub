@@ -18,17 +18,14 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
-import {
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-} from "react-icons/fi";
+import { FiMenu, FiBell, FiChevronDown } from "react-icons/fi";
 import { Web3Context } from "../context/web3Model";
 import CurrencySelect from "../utils/Currency";
 
-const MobileNav = ({onOpen,role,data, ...rest }) => {
-  const router =useRouter()
+const MobileNav = ({ onOpen, role, data, ...rest }) => {
+  const router = useRouter();
   const { disconnect } = useContext(Web3Context);
+  console.log('data', data)
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -68,11 +65,11 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
         <FiltersBox />
       </Flex> */}
 
-      <HStack spacing={{ base: "0", md: "6" }}>
-        <CurrencySelect/>
+      <HStack spacing={{ base: "0", md: "6" }} width={{base:"",sm:280}}>
+        <CurrencySelect />
 
         <Flex alignItems={"center"}>
-          <Menu>
+          <Menu >
             <MenuButton
               py={2}
               transition="all 0.3s"
@@ -116,8 +113,19 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              
-              <MenuItem onClick={()=>router.push('/User/Profile')}>Profile</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  const basePath = router.pathname.split('/')[1];
+                  // add a new path to the current URL based on the current base path
+                  if (basePath === "User") {
+                    router.push("/User/Profile");
+                  } else if (basePath === "Inspector") {
+                    router.push("/Inspector/Profile");
+                  }
+                }}
+              >
+                Profile
+              </MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
               <MenuItem
@@ -136,4 +144,3 @@ const MobileNav = ({onOpen,role,data, ...rest }) => {
 };
 
 export default MobileNav;
-

@@ -171,7 +171,7 @@ contract landregistry {
             
             // Update the inspectors mapping and lists
             UserMapping[_addr].isUserVerified = true;
-            userinfo[_addr] = UserInfo(msg.sender, block.timestamp,verStatus.directedVerified);
+            userinfo[_addr] = UserInfo(msg.sender, block.timestamp,verStatus.addbyAdmin);
             RegisteredInspectorMapping[_addr] = true;
             inspectorsCount++;
             allLandInspectorList[1].push(_addr);

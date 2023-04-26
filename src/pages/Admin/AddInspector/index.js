@@ -1,9 +1,11 @@
+import { UserInfo } from "@/components/Cards/profileDetails";
 import { Web3Context } from "@/components/context/web3Model";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import ProtectedRoute from "@/components/protected/protectedRoute";
 import { districtData } from "@/components/utils/districts";
 import {
   Button,
+  Container,
   Flex,
   FormControl,
   FormLabel,
@@ -13,14 +15,19 @@ import {
   InputLeftAddon,
   Select,
   useColorModeValue,
+  Text,
   useToast,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
+
 import { useContext, useState } from "react";
-
 export default function ChangeAdmin() {
-  const { contract } = useContext(Web3Context);
-  const [loading, setLoading] = useState(false);
+  const { contract, users,currentUser } = useContext(Web3Context);
 
+  const [loading, setLoading] = useState(false);
+  const [inspector,setInspector]=useState()
+  const [found,setFound]=useState(false)
+  
   const toast = useToast();
 
   const handleChnageAdmin = async (event) => {
@@ -29,24 +36,41 @@ export default function ChangeAdmin() {
     const formData = new FormData(event.target);
 
     try {
-      setLoading(true);
-      await contract.changeContractOwner(formData.get("address"), {
-        gasLimit: 1000000,
-      });
-      toast({
-        title: "Changed Susscesfully",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-      setLoading(false);
+      const inspector = users?.filter(
+        (user) => user.address == formData.get("address")
+      );
+      setInspector(inspector)
+      if (inspector) {
+        toast({
+          title: "User Found",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        setFound(true)
+        setLoading(true);
+        
+      const add=  await contract.addLandInspector(
+          formData.get("address"),
+          ethers.utils.formatBytes32String( formData.get("district"))
+        );
+        await add.wait()
+        toast({
+          title: "Add Susscesfully",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        setLoading(false);
+      }
     } catch (error) {
       toast({
-        title: "Something Went Wrong",
+        title: error.message,
         status: "error",
         duration: 2000,
         isClosable: true,
       });
+      console.log(error)
       setLoading(false);
     }
   };
@@ -60,7 +84,7 @@ export default function ChangeAdmin() {
           justify="center"
           minH="calc(100vh - 4rem)"
           bg={useColorModeValue("gray.50", "gray.800")}
-        marginTop={{base:"5",sm:-25}}
+          marginTop={{ base: "5", sm: -25 }}
         >
           <Heading mb={8}>Add Land Inspector</Heading>
           <Flex
@@ -78,10 +102,10 @@ export default function ChangeAdmin() {
           >
             <FormControl id="address" isRequired flex={0.7}>
               <FormLabel>Wallet Address</FormLabel>
-              <InputGroup width={'full'}>
+              <InputGroup width={"full"}>
                 <InputLeftAddon children="0x" />
                 <Input
-                width={'full'}
+                  width={"full"}
                   type="text"
                   placeholder="Enter wallet address"
                   name="address"
@@ -89,7 +113,7 @@ export default function ChangeAdmin() {
               </InputGroup>
             </FormControl>
 
-            <FormControl  isRequired flex={0.2}>
+            <FormControl isRequired flex={0.2} id="district">
               <FormLabel htmlFor="district" fontWeight={"normal"}>
                 District
               </FormLabel>
@@ -117,7 +141,7 @@ export default function ChangeAdmin() {
             </FormControl>
 
             <Button
-            flex={0.1}
+              flex={0.1}
               bg={"blue.400"}
               colorScheme="blue"
               _hover={{ bg: "blue.500" }}
@@ -132,6 +156,14 @@ export default function ChangeAdmin() {
             </Button>
           </Flex>
         </Flex>
+        {found&&
+        <Container mt={-20} width={{
+        base:"100%",md:1000
+      }} justifyContent="center" alignItems={"center"} maxW={800} boxShadow={'lg'} p={10}>
+        <Text>User Information</Text>
+
+        <UserInfo user={inspector ? inspector[0] : inspector} role={"user"} />
+      </Container>}
       </SidebarWithHeader>
     </ProtectedRoute>
   );
