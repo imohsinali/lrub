@@ -1,10 +1,8 @@
 import { Button, Divider, Flex, Image, Text } from "@chakra-ui/react";
-import Link from "next/link";
 import React from "react";
-import { timeStamp } from "../utils/timeStamp";
 import LandInfo from "./LandInfo";
 
-const LandDetails = ({ land, user,pkr }) => {
+const LandDetails = ({ land, user, pkr }) => {
   return (
     <Flex
       borderWidth="0.5px"
@@ -18,7 +16,7 @@ const LandDetails = ({ land, user,pkr }) => {
       <Text fontSize="xl" fontWeight="bold" mb={2}>
         Property Details
       </Text>
-      {user == "user" ? (
+      {user == "user" || "admin" ? (
         <Image
           src={`https://gateway.pinata.cloud/ipfs/${land?.landpic}`}
           minW={{ base: "100%", md: "40%", lg: "30%" }}
@@ -43,12 +41,9 @@ const LandDetails = ({ land, user,pkr }) => {
           <Divider />
         </>
       )}
-      <LandInfo land={land} pkr={pkr}/>
-
-   
+      <LandInfo land={land} pkr={pkr} />
     </Flex>
   );
 };
 
 export default LandDetails;
-

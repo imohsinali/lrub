@@ -86,7 +86,7 @@ const LandInfo = ({ land,pkr,user }) => {
         </Text>
 
         <Button variant={"link"}>
-          {land?.isUserVerified || user == "inspector" ? (
+          {land?.isUserVerified || user == "inspector"||"admin" ? (
             <Link
               href={`https://gateway.pinata.cloud/ipfs/${land?.document}`}
               target="_blank"

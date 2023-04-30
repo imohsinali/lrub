@@ -22,7 +22,8 @@ export default function Navbar() {
   const toast = useToast();
 
   const router = useRouter();
-  const { account, connectWallet, contract, matic } = useContext(Web3Context);
+  const { account, connectWallet, contract, matic, disconnect } =
+    useContext(Web3Context);
   const [loginClicked, setLogin] = useState(false);
   console.log(matic);
 
@@ -84,7 +85,7 @@ export default function Navbar() {
           const Admin1 = await contract?.isContractOwner(account);
           const Inpector = await contract?.isLandInspector(account);
           const UserRegistered = await contract?.RegisteredUserMapping(account);
-          console.log("login called", Admin1); // add this line
+          console.log("login called", Admin1, Inpector); // add this line
 
           loginPage(role, Admin1, Inpector, UserRegistered);
         } catch (error) {
@@ -113,11 +114,11 @@ export default function Navbar() {
         });
         router.push("/Admin");
         toastSuccess();
-      }
-
-      else if (role?.Admin && !Admin) {
-        router.reload();
+      } else if (role?.Admin && !Admin) {
+        handleSetPath(false, false, false);
+        setLogin(false);
         toastError();
+        setToastShown(false);
       } else if (role?.Inspector && Inpector) {
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })
@@ -133,9 +134,10 @@ export default function Navbar() {
         router.push("/Inspector");
         toastSuccess();
       } else if (role?.Inspector && !Inpector) {
-        router.reload();
-
         toastError();
+        handleSetPath(false, false, false);
+        setLogin(false);
+        setToastShown(false);
       } else if (role?.User && UserRegistered) {
         const token = await new SignJWT({})
           .setProtectedHeader({ alg: "HS256" })

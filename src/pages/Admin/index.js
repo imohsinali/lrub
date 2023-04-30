@@ -51,8 +51,21 @@ const AdminDashboard = () => {
     fun();
   }, []);
 
-  const { contract, totalUser, totalLand, totalInsp, totalLandTransfer } =
-    useContext(Web3Context);
+  const {
+    contract,
+    totalUser,
+    totalLand,
+    totalInsp,
+    totalLandTransfer,
+    users,
+    land,
+  } = useContext(Web3Context);
+
+  const pendinguser = users?.filter((user) => user.verStatus == 0);
+  const pendingland = land?.filter((la) => la.verStatus == 0);
+  const pending = pendinguser?.length + pendingland?.length;
+
+  console.log("p", pendinguser, pendingland, land);
   const methodP = {
     0x60806040: "Contract Creation",
     0x6910c46d: "Add Inspector",
@@ -140,7 +153,7 @@ const AdminDashboard = () => {
             <Box as={FaClock} fontSize="3xl" mr={4} />
             <Stat>
               <StatLabel>Pending Verification Requests</StatLabel>
-              <StatNumber>10</StatNumber>
+              <StatNumber>{pending}</StatNumber>
             </Stat>
           </Flex>
         </Box>
@@ -149,7 +162,9 @@ const AdminDashboard = () => {
             <Box as={FaCheckCircle} fontSize="3xl" mr={4} />
             <Stat>
               <StatLabel>Completed Verification Requests</StatLabel>
-              <StatNumber>50</StatNumber>
+              <StatNumber>
+                {totalUser + totalLand + totalLandTransfer - pending}
+              </StatNumber>
             </Stat>
           </Flex>
         </Box>

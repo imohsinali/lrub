@@ -35,11 +35,12 @@ export const getAlluser = async (contract) => {
 
   const userInfo = await Promise?.all(
     userAddresses?.map(async (address) => {
-      const { verfiedby, verifydate,verfiactionStatus } = await contract?.userinfo(address);
+      const { verfiedby, verifydate, verfiactionStatus } =
+        await contract?.userinfo(address);
       return {
         verifydate: parseInt(verifydate?._hex),
         verfiedby,
-        verStatus:verfiactionStatus
+        verStatus: verfiactionStatus,
       };
     })
   );
@@ -106,10 +107,13 @@ export const Lands = async (contract) => {
   console.log("las;als", land);
   const landinfo = await Promise?.all(
     landsArray?.map(async (id) => {
-      const { verfydate, verfiedby } = await contract?.landinfo(id);
+      const { verfydate, verfiedby, childs, verfiactionStatus } =
+        await contract?.landinfo(id);
       return {
         timestamp: parseInt(verfydate?._hex),
+        childs: parseInt(childs._hex),
         verfiedby,
+        verStatus: verfiactionStatus,
       };
     })
   );

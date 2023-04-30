@@ -17,11 +17,12 @@ import { Web3Context } from "../context/web3Model";
 import fileHash from "../utils/IPFS";
 
 export default function LandDetailsForm({ landid }) {
-  const { contract,matic } = useContext(Web3Context);
+  const { contract, matic } = useContext(Web3Context);
 
   const [area, setArea] = useState("");
   const [numberOfPlots, setNumberOfPlots] = useState("");
   const [chnageOption, setOption] = useState({
+    proxy: false,
     plotingB: false,
     priceB: false,
     picB: false,
@@ -29,7 +30,56 @@ export default function LandDetailsForm({ landid }) {
   });
   console.log("asas", landid);
   const [loading, setLoading] = useState(false);
+  const [address, setAdress] = useState("");
   const toast = useToast();
+
+  const handleProxy = async (proxy) => {
+    try {
+      if (address && proxy) {
+        setLoading(true);
+        const proxyadd = await contract.AndandRemoveProxyOwner(
+          landid,
+          address,
+          proxy
+        );
+        await proxyadd.wait();
+        toast({
+          title: "Add Susscesfully",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        setLoading(false);
+      }
+
+      if (address && !proxy) {
+        setLoading(true);
+        const proxyadd = await contract.AndandRemoveProxyOwner(
+          landid,
+          address,
+          proxy
+        );
+        await proxyadd.wait();
+        toast({
+          title: "remove Susscesfully",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error, landid);
+
+      toast({
+        title: "Something went Wrong",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+  };
 
   const handlePlotingSubmit = async (event) => {
     console.log("asd", area, landid, numberOfPlots);
@@ -107,24 +157,12 @@ export default function LandDetailsForm({ landid }) {
     setLoading(false);
   };
 
-  // function changeDetails(
-  // uint _landId,
-  // bool s,
-  // bool p,
-  // bool i,
-  // bool c,
-  // bool sell,
-  // uint _newPrice,
-  // string memory _newPic,
-  // string memory _allLatiLongi
-  // Handle form submission logic for ploting here
-
   const [price, setPrice] = useState("");
 
   const handlePriceSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const landprice=Math.round(matic*price)
+    const landprice = Math.round(matic * price);
     try {
       const plotting = await contract.changeDetails(
         landid,
@@ -236,6 +274,31 @@ export default function LandDetailsForm({ landid }) {
           }
           onClick={() =>
             setOption({
+              proxy: true,
+              plotingB: false,
+              picB: false,
+              coordB: false,
+              priceB: false,
+            })
+          }
+        >
+          Proxy Owner
+        </Button>
+        <Button
+          colorScheme="twitter"
+          minW={100}
+          p={2}
+          leftIcon={
+            <Image
+              src={"/images/plotting.png"}
+              bgColor={"green"}
+              width={70}
+              height={50}
+              alt=""
+            />
+          }
+          onClick={() =>
+            setOption({
               plotingB: true,
               picB: false,
               coordB: false,
@@ -321,6 +384,60 @@ export default function LandDetailsForm({ landid }) {
         </Button>
       </Flex>
 
+      {chnageOption.proxy && (
+        <Box>
+          <Text
+            fontSize={{ base: "1rem", sm: "1.5rem" }}
+            marginBottom="0.2rem"
+            mt={2}
+          >
+            Add ProxyOwner
+          </Text>
+          <Flex
+            borderWidth="2px"
+            borderColor="blue"
+            alignItems={"center"}
+            justifyContent="center"
+          >
+            <Box
+              width={{ base: 700, xl: 600, sm: 800, md: 800 }}
+              alignSelf="center"
+              as="form"
+            >
+              <FormControl marginBottom="1rem" isRequired>
+                <FormLabel htmlFor="address">Wallet Address:</FormLabel>
+                <Input
+                  id="address"
+                  placeholder="Enter Wallet Address"
+                  size={"lg"}
+                  type="string"
+                  value={address}
+                  onChange={(event) => setAdress(event.target.value)}
+                />
+              </FormControl>
+              <Flex mb={2} gap={2}>
+                <Button
+                  onClick={() => handleProxy(true)}
+                  marginTop="0.1rem"
+                  variant={"outline"}
+                  isLoading={loading}
+                >
+                  Add Proxy
+                </Button>
+
+                <Button
+                  onClick={() => handleProxy(false)}
+                  marginTop="0.1rem"
+                  variant={"outline"}
+                  isLoading={loading}
+                >
+                  Remove Proxy
+                </Button>
+              </Flex>
+            </Box>
+          </Flex>
+        </Box>
+      )}
       {chnageOption.plotingB && (
         <Box>
           <Text

@@ -407,7 +407,7 @@ contract landregistry {
                     lands[id].document,
                     lands[id].landpic,
                     false,
-                    false,
+                    true,
                     payable(msg.sender),
                     contractOwner,
                     block.timestamp
@@ -538,8 +538,9 @@ contract landregistry {
             lands[landId].ownerAddress == msg.sender &&
             lands[landId].isLandVerified &&
             !lands[landId].isforSell
+            
         ) {
-            if (_addRemove) {
+            if (_addRemove && proxyOwner!=lands[landId].proxyownerAddress) {
                 lands[landId].proxyownerAddress = proxyOwner;
             }
 
@@ -617,11 +618,9 @@ contract landregistry {
         );
         require(
             LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
-            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,
-            
+            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,  
             "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
         );
-
             // Accept the request
             if (LandRequestMapping[_requestId].bidPrice > 0) {
                 // Update the land price with the bid price
@@ -629,27 +628,14 @@ contract landregistry {
                     _requestId,
                     lands[LandRequestMapping[_requestId].landId].landPrice,
                     LandRequestMapping[_requestId].bidPrice
-                );
-                
+                );   
             }
-
             LandRequestMapping[_requestId].requestStatus = reqStatus.accepted;
-
             uint landId = LandRequestMapping[_requestId].landId;
-            
-
             for (uint i = 1; i <= requestCount; i++) {
                 if (LandRequestMapping[i].landId == landId && i != _requestId &&!LandRequestMapping[i].isPaymentDone) {
                     LandRequestMapping[i].requestStatus = reqStatus.rejected;
-                }
-            }
-
-        
-
-        
-    }
-
-
+                }}}
     function rejectRequest(uint _requestId) public {
         require(
             LandRequestMapping[_requestId].sellerId == msg.sender,
@@ -657,15 +643,10 @@ contract landregistry {
         );
         require(
             LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
-            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,
-            
+            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,  
             "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
         );
-
-       
             LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
-
-        
     }
     
 

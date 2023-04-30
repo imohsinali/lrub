@@ -10,7 +10,7 @@ export const AdminLink = [
   { name: "Add Inspector", icon: FiTrendingUp, src: "/Admin/AddInspector" },
   { name: "View the List", icon: FiCompass, src: "/Admin/ViewtheList" },
   { name: "Change Admin", icon: FiStar, src: "/Admin/ChangeAdmin" },
-  { name: "Search Details", icon: FiSettings, src: "/SearchDetail" },
+  { name: "Search Details", icon: FiSettings, src: "/Admin/SearchDetails" },
 ];
 export const InspectorLinks = [
   { name: "Home", icon: FiHome, src: "/Inspector" },
