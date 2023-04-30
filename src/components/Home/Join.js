@@ -1,4 +1,5 @@
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import Image from "next/image";
 
 const Card = ({ title, description, icon }) => (
   <Box
@@ -14,7 +15,7 @@ const Card = ({ title, description, icon }) => (
       transition="transform .2s"
       _hover={{ transform: "scale(1.05)" }}
   >
-    <Image src={icon} boxSize="10" color="purple.500" mb="4"  alt="image"/>
+    <Image src={icon} width={50} height={10} boxSize="10" color="purple.500" mb="4"  alt="image"/>
     <Text fontSize="xl" fontWeight="semibold" mb="2">
       {title}
     </Text>
