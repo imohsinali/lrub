@@ -39,18 +39,6 @@ import {
 } from "react-icons/fa";
 
 const AdminDashboard = () => {
-  const [transactions, setTransaction] = useState();
-  useEffect(() => {
-    const fun = async () => {
-      const url =
-        "https://api-testnet.polygonscan.com/api?module=account&action=txlist&address=0x8b5018C3de4e271464809bc3A6a2509e154343D8&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=6SPF5NK1C7PGN4VQGDTA7RII7SIUUUSUK5";
-      const { data } = await axios.get(url);
-      console.log("re", data?.result);
-      setTransaction(data?.result);
-    };
-    fun();
-  }, []);
-
   const {
     contract,
     totalUser,
@@ -59,7 +47,20 @@ const AdminDashboard = () => {
     totalLandTransfer,
     users,
     land,
+    fun,
   } = useContext(Web3Context);
+  const [transactions, setTransaction] = useState();
+  useEffect(() => {
+    const fun1 = async () => {
+      const url =
+        "https://api-testnet.polygonscan.com/api?module=account&action=txlist&address=0x8b5018C3de4e271464809bc3A6a2509e154343D8&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=6SPF5NK1C7PGN4VQGDTA7RII7SIUUUSUK5";
+      const { data } = await axios.get(url);
+      console.log("re", data?.result);
+      setTransaction(data?.result);
+    };
+    fun1();
+    fun();
+  }, [contract]);
 
   const pendinguser = users?.filter((user) => user.verStatus == 0);
   const pendingland = land?.filter((la) => la.verStatus == 0);

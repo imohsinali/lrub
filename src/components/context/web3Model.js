@@ -195,26 +195,19 @@ const Web3Provider = ({ children }) => {
   const [totalInsp, settotalInsp] = useState();
   const [totalLandTransfer, settotalLandTransfer] = useState();
 
-  // uint public inspectorsCount;
-  // uint public userCount;
-  // uint public landsCount;
-  // uint public documentId;
+  const fun = async () => {
+    const user = await contract?.userCount();
+    settotalUser(parseInt(user?._hex));
+    const land = await contract?.landsCount();
+    settotalLand(parseInt(land?._hex));
 
-  useEffect(() => {
-    const fun = async () => {
-      const user = await contract?.userCount();
-      settotalUser(parseInt(user?._hex));
-      const land = await contract?.landsCount();
-      settotalLand(parseInt(land?._hex));
-
-      const insp = await contract?.inspectorsCount();
-      settotalInsp(parseInt(insp?._hex));
-      const transfer = await contract?.documentId();
-      settotalLandTransfer(parseInt(transfer?._hex));
-    };
-    fun();
-  }, [contract]);
+    const insp = await contract?.ReturnAllLandIncpectorList();
+    settotalInsp(parseInt(insp?.length));
+    const transfer = await contract?.documentId();
+    settotalLandTransfer(parseInt(transfer?._hex));
+  };
   const web3ContextValue = {
+    fun,
     provider,
     library,
     account,
