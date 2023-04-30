@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState, useCallback, useMemo } from "react";
 import {
   Box,
   Table,
@@ -13,14 +13,13 @@ import {
 import Pagination from "@/components/utils/pagination";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import { Web3Context } from "@/components/context/web3Model";
-import VerifyLandModel from "@/components/Models/VerifyLandModel";
 import { Lands } from "@/components/context/functions";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 
 const TableWithPagination = () => {
   const router = useRouter();
-  const { setLandId, contract,currentUser,account } = useContext(Web3Context);
+  const { contract, currentUser, account } = useContext(Web3Context);
 
   const { data: lands, error: landError } = useSWR(
     ["lands", contract],
@@ -32,18 +31,18 @@ const TableWithPagination = () => {
   const [postsPerPage] = useState(10);
   const indexOfLastPost = (currentPage + 1) * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = lands
-    ?.slice(indexOfFirstPost, indexOfLastPost)
-    .filter(Boolean);
+  const currentPosts = useMemo(() => {
+    return lands?.slice(indexOfFirstPost, indexOfLastPost).filter(Boolean);
+  }, [lands, indexOfFirstPost, indexOfLastPost]);
 
-  console.log("indexOfFirstPost", indexOfFirstPost);
+  const handlePageClick = useCallback(
+    (p) => {
+      setCurrentPage(p);
+      console.log(p);
+    },
+    [setCurrentPage]
+  );
 
-  const handlePageClick = (p) => {
-    setCurrentPage(p);
-    console.log(p);
-  };
-
-  const [isOpen, setOpen] = useState(false);
   return (
     // <ProtectedRoute>
     <SidebarWithHeader bgColor={"#F7FAFC"}>
@@ -84,47 +83,45 @@ const TableWithPagination = () => {
                     borderRadius={15}
                     p={{ base: 2, md: 5 }}
                     fontSize={{ base: 10, md: 14 }}
-
                     onClick={() => {
-                      const [coord, zoom] = row?.allLatitudeLongitude?.split("/");
+                      const [coord, zoom] =
+                        row?.allLatitudeLongitude?.split("/");
                       const coordArray = coord?.split(";")?.map((pair) => {
                         const [longitude, latitude] = pair?.split(",");
                         return [Number(longitude), Number(latitude)];
                       });
-        
+
                       localStorage.setItem(
                         "landdetails",
                         JSON.stringify({
-                          id:row?.id,
-                          district:row?.district,
-                          landpic:row?.landpic,
+                          id: row?.id,
+                          district: row?.district,
+                          landpic: row?.landpic,
                           landPrice: row?.landPrice,
                           zoom,
                           coord1: coordArray[0][0],
                           coord2: coordArray[0][1],
                           coordArray,
-                          document:row?.document,
-                          landArea:row?.landArea,
-                          ownerAddress:row?.ownerAddress,
-                          propertyPID:row?.propertyPID,
-                          registerdate:row?.registerdate,
-                          landAddress:row?.landAddress,
-                          proxyownerAddress:row?.proxyownerAddress,
-                          timestamp:row?.timestamp,
-                          verfiedby:row?.verfiedby,
-                          isLandVerified:row?.isLandVerified,
-                          isforSell:row?.isforSell,
-                          landStatus:row?.landStatus,
+                          document: row?.document,
+                          landArea: row?.landArea,
+                          ownerAddress: row?.ownerAddress,
+                          propertyPID: row?.propertyPID,
+                          registerdate: row?.registerdate,
+                          landAddress: row?.landAddress,
+                          proxyownerAddress: row?.proxyownerAddress,
+                          timestamp: row?.timestamp,
+                          verfiedby: row?.verfiedby,
+                          isLandVerified: row?.isLandVerified,
+                          isforSell: row?.isforSell,
+                          landStatus: row?.landStatus,
                           isUserVerified: currentUser[0].isUserVerified,
                           currentUser: currentUser[0].address == account,
                           link: "LandMarket",
-                          role:'landVerification'
+                          role: "landVerification",
                         })
                       );
                       router.push("/Inspector/VerifyLand/Verification");
-
                     }}
-                    
                   >
                     {row?.isLandVerified ? "Verified" : " Verify"}
                   </Button>
