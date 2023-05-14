@@ -1,37 +1,38 @@
 import { ethers } from "ethers";
 export const getAlluser = async (contract) => {
   const userAddresses = await contract?.ReturnAllUserList();
-  const users = await Promise?.all(
-    userAddresses?.map(async (address) => {
-      const {
-        name,
-        city,
-        dob,
-        document,
-        profilepic,
-        isUserVerified,
-        registerdate,
-        cnic,
-        email,
-        phone,
-        district,
-      } = await contract.UserMapping(address);
-      return {
-        address,
-        name: ethers.utils.parseBytes32String(name),
-        city: ethers.utils.parseBytes32String(city),
-        district: ethers.utils.parseBytes32String(district),
-        email: ethers.utils.parseBytes32String(email),
-        phone: ethers.utils.parseBytes32String(phone),
-        dob: ethers.utils.parseBytes32String(dob),
-        cnic: parseInt(cnic?._hex),
-        registerdate: parseInt(registerdate?._hex),
-        isUserVerified,
-        document,
-        profilepic,
-      };
-    })
-  );
+  if (userAddresses) {
+    const users = await Promise?.all(
+      userAddresses?.map(async (address) => {
+        const {
+          name,
+          city,
+          dob,
+          document,
+          profilepic,
+          isUserVerified,
+          registerdate,
+          cnic,
+          email,
+          phone,
+          district,
+        } = await contract.UserMapping(address);
+        return {
+          address,
+          name: ethers.utils.parseBytes32String(name),
+          city: ethers.utils.parseBytes32String(city),
+          district: ethers.utils.parseBytes32String(district),
+          email: ethers.utils.parseBytes32String(email),
+          phone: ethers.utils.parseBytes32String(phone),
+          dob: ethers.utils.parseBytes32String(dob),
+          cnic: parseInt(cnic?._hex),
+          registerdate: parseInt(registerdate?._hex),
+          isUserVerified,
+          document,
+          profilepic,
+        };
+      })
+    );
 
   const userInfo = await Promise?.all(
     userAddresses?.map(async (address) => {
@@ -54,6 +55,7 @@ export const getAlluser = async (contract) => {
   });
   console.log("suer", usersWithInfo);
   return usersWithInfo;
+}
 };
 
 export const Lands = async (contract) => {

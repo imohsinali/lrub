@@ -1,11 +1,25 @@
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import { Web3Context } from "@/components/context/web3Model";
+import PaginationButtom from "@/components/pagination/PaginationButtom";
+import PaginationTop from "@/components/pagination/PaginationTop";
+import { handleCopy } from "@/components/utils/copyAddress";
 import FilterCard from "@/components/utils/filterCard";
 import FilterMethod from "@/components/utils/filterMethodCard";
 import shortenEthereumAddress from "@/components/utils/shortenAddress";
+import { age } from "@/components/utils/timeStamp";
 import { UpDownIcon } from "@chakra-ui/icons";
 // import React from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Button,
+  Spinner,
+  Divider,
+} from "@chakra-ui/react";
 
 const AHome = () => {
   return (
@@ -28,7 +42,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   FaLandmark,
   FaUser,
@@ -86,26 +100,21 @@ const AdminDashboard = () => {
   const [open, setOpen] = useState(false);
   const [openMethod, setOpenMethod] = useState(false);
 
-  const [order, setOrder] = useState("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostPerPage] = useState(10);
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = transactions;
 
-  const handleCopy = (text) => {
-    // Create a temporary input element to hold the text
-    const input = document.createElement("input");
-    input.setAttribute("value", text);
-    document.body.appendChild(input);
-    input.select();
-    // Copy the text to the clipboard
-    document.execCommand("copy");
-    document.body.removeChild(input);
-  };
+  const [order, setOrder] = useState("desc");
   const handleTimeFilter = () => {
     const sorted =
-      order === "desc"
+      order == "desc"
         ? transactions.sort((a, b) => b.timeStamp - a.timeStamp)
         : transactions.sort((a, b) => a.timeStamp - b.timeStamp);
 
     setTransaction(sorted);
-    setOrder(order === "desc" ? "asc" : "desc"); // Toggle the order direction
+    setOrder(order == "desc" ? "asc" : "desc"); // Toggle the order direction
   };
   return (
     <>
@@ -170,194 +179,176 @@ const AdminDashboard = () => {
           </Flex>
         </Box>
       </SimpleGrid>
-      <Box overflowX="auto">
-        <Table variant="simple">
-          <Thead backgroundColor={"black"} color={"white"} mt={4}>
-            <Tr>
-              <Th fontSize={"1rem"} color={"white"}>
-                Tx Hash
-              </Th>
-              <Th fontSize={"1rem"} color={"white"}>
-                {" "}
-                Tx from
-                <Button
-                  // variant={'outline'}
-                  // bgColor={"green"}
-                  onClick={() => {
-                    setOpen(!open);
-                    setOpenMethod(false);
-                  }}
-                  _hover={{
-                    backgroundColor: "gray.400",
-                  }}
-                  ml={2}
-                  width={4}
-                  height={6}
-                  leftIcon={
-                    <Image
-                      src={"/images/ficon.png"}
-                      bgColor={"green"}
-                      width={14}
-                      height={0}
-                      p={1}
-                      alt=""
-                    />
-                  }
-                ></Button>
-              </Th>
+      {!transactions > 0 ? (
+        <Flex mt={60} h="100%" w="100%" align="center" justify="center">
+          <Spinner size="xl" color="blue.500" />
+        </Flex>
+      ) : (
+        <Box>
+          <PaginationTop
+            land={transactions}
+            postsPerPage={postsPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
 
-              <Th fontSize={"1rem"} color={"white"}>
-                Block No
-              </Th>
-              <Th fontSize={"1rem"} color={"white"}>
-                Age
-                <Button
-                  // variant={'outline'}
-                  // bgColor={"green"}
-                  onClick={handleTimeFilter}
-                  _hover={{
-                    backgroundColor: "gray.400",
-                  }}
-                  ml={2}
-                  width={4}
-                  height={6}
-                  color="black"
+          <Divider />
+
+          <Box overflowX="auto">
+            <Table variant="simple" position="relative">
+              <Thead backgroundColor={"black"} color={"white"} mt={4}>
+                <Tr>
+                  <Th fontSize={"1rem"} color={"white"}>
+                    Tx Hash
+                  </Th>
+                  <Th fontSize={"1rem"} color={"white"}>
+                    {" "}
+                    Tx from
+                    <Button
+                      // variant={'outline'}
+                      // bgColor={"green"}
+                      onClick={() => {
+                        setOpen(!open);
+                        setOpenMethod(false);
+                      }}
+                      _hover={{
+                        backgroundColor: "gray.400",
+                      }}
+                      ml={2}
+                      width={4}
+                      height={6}
+                      leftIcon={
+                        <Image
+                          src={"/images/ficon.png"}
+                          bgColor={"green"}
+                          width={14}
+                          height={0}
+                          p={1}
+                          alt=""
+                        />
+                      }
+                    ></Button>
+                  </Th>
+
+                  <Th fontSize={"1rem"} color={"white"}>
+                    Block No
+                  </Th>
+                  <Th fontSize={"1rem"} color={"white"}>
+                    Age
+                    <Button
+                      onClick={handleTimeFilter}
+                      _hover={{
+                        backgroundColor: "gray.400",
+                      }}
+                      ml={2}
+                      width={4}
+                      height={6}
+                      color="black"
+                    >
+                      <Icon as={UpDownIcon} />
+                    </Button>
+                  </Th>
+                  <Th fontSize={"1rem"} color={"white"}>
+                    Method
+                    <Button
+                      onClick={() => {
+                        setOpenMethod(!openMethod);
+                        setOpen(false);
+                      }}
+                      _hover={{
+                        backgroundColor: "gray.400",
+                      }}
+                      ml={2}
+                      width={4}
+                      height={6}
+                      leftIcon={
+                        <Image
+                          src={"/images/ficon.png"}
+                          bgColor={"green"}
+                          width={14}
+                          height={0}
+                          p={1}
+                          alt=""
+                        />
+                      }
+                    ></Button>
+                  </Th>
+                  <Th fontSize={"1rem"} color={"white"}>
+                    Status
+                  </Th>
+                </Tr>
+              </Thead>
+              {open && (
+                <Flex position={"absolute"} left={200} zIndex={10}>
+                  <FilterCard
+                    transactions={transactions}
+                    setTransaction={setTransaction}
+                  />
+                </Flex>
+              )}
+
+              {openMethod && (
+                <Flex
+                  position={"absolute"}
+                  left={{ base: 500, sm: 940 }}
+                  zIndex={10}
                 >
-                  <Icon as={UpDownIcon} />
-                </Button>
-              </Th>
-              <Th fontSize={"1rem"} color={"white"}>
-                Method
-                <Button
-                  // variant={'outline'}
-                  // bgColor={"green"}
-                  onClick={() => {
-                    setOpenMethod(!openMethod);
-                    setOpen(false);
-                  }}
-                  _hover={{
-                    backgroundColor: "gray.400",
-                  }}
-                  ml={2}
-                  width={4}
-                  height={6}
-                  leftIcon={
-                    <Image
-                      src={"/images/ficon.png"}
-                      bgColor={"green"}
-                      width={14}
-                      height={0}
-                      p={1}
-                      alt=""
-                    />
-                  }
-                ></Button>
-              </Th>
-              <Th fontSize={"1rem"} color={"white"}>
-                Status
-              </Th>
-            </Tr>
-          </Thead>
-          {open && (
-            <Flex position={"absolute"} left={500} zIndex={10}>
-              <FilterCard
-                transactions={transactions}
-                setTransaction={setTransaction}
-              />
-            </Flex>
+                  <FilterMethod
+                    transactions={transactions}
+                    setTransaction={setTransaction}
+                  />
+                </Flex>
+              )}
+
+              <Tbody zIndex={10}>
+                {currentPosts?.map((tx) => (
+                  <Tr key={tx.hash}>
+                    <Td zIndex={10}>
+                      <Button
+                        size="sm"
+                        onClick={() => handleCopy(tx.hash)}
+                        variant="none"
+                        // colorScheme="blue"
+                      >
+                        {shortenEthereumAddress(tx.hash)}
+                      </Button>
+                    </Td>
+
+                    <Td zIndex={10}>
+                      <Button
+                        size="sm"
+                        onClick={() => handleCopy(tx.from)}
+                        variant="none"
+                        // colorScheme="blue"
+                      >
+                        {shortenEthereumAddress(tx.from)}
+                      </Button>
+                    </Td>
+                    <Td>{tx.blockNumber}</Td>
+                    <Td>{age(tx?.timeStamp)}</Td>
+                    <Td>{methodP[Number(tx?.methodId)]}</Td>
+                    <Td>{tx.isError ? "Success" : "Failed"}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+            {transactions?.length == 0 && (
+              <Flex backgroundColor={"orange.100"} p={4}>
+                There are n Matching entries
+              </Flex>
+            )}
+          </Box>
+          {currentPosts && (
+            <PaginationButtom
+              land={transactions}
+              postsPerPage={postsPerPage}
+              setPostPerPage={setPostPerPage}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+            />
           )}
-
-          {openMethod && (
-            <Flex position={"absolute"} left={1240} zIndex={10}>
-              <FilterMethod
-                transactions={transactions}
-                setTransaction={setTransaction}
-              />
-            </Flex>
-          )}
-
-          <Tbody zIndex={10}>
-            {transactions?.map((tx) => (
-              <Tr key={tx.hash}>
-                <Td zIndex={10}>
-                  <Button
-                    size="sm"
-                    onClick={() => handleCopy(tx.hash)}
-                    variant="none"
-                    // colorScheme="blue"
-                  >
-                    {shortenEthereumAddress(tx.hash)}
-                  </Button>
-                </Td>
-
-                <Td zIndex={10}>
-                  <Button
-                    size="sm"
-                    onClick={() => handleCopy(tx.from)}
-                    variant="none"
-                    // colorScheme="blue"
-                  >
-                    {shortenEthereumAddress(tx.from)}
-                  </Button>
-                </Td>
-                <Td>{tx.blockNumber}</Td>
-                <Td>{timsps(tx.timeStamp)}</Td>
-                <Td>{methodP[Number(tx?.methodId)]}</Td>
-                <Td>{tx.isError ? "Success" : "Failed"}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-        {transactions?.length == 0 && (
-          <Flex backgroundColor={"orange.100"} p={4}>
-            There are n Matching entries
-          </Flex>
-        )}
-      </Box>
+        </Box>
+      )}
     </>
   );
-};
-
-const timsps = (birthTimestamp) => {
-  const currentTimestamp = Math.floor(Date.now() / 1000); // current timestamp in seconds
-  const ageInSeconds = currentTimestamp - birthTimestamp;
-  let outputString = "";
-
-  if (ageInSeconds < 60) {
-    outputString = `${ageInSeconds} s`;
-  } else if (ageInSeconds < 3600) {
-    const ageInMinutes = Math.floor(ageInSeconds / 60);
-    const remainingSeconds = ageInSeconds % 60;
-    outputString = `${ageInMinutes} m ${remainingSeconds} s`;
-  } else if (ageInSeconds < 86400) {
-    const ageInHours = Math.floor(ageInSeconds / 3600);
-    const remainingMinutes = Math.floor((ageInSeconds % 3600) / 60);
-    const remainingSeconds = ageInSeconds % 60;
-    outputString = `${ageInHours} h ${remainingMinutes} m ${remainingSeconds} s`;
-  } else if (ageInSeconds < 2592000) {
-    const ageInDays = Math.floor(ageInSeconds / 86400);
-    const remainingHours = Math.floor((ageInSeconds % 86400) / 3600);
-    const remainingMinutes = Math.floor((ageInSeconds % 3600) / 60);
-    const remainingSeconds = ageInSeconds % 60;
-    outputString = `${ageInDays} d ${remainingHours} h ${remainingMinutes} m ${remainingSeconds} s`;
-  } else if (ageInSeconds < 31536000) {
-    const ageInMonths = Math.floor(ageInSeconds / 2592000);
-    const remainingDays = Math.floor((ageInSeconds % 2592000) / 86400);
-    const remainingHours = Math.floor((ageInSeconds % 86400) / 3600);
-    const remainingMinutes = Math.floor((ageInSeconds % 3600) / 60);
-    const remainingSeconds = ageInSeconds % 60;
-    outputString = `${ageInMonths} mon ${remainingDays} d ${remainingHours} h ${remainingMinutes} m ${remainingSeconds} s`;
-  } else {
-    const ageInYears = Math.floor(ageInSeconds / 31536000);
-    const remainingMonths = Math.floor((ageInSeconds % 31536000) / 2592000);
-    const remainingDays = Math.floor((ageInSeconds % 2592000) / 86400);
-    const remainingHours = Math.floor((ageInSeconds % 86400) / 3600);
-    const remainingMinutes = Math.floor((ageInSeconds % 3600) / 60);
-    const remainingSeconds = ageInSeconds % 60;
-    outputString = `${ageInYears} y ${remainingMonths} mon ${remainingDays} d ${remainingHours} h ${remainingMinutes} m ${remainingSeconds} s`;
-  }
-
-  console.log(`The age is: ${outputString}`);
-
-  return outputString;
 };

@@ -9,8 +9,8 @@ const FilterCard = ({ transactions, setTransaction }) => {
   };
 
   const handleApplyFilter = () => {
-    const filter = transactions?.filter((tx) => tx.from == address);
-    console.log(filter);
+    const filter = transactions?.filter((tx) => tx.ownerAddress||tx.from == address);
+    console.log('hello', filter,transactions);
     setTransaction(filter);
   };
 
