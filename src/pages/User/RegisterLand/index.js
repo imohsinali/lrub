@@ -143,7 +143,7 @@ const AddLand = () => {
           isAnimated
         ></Progress>
         <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
-          Add Land
+          Register Land
         </Heading>
         {step === 1 ? (
           <Form1 formData={formData} onChange={setFormData} />

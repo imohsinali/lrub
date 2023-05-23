@@ -327,7 +327,7 @@ const AdminDashboard = () => {
                     <Td>{tx.blockNumber}</Td>
                     <Td>{age(tx?.timeStamp)}</Td>
                     <Td>{methodP[Number(tx?.methodId)]}</Td>
-                    <Td>{tx.isError ? "Success" : "Failed"}</Td>
+                    <Td>{tx.isError=="0" ? "Success" : "Failed"}</Td>
                   </Tr>
                 ))}
               </Tbody>

@@ -71,7 +71,7 @@ const TableWithPagination = () => {
           <Divider />
 
           <Box overflowX="auto">
-            <Table variant={{ base: "unstyled", md: "simple" }} position="relative">
+            <Table  position="relative">
               <Thead fontSize={{ base: 14, md: 20 }} color={"white"}>
                 <Tr
                   fontSize={{ base: 12, md: 17 }}

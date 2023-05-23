@@ -249,7 +249,7 @@ export const landRequest = async (contract) => {
     landsArray.push(i + 1);
   }
   const request = await Promise.all(
-    [1, 2, 3, 4, 5].map(async (id) => {
+    landsArray.map(async (id) => {
       const {
         sellerId,
         buyerId,
@@ -258,7 +258,7 @@ export const landRequest = async (contract) => {
         bidPrice,
         requestStatus,
         isPaymentDone,
-      } = await contract.LandRequestMapping(id);
+      } = await contract?.LandRequestMapping(id);
       return {
         sellerId,
         buyerId,

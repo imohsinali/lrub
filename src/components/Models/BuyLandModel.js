@@ -68,12 +68,12 @@ export default function BuyLandModel({ isOpen, setOpen, land }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
+    <Modal isOpen={isOpen} onClose={() => setOpen(false)} >
       <ModalOverlay w={"110%"} h={"110%"} />
-      <ModalContent m={{ base: 200, sm: 50 }} ml={{ base: "", sm: "40%" }}>
+      <ModalContent m={{ base: 200, sm: 50 }} ml={{ base: "", sm: "40%" }} mt={{base:"200",sm:"40"}} overflow={"hidden"} >
         <ModalCloseButton />
 
-        <ModalHeader mt={{ base: "4", sm: "" }}>
+        <ModalHeader mt={{ base: "4", sm: "2" }}>
           <Flex alignItems={"center"}>
             <Avatar
               alignSelf={"flex-start"}

@@ -9,10 +9,14 @@ import {
   Td,
   Button,
   Flex,
+  useToast,
+  Spinner,
+  Divider,
 } from "@chakra-ui/react";
-import Pagination from "@/components/utils/pagination";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import { Web3Context } from "@/components/context/web3Model";
+import PaginationTop from "@/components/pagination/PaginationTop";
+import PaginationButtom from "@/components/pagination/PaginationButtom";
 import PaymentModel from "@/components/Models/paymentModel";
 
 const TableWithPagination = () => {
@@ -26,13 +30,9 @@ const TableWithPagination = () => {
   };
   const { land, sendRequest, pkr } = useContext(Web3Context);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [postsPerPage] = useState(10);
-  const indexOfLastPost = (currentPage + 1) * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = sendRequest
-    ?.slice(indexOfFirstPost, indexOfLastPost)
-    .filter(Boolean);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostPerPage] = useState(10);
+
   const landPrice = (landid) => {
     console.log(landid);
     const filteredLand = land?.filter((la) => la.id === landid);
@@ -51,72 +51,95 @@ const TableWithPagination = () => {
   return (
     // <ProtectedRoute>
     <SidebarWithHeader bgColor={"#F7FAFC"}>
-      {/* <FiltersBox/> */}
-      <Box overflowX="auto">
-        <Table
-          variant={{ base: "unstyled", md: "simple" }}
-          mt={{ base: 20, md: 20 }}
-        >
-          <Thead fontSize={{ base: 14, md: 20 }}>
-            <Tr fontSize={{ base: 12, md: 17 }}>
-              <Th fontSize={{ base: 10, md: 17 }}>Requst Id</Th>
+      {!sendRequest > 0 ? (
+        <Flex mt={60} h="100%" w="100%" align="center" justify="center">
+          <Spinner size="xl" color="blue.500" />
+        </Flex>
+      ) : (
+        <Box mt={{ base: 20, md: 20 }}>
+          <PaginationTop
+            land={sendRequest}
+            postsPerPage={postsPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
 
-              <Th fontSize={{ base: 10, md: 17 }}>Land Id</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Seller Address</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Actual Price</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Offer Price</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Status</Th>
-              <Th fontSize={{ base: 10, md: 17 }}>Make Payment</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {currentPosts?.map((row, index) => (
-              <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
-                <Td>{row.reqId}</Td>
+          <Divider />
 
-                <Td>{row.landId}</Td>
+          <Box overflowX="auto">
+            <Table >
+              <Thead backgroundColor={"black"} color={"white"} mt={4}>
+                <Tr>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Requst Id</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Land Id</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Seller Address</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Actual Price</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Offer Price</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Status</Th>
+                  <Th fontSize={{ base: 10, md: 17 }}color={"white"}>Make Payment</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {sendRequest?.map((row, index) => (
+                  <Tr key={row.address} fontSize={{ base: 12, md: 17 }}>
+                    <Td>{row.reqId}</Td>
 
-                <Td>{row?.sellerId}</Td>
-                <Td>{Math.round(landPrice(row?.landId) * pkr)}</Td>
-                <Td>{Math.round(row?.bidPrice * pkr)}</Td>
-                <Td>{requeststatus[row?.requestStatus]}</Td>
-                <Td>
-                  <Button
-                    backgroundColor={"green"}
-                    borderRadius={15}
-                    p={{ base: 2, md: 5 }}
-                    fontSize={{ base: 10, md: 14 }}
-                    isDisabled={row?.requestStatus != 2}
-                    onClick={() => {
-                      const dataToStore = {
-                        landId: row.landId,
-                        sellerId: row.sellerId,
-                        landPrice: row.bidPrice,
-                        reqId: row.reqId,
-                        buyerId: row.buyerId,
-                      };
+                    <Td>{row.landId}</Td>
 
-                      localStorage.setItem(
-                        "Paymentland",
-                        JSON.stringify(dataToStore)
-                      );
-                      setOpen(true);
-                    }}
-                  >
-                    Make A Payment
-                  </Button>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+                    <Td>{row?.sellerId}</Td>
+                    <Td>{Math.round(landPrice(row?.landId) * pkr)}</Td>
+                    <Td>{Math.round(row?.bidPrice * pkr)}</Td>
+                    <Td>{requeststatus[row?.requestStatus]}</Td>
+                    <Td>
+                      <Button
+                        backgroundColor={"green"}
+                        borderRadius={15}
+                        p={{ base: 2, md: 5 }}
+                        fontSize={{ base: 10, md: 14 }}
+                        isDisabled={row?.requestStatus != 2}
+                        onClick={() => {
+                          const dataToStore = {
+                            landId: row.landId,
+                            sellerId: row.sellerId,
+                            landPrice: row.bidPrice,
+                            reqId: row.reqId,
+                            buyerId: row.buyerId,
+                          };
+
+                          localStorage.setItem(
+                            "Paymentland",
+                            JSON.stringify(dataToStore)
+                          );
+                          setOpen(true);
+                        }}
+                      >
+                        Make A Payment
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+
+            {sendRequest?.length == 0 && (
+              <Flex backgroundColor={"orange.100"} p={4}>
+                There are no Matching entries
+              </Flex>
+            )}
+          </Box>
+          {sendRequest && (
+            <PaginationButtom
+              land={sendRequest}
+              postsPerPage={postsPerPage}
+              setPostPerPage={setPostPerPage}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+            />
+          )}
+        </Box>
+      )}
 
       {isOpen && <PaymentModel isOpen={isOpen} setOpen={setOpen} />}
-
-      <Flex bgColor={"red"}>
-        <Pagination handlePageClick={handlePageClick} page={currentPage} />
-      </Flex>
     </SidebarWithHeader>
   );
 };

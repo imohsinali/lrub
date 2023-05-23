@@ -24,6 +24,7 @@ export default function Layout({ children }) {
         <Flex justifyContent={"center"} direction="column">
           <Text
             fontSize={{ base: "2.4rem", sm: "4rem" }}
+            fontWeight='bold'
             align={"center"}
             mt={{
               base: "2rem",
@@ -34,7 +35,7 @@ export default function Layout({ children }) {
               sm: "2rem",
             }}
           >
-            Key Fetures
+            Key  Features.
           </Text>
           <CardGrid />
         </Flex>
@@ -55,6 +56,8 @@ export default function Layout({ children }) {
               base: "0rem",
               sm: "2rem",
             }}
+            fontWeight='bold'
+
           >
             How To Join.
           </Text>
@@ -72,6 +75,7 @@ export default function Layout({ children }) {
           color={{ base: "red", med: "green", sm: "yellow", xl: "blue" }}
           width={{ base: 400, sm: 100, md: 810, xl: "95%" }}
           overflow={"hidden"}
+          
         >
           <Text
             fontSize={{ base: "2.4rem", sm: "4rem" }}
@@ -84,8 +88,10 @@ export default function Layout({ children }) {
               base: "0rem",
               sm: "2rem",
             }}
+            fontWeight='bold'
+
           >
-            Development Stacks
+            Development Stacks.
           </Text>
           <Flex
             justifyContent={"center"}
@@ -97,7 +103,7 @@ export default function Layout({ children }) {
             <Banner1 />
           </Flex>
         </Flex>
-        <Flex width={{ base: "113%", sm: "100%" }}>
+        <Flex width={{ base: "113%", sm: "100%" }} bg="gray.500"> 
           <Footer />
         </Flex>
         {/* Rest of your home page content */}
