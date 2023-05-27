@@ -76,6 +76,7 @@ export default function ChangeAdmin() {
             width={{ base: "100%", md: "800px" }}
             as="form"
             onSubmit={handleChnageAdmin}
+            
           >
             <FormControl id="address" isRequired>
               <FormLabel>Wallet Address</FormLabel>
@@ -104,3 +105,8 @@ export default function ChangeAdmin() {
     </ProtectedRoute>
   );
 }
+
+
+
+
+

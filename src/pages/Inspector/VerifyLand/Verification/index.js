@@ -1,13 +1,9 @@
 import { Web3Context } from "@/components/context/web3Model";
 import SidebarWithHeader from "@/components/Dashbord/Dashboard";
 import {
-  Box,
   Button,
   Container,
   Flex,
-  Heading,
-  Image,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";

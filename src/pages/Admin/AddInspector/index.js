@@ -156,7 +156,7 @@ export default function ChangeAdmin() {
             </Button>
           </Flex>
         </Flex>
-        {found&&
+        {found&
         <Container mt={-20} width={{
         base:"100%",md:1000
       }} justifyContent="center" alignItems={"center"} maxW={800} boxShadow={'lg'} p={10}>

@@ -32,10 +32,7 @@ const Myland = () => {
     setZoom(land?.zoom);
     setCoordArray(land?.coordArray);
   }, []);
-  const handle = async () => {
-    const hos = await contract.getLandHistoryId(7);
-    console.log("buy", hos);
-  };
+  
   return (
     <SidebarWithHeader>
       <Flex mt={20}>

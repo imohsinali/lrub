@@ -27,8 +27,10 @@ export default function ChangeAdmin() {
   const { contract, users, currentUser, totalLand } = useContext(Web3Context);
 
   const [loading, setLoading] = useState(false);
-  const [inspector, setInspector] = useState();
-  const [found, setFound] = useState(false);
+  const [user, setUser] = useState();
+  const [userfound, setFoundUser] = useState(false);
+  const [Inspfound, setFoundInsp] = useState(false);
+
   const [landfound, setFoundland] = useState(false);
 
   const toast = useToast();
@@ -39,19 +41,19 @@ export default function ChangeAdmin() {
     const formData = new FormData(event.target);
 
     try {
-      const inspector = users?.filter(
+      const us = users?.filter(
         (user) => user.address == formData.get("address")
       );
 
-      setInspector(inspector);
-      if (inspector) {
+      setUser(us);
+      if (us) {
         toast({
           title: "User Found",
           status: "success",
           duration: 2000,
           isClosable: true,
         });
-        setFound(true);
+        setFoundUser(true);
       }
     } catch (error) {
       toast({
@@ -64,6 +66,48 @@ export default function ChangeAdmin() {
       setLoading(false);
     }
   };
+
+  const { data: inspectors } = useSWR(["insp", contract, users], async () => {
+    const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
+    const inspectors = users.filter((user) =>
+      inspectorAddresses.includes(user.address)
+    );
+
+    return inspectors;
+  });
+
+  const handleInsp = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    try {
+      const us = inspectors?.filter(
+        (user) => user.address == formData.get("address")
+      );
+
+      setUser(us);
+      if (us) {
+        toast({
+          title: "Inspctor Found",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        setFoundInsp(true);
+      }
+    } catch (error) {
+      toast({
+        title: error.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   const { data: lands, error: landError } = useSWR(
     ["landsd", contract],
     async () => await Lands(contract),
@@ -154,13 +198,6 @@ export default function ChangeAdmin() {
             <Flex gap={2}>
               <Button
                 onClick={() =>
-                  setRole({ user: false, Insp: true, land: false })
-                }
-              >
-                Inspector
-              </Button>
-              <Button
-                onClick={() =>
                   setRole({ user: true, Insp: false, land: false })
                 }
               >
@@ -180,7 +217,15 @@ export default function ChangeAdmin() {
               width={{ base: "100%", md: "800px" }}
               p={4}
               as="form"
-              onSubmit={role.user ? handleUser : role.land ? hanleLand : ""}
+              onSubmit={
+                role.user
+                  ? handleUser
+                  : role.Insp
+                  ? handleInsp
+                  : role.land
+                  ? hanleLand
+                  : ""
+              }
             >
               <FormControl id="address" isRequired flex={0.8}>
                 <FormLabel>
@@ -216,7 +261,7 @@ export default function ChangeAdmin() {
             </Flex>
           </Flex>
         </Flex>
-        {found && (
+        {role.user && userfound && (
           <Container
             mt={-20}
             width={{
@@ -231,10 +276,26 @@ export default function ChangeAdmin() {
           >
             <Text>User Information</Text>
 
-            <UserInfo
-              user={inspector ? inspector[0] : inspector}
-              role={"user"}
-            />
+            <UserInfo user={user ? user[0] : user} role={"user"} />
+          </Container>
+        )}
+
+        {role.Insp && Inspfound && (
+          <Container
+            mt={-20}
+            width={{
+              base: "100%",
+              md: 1000,
+            }}
+            justifyContent="center"
+            alignItems={"center"}
+            maxW={800}
+            boxShadow={"lg"}
+            p={10}
+          >
+            <Text>Inspector Information</Text>
+
+            <UserInfo user={Insp ? Insp[0] : Insp} role={"user"} />
           </Container>
         )}
 

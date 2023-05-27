@@ -10,8 +10,6 @@ import {
   Button,
   Divider,
   Flex,
-  Text,
-  Select,
 } from "@chakra-ui/react";
 import Image from "next/image";
 
@@ -32,11 +30,6 @@ const TableWithPagination = () => {
   const router = useRouter();
   const { contract, currentUser, account } = useContext(Web3Context);
 
-  // const { data: lands, error: landError } = useSWR(
-  //   ["lands", contract],
-  //   async () => await Lands(contract),
-  //   { revalidateOnMount: true }
-  // );
   const [land, setCurrent] = useState();
 
   useEffect(() => {
@@ -47,6 +40,7 @@ const TableWithPagination = () => {
     };
     fun();
   }, [contract]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const indexOfLastPost = currentPage * postsPerPage;
@@ -55,9 +49,7 @@ const TableWithPagination = () => {
     return land?.slice(indexOfFirstPost, indexOfLastPost).filter(Boolean);
   }, [land, indexOfFirstPost, indexOfLastPost]);
 
-  // const [currentPosts,SetCurrentPost]=useState(Posts)
   const [open, setOpen] = useState(false);
-  const [openMethod, setOpenMethod] = useState(false);
 
   return (
     <SidebarWithHeader bgColor={"#F7FAFC"}>
