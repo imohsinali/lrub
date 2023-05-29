@@ -18,6 +18,8 @@ const LandDetails = ({ land, user, pkr }) => {
       </Text>
       {user == "user" || "admin" ? (
         <Image
+
+
           src={`https://gateway.pinata.cloud/ipfs/${land?.landpic}`}
           minW={{ base: "100%", md: "40%", lg: "30%" }}
           minH={{ base: "200px", md: "300px" }}

@@ -20,8 +20,9 @@ const UserVerification = () => {
     setUser(user);
     setRole(user?.role);
   }, []);
-
+   console.log('use',user)
   const verifyuserA = async (id) => {
+    console.log("add",id)
     try {
       setLoading(true);
       const verfied = await contract.verifyUserAccepted(id);
@@ -41,6 +42,7 @@ const UserVerification = () => {
         isClosable: true,
       });
       setLoading(false);
+      console.log(error)
     }
   };
 
@@ -63,6 +65,7 @@ const UserVerification = () => {
         duration: 2000,
         isClosable: true,
       });
+
       setLoading(false);
     }
   };
@@ -100,7 +103,7 @@ const UserVerification = () => {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyuserR(user.id)}
+            onClick={() => verifyuserR(user?.address)}
             isDisabled={user?.isUserVerified}
             isLoading={loading}
           >
@@ -113,7 +116,7 @@ const UserVerification = () => {
             fontSize={{ base: 10, md: 14 }}
             mr={3}
             colorScheme="blue"
-            onClick={() => verifyuserA(user.id)}
+            onClick={() => verifyuserA(user?.address)}
             isDisabled={user?.isUserVerified}
             isLoading={loading}
           >

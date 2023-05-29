@@ -6,7 +6,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import HeroSection from "./HeroSection";
 import CardGrid from "./Grid";
 import Join from "./Join";
-import Banner1 from "./Banner1";
+import Banner1 from "./Development";
 import Footer from "./Footer";
 
 export default function Layout({ children }) {

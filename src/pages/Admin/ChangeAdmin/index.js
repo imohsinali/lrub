@@ -61,7 +61,7 @@ export default function ChangeAdmin() {
           justify="center"
           minH="calc(100vh - 4rem)"
           bg={useColorModeValue("gray.50", "gray.800")}
-          marginTop={-20}
+          marginTop={-5}
         >
           <Heading mb={8}>Change Admin</Heading>
           <Flex

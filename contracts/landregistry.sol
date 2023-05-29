@@ -58,6 +58,7 @@ contract landregistry {
         uint verfydate;
         uint childs;
         verStatus verfiactionStatus;
+        bool paymentdone;
     }
 
     struct LandPriceInfo {
@@ -107,14 +108,13 @@ contract landregistry {
         paymentdone,
         commpleted
     }
-    enum verStatus{
+    enum verStatus {
         requested,
         rejected,
         directedVerified,
         indirectedVerified,
         addbyAdmin
     }
-
 
     uint public inspectorsCount;
     uint public userCount;
@@ -164,14 +164,18 @@ contract landregistry {
         // Check if the caller is the contract owner and the inspector is not already registered
         if (
             msg.sender == contractOwner &&
-            RegisteredInspectorMapping[_addr] == false&&
-            RegisteredUserMapping[_addr]==true
+            RegisteredInspectorMapping[_addr] == false &&
+            RegisteredUserMapping[_addr] == true
         ) {
             // Check if the CNIC already exists in the inspectors mapping
-            
+
             // Update the inspectors mapping and lists
             UserMapping[_addr].isUserVerified = true;
-            userinfo[_addr] = UserInfo(msg.sender, block.timestamp,verStatus.addbyAdmin);
+            userinfo[_addr] = UserInfo(
+                msg.sender,
+                block.timestamp,
+                verStatus.addbyAdmin
+            );
             RegisteredInspectorMapping[_addr] = true;
             inspectorsCount++;
             allLandInspectorList[1].push(_addr);
@@ -234,11 +238,8 @@ contract landregistry {
             // The user is already registered.
             revert("Allreadey registerd");
         } else {
-
             for (uint i = 0; i < userCount; i++) {
-                if (
-                    UserMapping[allUsersList[1][i]].cnic == _cinc
-                ) {
+                if (UserMapping[allUsersList[1][i]].cnic == _cinc) {
                     revert("duplicate cnic");
                 }
             }
@@ -264,8 +265,7 @@ contract landregistry {
             );
             //emit Registration(msg.sender);
 
-        userinfo[msg.sender] = UserInfo(address(0), 0,verStatus.requested);
-
+            userinfo[msg.sender] = UserInfo(address(0), 0, verStatus.requested);
         }
     }
 
@@ -277,12 +277,15 @@ contract landregistry {
             InspectorMapping[msg.sender].posdistrict
         ) {
             UserMapping[_userId].isUserVerified = true;
-            userinfo[_userId] = UserInfo(msg.sender, block.timestamp,verStatus.directedVerified);
+            userinfo[_userId] = UserInfo(
+                msg.sender,
+                block.timestamp,
+                verStatus.directedVerified
+            );
         } else {
             revert();
         }
     }
-
 
     function verifyUserRejected(address _userId) public {
         if (
@@ -292,12 +295,15 @@ contract landregistry {
             InspectorMapping[msg.sender].posdistrict
         ) {
             UserMapping[_userId].isUserVerified = true;
-            userinfo[_userId] = UserInfo(msg.sender, block.timestamp,verStatus.rejected);
+            userinfo[_userId] = UserInfo(
+                msg.sender,
+                block.timestamp,
+                verStatus.rejected
+            );
         } else {
             revert();
         }
     }
-
 
     function isUserVerified(address id) public view returns (bool) {
         return UserMapping[id].isUserVerified;
@@ -353,16 +359,15 @@ contract landregistry {
                     block.timestamp,
                     0
                 )
-
-
             );
 
-                  landinfo[landsCount] = LandInfo(
-                    address(0),
-                    0,
-                    0,
-                    verStatus.requested
-                );
+            landinfo[landsCount] = LandInfo(
+                address(0),
+                0,
+                0,
+                verStatus.requested,
+                false
+            );
         } else {
             revert();
         }
@@ -430,14 +435,16 @@ contract landregistry {
                     landinfo[id].verfiedby,
                     landinfo[id].verfydate,
                     0,
-                    verStatus.indirectedVerified
+                    verStatus.indirectedVerified,
+                    false
                 );
 
                 landinfo[id] = LandInfo(
                     landinfo[id].verfiedby,
                     landinfo[id].verfydate,
                     newNumPlots,
-                    verStatus.directedVerified
+                    verStatus.directedVerified,
+                    false
                 );
 
                 // Calculate the new numplots value by adding the previous numplots value to the new one
@@ -491,7 +498,8 @@ contract landregistry {
                 msg.sender,
                 block.timestamp,
                 landinfo[_id].childs,
-                verStatus.directedVerified
+                verStatus.directedVerified,
+                false
             );
         } else {
             revert();
@@ -510,7 +518,8 @@ contract landregistry {
                 msg.sender,
                 block.timestamp,
                 landinfo[_id].childs,
-                verStatus.rejected
+                verStatus.rejected,
+                false
             );
         } else {
             revert();
@@ -538,9 +547,8 @@ contract landregistry {
             lands[landId].ownerAddress == msg.sender &&
             lands[landId].isLandVerified &&
             !lands[landId].isforSell
-            
         ) {
-            if (_addRemove && proxyOwner!=lands[landId].proxyownerAddress) {
+            if (_addRemove && proxyOwner != lands[landId].proxyownerAddress) {
                 lands[landId].proxyownerAddress = proxyOwner;
             }
 
@@ -601,56 +609,8 @@ contract landregistry {
         }
     }
 
-    function myReceivedLandRequests() public view returns (uint[] memory) {
-        return MyReceivedLandRequest[msg.sender];
-    }
-
-    function mySentLandRequests() public view returns (uint[] memory) {
-        return MySentLandRequest[msg.sender];
-    }
-
-
-
-    function acceptRequest(uint _requestId) public {
-        require(
-            LandRequestMapping[_requestId].sellerId == msg.sender,
-            "Only the seller can accept or reject a request."
-        );
-        require(
-            LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
-            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,  
-            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
-        );
-            // Accept the request
-            if (LandRequestMapping[_requestId].bidPrice > 0) {
-                // Update the land price with the bid price
-               landPriceInfo[_requestId]= LandPriceInfo(
-                    _requestId,
-                    lands[LandRequestMapping[_requestId].landId].landPrice,
-                    LandRequestMapping[_requestId].bidPrice
-                );   
-            }
-            LandRequestMapping[_requestId].requestStatus = reqStatus.accepted;
-            uint landId = LandRequestMapping[_requestId].landId;
-            for (uint i = 1; i <= requestCount; i++) {
-                if (LandRequestMapping[i].landId == landId && i != _requestId &&!LandRequestMapping[i].isPaymentDone) {
-                    LandRequestMapping[i].requestStatus = reqStatus.rejected;
-                }}}
-    function rejectRequest(uint _requestId) public {
-        require(
-            LandRequestMapping[_requestId].sellerId == msg.sender,
-            "Only the seller can accept or reject a request."
-        );
-        require(
-            LandRequestMapping[_requestId].requestStatus != reqStatus.commpleted&&
-            LandRequestMapping[_requestId].requestStatus != reqStatus.paymentdone,  
-            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
-        );
-            LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
-    }
-    
-
     function requestforBuyWithBid(uint _landId, uint _bidPrice) public {
+        require(!landinfo[_landId].paymentdone, "payment should not be done");
         uint requestId;
         uint[] memory requestIDs = MyReceivedLandRequest[
             lands[_landId].ownerAddress
@@ -663,6 +623,7 @@ contract landregistry {
         }
 
         bool isPaymentDone = LandRequestMapping[requestId].isPaymentDone;
+        // landinfo[_landId].paymentdone=true;
         reqStatus status = LandRequestMapping[requestId].requestStatus;
 
         if (
@@ -670,9 +631,8 @@ contract landregistry {
             lands[_landId].isLandVerified &&
             msg.sender != lands[_landId].ownerAddress &&
             !isPaymentDone &&
-            !(status == reqStatus.accepted)&&
+            !(status == reqStatus.accepted) &&
             !(status == reqStatus.commpleted)
-
         ) {
             requestCount++;
             LandRequestMapping[requestCount] = LandRequest(
@@ -693,22 +653,82 @@ contract landregistry {
         }
     }
 
+    function myReceivedLandRequests() public view returns (uint[] memory) {
+        return MyReceivedLandRequest[msg.sender];
+    }
+
+    function mySentLandRequests() public view returns (uint[] memory) {
+        return MySentLandRequest[msg.sender];
+    }
+
+    function acceptRequest(uint _requestId) public {
+        require(
+            LandRequestMapping[_requestId].sellerId == msg.sender,
+            "Only the seller can accept or reject a request."
+        );
+        require(
+            LandRequestMapping[_requestId].requestStatus !=
+                reqStatus.commpleted &&
+                LandRequestMapping[_requestId].requestStatus !=
+                reqStatus.paymentdone,
+            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
+        );
+        // Accept the request
+        if (LandRequestMapping[_requestId].bidPrice > 0) {
+            // Update the land price with the bid price
+            landPriceInfo[_requestId] = LandPriceInfo(
+                _requestId,
+                lands[LandRequestMapping[_requestId].landId].landPrice,
+                LandRequestMapping[_requestId].bidPrice
+            );
+        }
+        LandRequestMapping[_requestId].requestStatus = reqStatus.accepted;
+        uint landId = LandRequestMapping[_requestId].landId;
+        for (uint i = 1; i <= requestCount; i++) {
+            if (
+                LandRequestMapping[i].landId == landId &&
+                i != _requestId &&
+                !LandRequestMapping[i].isPaymentDone
+            ) {
+                rejectRequest(i);
+            }
+        }
+    }
+
+    function rejectRequest(uint _requestId) public {
+        require(
+            LandRequestMapping[_requestId].sellerId == msg.sender,
+            "Only the seller can accept or reject a request."
+        );
+        require(
+            LandRequestMapping[_requestId].requestStatus !=
+                reqStatus.commpleted &&
+                LandRequestMapping[_requestId].requestStatus !=
+                reqStatus.paymentdone,
+            "Request must not be in 'paymentdone or completed' status to be accepted or rejected."
+        );
+        LandRequestMapping[_requestId].requestStatus = reqStatus.rejected;
+    }
+
     function makePayment(
         address payable _receiver,
         uint _requestId
     ) public payable {
+        uint landId = LandRequestMapping[_requestId].landId;
+
         if (
             LandRequestMapping[_requestId].buyerId == msg.sender &&
             LandRequestMapping[_requestId].requestStatus ==
             reqStatus.accepted &&
             LandRequestMapping[_requestId].requestStatus !=
-            reqStatus.paymentdone&&
+            reqStatus.paymentdone &&
             LandRequestMapping[_requestId].sellerId == _receiver &&
             msg.value == landPriceInfo[_requestId].bidPrice
         ) {
             LandRequestMapping[_requestId].requestStatus = reqStatus
                 .paymentdone;
             LandRequestMapping[_requestId].isPaymentDone = true;
+            landinfo[landId].paymentdone = true;
             paymentDoneList[1].push(_requestId);
             _receiver.transfer(msg.value);
         } else {

@@ -29,9 +29,8 @@ export default function ChangeAdmin() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState();
   const [userfound, setFoundUser] = useState(false);
-  const [Inspfound, setFoundInsp] = useState(false);
+  const [landfound,setLandFound]=useState(false)
 
-  const [landfound, setFoundland] = useState(false);
 
   const toast = useToast();
 
@@ -54,6 +53,7 @@ export default function ChangeAdmin() {
           isClosable: true,
         });
         setFoundUser(true);
+      
       }
     } catch (error) {
       toast({
@@ -67,46 +67,8 @@ export default function ChangeAdmin() {
     }
   };
 
-  const { data: inspectors } = useSWR(["insp", contract, users], async () => {
-    const inspectorAddresses = await contract.ReturnAllLandIncpectorList();
-    const inspectors = users.filter((user) =>
-      inspectorAddresses.includes(user.address)
-    );
 
-    return inspectors;
-  });
 
-  const handleInsp = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-
-    try {
-      const us = inspectors?.filter(
-        (user) => user.address == formData.get("address")
-      );
-
-      setUser(us);
-      if (us) {
-        toast({
-          title: "Inspctor Found",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-        setFoundInsp(true);
-      }
-    } catch (error) {
-      toast({
-        title: error.message,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-      });
-      console.log(error);
-      setLoading(false);
-    }
-  };
 
   const { data: lands, error: landError } = useSWR(
     ["landsd", contract],
@@ -121,7 +83,6 @@ export default function ChangeAdmin() {
     const filter = lands.filter(
       (land) => land.id == Number(formData.get("address"))
     );
-
     const [coord, zoom] = filter[0]?.allLatitudeLongitude?.split("/");
     const coordArray = coord?.split(";")?.map((pair) => {
       const [longitude, latitude] = pair?.split(",");
@@ -160,6 +121,7 @@ export default function ChangeAdmin() {
         duration: 2000,
         isClosable: true,
       });
+      setLandFound(true)
     } else {
       toast({
         title: "land not  Found",
@@ -167,6 +129,8 @@ export default function ChangeAdmin() {
         duration: 2000,
         isClosable: true,
       });
+      setLandFound(false)
+
     }
   };
 
@@ -181,7 +145,7 @@ export default function ChangeAdmin() {
           justify="center"
           minH="calc(100vh - 4rem)"
           bg={useColorModeValue("gray.50", "gray.800")}
-          marginTop={{ base: "5", sm: -25 }}
+          marginTop={{ base: "5", sm: 1 }}
         >
           <Heading mb={8}>Search Details</Heading>
           <Flex
@@ -196,6 +160,7 @@ export default function ChangeAdmin() {
             width={{ base: "100%", md: "800px" }}
           >
             <Flex gap={2}>
+              
               <Button
                 onClick={() =>
                   setRole({ user: true, Insp: false, land: false })
@@ -220,8 +185,6 @@ export default function ChangeAdmin() {
               onSubmit={
                 role.user
                   ? handleUser
-                  : role.Insp
-                  ? handleInsp
                   : role.land
                   ? hanleLand
                   : ""
@@ -280,24 +243,7 @@ export default function ChangeAdmin() {
           </Container>
         )}
 
-        {role.Insp && Inspfound && (
-          <Container
-            mt={-20}
-            width={{
-              base: "100%",
-              md: 1000,
-            }}
-            justifyContent="center"
-            alignItems={"center"}
-            maxW={800}
-            boxShadow={"lg"}
-            p={10}
-          >
-            <Text>Inspector Information</Text>
-
-            <UserInfo user={Insp ? Insp[0] : Insp} role={"user"} />
-          </Container>
-        )}
+        
 
         {role.land && landfound && <LandDetail click={setFoundland} />}
       </SidebarWithHeader>
