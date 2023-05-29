@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/mohsin/Documents/GitHub/lrub/contracts/landregistry.sol": {
-      "lastModificationDate": 1685202428251,
-      "contentHash": "7503199f0f7f52b608f44ed62e8d6667",
+      "lastModificationDate": 1685340159496,
+      "contentHash": "cae0e5486a905ae7a33b10355a163c4e",
       "sourceName": "contracts/landregistry.sol",
       "solcConfig": {
         "version": "0.8.0",

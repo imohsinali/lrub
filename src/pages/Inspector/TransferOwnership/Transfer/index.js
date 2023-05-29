@@ -9,7 +9,6 @@ import { Web3Context } from "@/components/context/web3Model";
 import LandDetails from "@/components/Cards/landDetails";
 import { useRouter } from "next/router";
 import MakePdf from "@/components/utils/pdfDocument";
-import fileHash from "@/components/utils/IPFS";
 import pdfHash from "@/components/utils/pdfHash";
 import Link from "next/link";
 import getCameraStreams from "@/components/utils/cameraStream";

@@ -12,8 +12,10 @@ const pdfHash = async (pdfBytes) => {
     url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
     data: formData,
     headers: {
-      pinata_api_key: `7cef58394b1f0a591f15`,
-      pinata_secret_api_key: `54098153be2dc5cc4dc335c06b91cbe1dc5dbae086263a764708f16eeee76ad4
+      pinata_api_key: `5abf2908f3ff2e9eea2b`,
+      pinata_secret_api_key: `c8a7bb3ff88dacea157eb7bbbc568b7907d7fec683b08922c8bda1837c0357a0
+
+
 
 `,
       "Content-Type": "multipart/form-data",
