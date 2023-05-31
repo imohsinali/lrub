@@ -29,46 +29,44 @@ export default function ChangeAdmin() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState();
   const [userfound, setFoundUser] = useState(false);
-  const [landfound,setLandFound]=useState(false)
-
+  const [landfound, setLandFound] = useState(false);
+  const [land, setLand] = useState();
 
   const toast = useToast();
 
   const handleUser = async (event) => {
+    setFoundUser(false);
+
     event.preventDefault();
 
     const formData = new FormData(event.target);
 
-    try {
-      const us = users?.filter(
-        (user) => user.address == formData.get("address")
-      );
+    const us = users?.filter((user) => user.address == formData.get("address"));
 
-      setUser(us);
-      if (us) {
-        toast({
-          title: "User Found",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-        setFoundUser(true);
-      
-      }
-    } catch (error) {
+    if (us) {
       toast({
-        title: error.message,
+        title: "User Found",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      setFoundUser(true);
+      setUser(us);
+    } 
+    
+    else {
+      toast({
+        title: "User Not Found",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
       console.log(error);
+      setFoundUser(false);
+
       setLoading(false);
     }
   };
-
-
-
 
   const { data: lands, error: landError } = useSWR(
     ["landsd", contract],
@@ -80,7 +78,7 @@ export default function ChangeAdmin() {
 
     const formData = new FormData(event.target);
 
-    const filter = lands.filter(
+    const filter = lands?.filter(
       (land) => land.id == Number(formData.get("address"))
     );
     const [coord, zoom] = filter[0]?.allLatitudeLongitude?.split("/");
@@ -113,15 +111,14 @@ export default function ChangeAdmin() {
         landStatus: filter[0]?.landStatus,
       })
     );
-    setLandFound(filter);
-    if (landfound) {
+    if (filter) {
       toast({
         title: "land Found",
         status: "success",
         duration: 2000,
         isClosable: true,
       });
-      setLandFound(true)
+      setLandFound(true);
     } else {
       toast({
         title: "land not  Found",
@@ -129,9 +126,9 @@ export default function ChangeAdmin() {
         duration: 2000,
         isClosable: true,
       });
-      setLandFound(false)
-
+      setLandFound(false);
     }
+    setLandFound(false);
   };
 
   const [role, setRole] = useState({ user: false, Insp: true, land: false });
@@ -160,7 +157,6 @@ export default function ChangeAdmin() {
             width={{ base: "100%", md: "800px" }}
           >
             <Flex gap={2}>
-              
               <Button
                 onClick={() =>
                   setRole({ user: true, Insp: false, land: false })
@@ -182,13 +178,7 @@ export default function ChangeAdmin() {
               width={{ base: "100%", md: "800px" }}
               p={4}
               as="form"
-              onSubmit={
-                role.user
-                  ? handleUser
-                  : role.land
-                  ? hanleLand
-                  : ""
-              }
+              onSubmit={role.user ? handleUser : role.land ? hanleLand : ""}
             >
               <FormControl id="address" isRequired flex={0.8}>
                 <FormLabel>
@@ -243,9 +233,7 @@ export default function ChangeAdmin() {
           </Container>
         )}
 
-        
-
-        {role.land && landfound && <LandDetail click={setFoundland} />}
+        {role.land && landfound && <LandDetail />}
       </SidebarWithHeader>
     </ProtectedRoute>
   );

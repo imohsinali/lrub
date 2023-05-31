@@ -7,7 +7,6 @@ import Profiledetail from "@/components/Cards/profileDetails";
 import { Button, Container, Flex, Text, useToast } from "@chakra-ui/react";
 import { Web3Context } from "@/components/context/web3Model";
 import LandDetails from "@/components/Cards/landDetails";
-import { useRouter } from "next/router";
 import MakePdf from "@/components/utils/pdfDocument";
 import pdfHash from "@/components/utils/pdfHash";
 import Link from "next/link";
