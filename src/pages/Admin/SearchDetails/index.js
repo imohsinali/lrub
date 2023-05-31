@@ -113,7 +113,7 @@ export default function ChangeAdmin() {
         landStatus: filter[0]?.landStatus,
       })
     );
-    setFoundland(filter);
+    setLandFound(filter);
     if (landfound) {
       toast({
         title: "land Found",
