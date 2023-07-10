@@ -9,9 +9,9 @@ import WalletConnect from "@walletconnect/web3-provider";
 export const Context = React.createContext();
 
 // const { ethereum } = window;
-// const contractAddress="0x0C84632F86C08850Db4BbFC2b2C0f4AddB19EB79"
+const contractAddress="0x0C84632F86C08850Db4BbFC2b2C0f4AddB19EB79"
 // const contractAddress = "0x71c1a7AE879D0E47d0987E6afd409b79B9Ae8f3D";
-const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
+// const contractAddress = "0xbd1c2bec6b1ad8057f462d46de2b91c7289322b1";
 
 const createEthereumContract = () => {
   const provider = new Web3Provider(window.ethereum);
