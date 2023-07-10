@@ -35,7 +35,7 @@ const Card = ({
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  console.log("land id", id);
+  console.log("land id", id,landPrice);
   const sellLand = async (id) => {
     try {
       if (isLandVerified) {

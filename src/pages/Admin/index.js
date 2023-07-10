@@ -90,10 +90,10 @@ const AdminDashboard = () => {
     0x58051d93: "Subplot",
     0xe749752c: "User Registered",
     0xf98cf07c: "Make Payment",
-    0x935400ee: "Request Rejected",
+    0x935400ee: "Chnage Detail",
     0x9dec448e: "Buy Request",
     0x4ba1f098: "Request Accepted",
-    0x2d7788db: "Change Detail",
+    0x935400ee	: "Change Detail",
     0x314967ac: "Add Land",
   };
 

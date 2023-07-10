@@ -39,7 +39,7 @@ const TableWithPagination = () => {
   const lands = landrequest?.filter(
     (land) => land.requestStatus == 3 || land.requestStatus == 4
   );
-  console.log("land", lands);
+  console.log("landss", lands);
   const requeststatus = {
     0: "pending",
     1: "accepted",
