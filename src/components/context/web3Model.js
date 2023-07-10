@@ -11,10 +11,9 @@ import { getAlluser, Lands, RecivedRequest, SendRequest } from "./functions";
 // const contractAddress = "0x0421587b973034bB7388B4fDC73416937543c29d";
 // const contractAddress = "0xf8d9B8AA3E76203196DecE61f25Ce841F3e04475";
 
-// const contractAddress = "0xC08FC998D15F3621d413D5936b2EA23a9AEb93bb";
+const contractAddress = "0xC08FC998D15F3621d413D5936b2EA23a9AEb93bb";
 // const contractAddress = "0x8b5018C3de4e271464809bc3A6a2509e154343D8";
-//0xB0Bf89B9e79c3E1482F85B32Ff1e901cC46aC37B
-const contractAddress = "0xB0Bf89B9e79c3E1482F85B32Ff1e901cC46aC37B";
+//
 
 const providerOptions = {
   walletconnect: {

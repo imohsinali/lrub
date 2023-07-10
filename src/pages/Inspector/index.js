@@ -67,7 +67,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fun1 = async () => {
       const url =
-        "https://api-testnet.polygonscan.com/api?module=account&action=txlist&address=0xB0Bf89B9e79c3E1482F85B32Ff1e901cC46aC37B&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=6SPF5NK1C7PGN4VQGDTA7RII7SIUUUSUK5";
+        "https://api-testnet.polygonscan.com/api?module=account&action=txlist&address=0xC08FC998D15F3621d413D5936b2EA23a9AEb93bb&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=6SPF5NK1C7PGN4VQGDTA7RII7SIUUUSUK5";
       const { data } = await axios.get(url);
       console.log("re", data?.result);
       setTransaction(data?.result);
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
     0x935400ee: "Request Rejected",
     0x9dec448e: "Buy Request",
     0x4ba1f098: "Request Accepted",
-    0x935400ee: "Change Detail",
+    0x2d7788db: "Change Detail",
     0x314967ac: "Add Land",
   };
 

@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MITs
 
 pragma solidity ^0.8.0;
 
@@ -143,7 +142,6 @@ contract landregistry {
     mapping(address => UserInfo) public userinfo;
     mapping(uint => LandPriceInfo) public landPriceInfo;
     mapping(uint => TransferInfo) public transferInfo;
-    mapping(uint => bool) private propertyPIDExists;
 
     function isContractOwner(address _addr) public view returns (bool) {
         if (_addr == contractOwner) return true;
@@ -244,6 +242,7 @@ contract landregistry {
                     revert("duplicate cnic");
                 }
             }
+            // require(!RegisteredUserMapping[msg.sender]);
 
             RegisteredUserMapping[msg.sender] = true;
             userCount++;
@@ -325,8 +324,7 @@ contract landregistry {
     ) public {
         if (
             UserMapping[msg.sender].isUserVerified &&
-            // !CheckDuplicatePid(_propertyPID) &&
-            !propertyPIDExists[_propertyPID] &&
+            !CheckDuplicatePid(_propertyPID) &&
             _area > 0 &&
             !UserMapping[msg.sender].death
         ) {
@@ -369,7 +367,6 @@ contract landregistry {
                 verStatus.requested,
                 false
             );
-            propertyPIDExists[_propertyPID] = true;
         } else {
             revert();
         }
